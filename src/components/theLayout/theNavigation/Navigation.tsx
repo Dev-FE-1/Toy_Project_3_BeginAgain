@@ -6,7 +6,7 @@ import {
   CgProfile
 } from 'react-icons/cg'
 import { css } from '@emotion/react'
-import Colors from '@/styles/Colors'
+import { Colors } from '@/styles/Theme'
 import NavigationItem from './NavigationItem'
 
 const Navigation = () => {
@@ -14,7 +14,7 @@ const Navigation = () => {
     <nav>
       <ul css={navbar}>
         <NavigationItem
-          path="/home"
+          path="/"
           Icon={CgHome}
         />
         <NavigationItem
