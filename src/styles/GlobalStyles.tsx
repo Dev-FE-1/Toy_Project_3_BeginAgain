@@ -1,6 +1,6 @@
 import { Global, css } from '@emotion/react'
-import Colors from '@/styles/Colors'
-import { fontSize, fontWeight } from '@/styles/Fonts'
+import { Colors } from '@/styles/Theme'
+import { FontSize, FontWeight } from '@/styles/Theme'
 
 const GlobalStyles = () => (
   <Global
@@ -164,8 +164,8 @@ const GlobalStyles = () => (
           'Segoe UI Emoji',
           'Segoe UI Symbol',
           sans-serif;
-        font-size: ${fontSize.md};
-        font-weight: ${fontWeight.medium};
+        font-size: ${FontSize.md};
+        font-weight: ${FontWeight.medium};
         background-color: ${Colors.white};
         color: ${Colors.black};
       }
