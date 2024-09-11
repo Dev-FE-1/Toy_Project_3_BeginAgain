@@ -6,7 +6,7 @@ import {
   CgProfile
 } from 'react-icons/cg'
 import { css } from '@emotion/react'
-import { Colors } from '@/styles/Theme'
+import { Colors, Width } from '@/styles/Theme'
 import NavigationItem from './NavigationItem'
 
 const Navigation = () => {
@@ -43,16 +43,16 @@ const navbar = css`
   justify-content: space-around;
   align-items: center;
   height: 72px;
-  position: sticky;
-  width: 430px;
+  position: fixed;
+  width: ${Width.max};
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
   background-color: ${Colors.black};
   color: ${Colors.lightGrey};
   opacity: 0.8;
   z-index: 100;
-  border-radius: 10px;
-  .active {
-    color: ${Colors.white};
-  }
+  border-radius: 10px 10px 0 0;
 `
 
 export default Navigation

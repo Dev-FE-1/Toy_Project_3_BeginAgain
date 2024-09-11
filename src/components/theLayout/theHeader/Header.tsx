@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Colors } from '@/styles/Theme'
+import { Colors, Width } from '@/styles/Theme'
 import { FontSize } from '@/styles/Theme'
 import { createPortal } from 'react-dom'
 
@@ -22,7 +22,10 @@ const headerStyle = css`
   align-items: center;
   height: 72px;
   position: sticky;
-
+  width: ${Width.max};
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 100;
   color: ${Colors.white};
 `
