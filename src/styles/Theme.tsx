@@ -6,7 +6,8 @@ export const Colors = {
   black: '#1E1E1E',
   lightGrey: '#EBEBEB',
   red: '#D32F2F',
-  white: '#FFFFFF'
+  white: '#FFFFFF',
+  grey: '#B3B3B3'
 }
 export const FontSize = {
   xs: '12px',
