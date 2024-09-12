@@ -5,22 +5,20 @@ import { css } from '@emotion/react'
 import { Colors, FontSize, FontWeight } from '@/styles/Theme'
 import { GrAddCircle } from "react-icons/gr" 
 
-function Radio({ children, name, value, defaultChecked }) {
-  return (
-    <label>
-      <input type="radio" name={name} value={value} defaultChecked={defaultChecked} />
-      {children}
-    </label>
-  )
-}
 const AddPlaylist = () => {
+  const [visibility, setVisibility] = useState("Open"); 
+  const handleVisibilityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setVisibility(event.target.value); 
+  };
+  
   return (
     <>
       <Header title="Add Playlist" />
+
       <div css={DivContainer}>
-        <div css={TitleContainer}>동영상 링크</div>
-        <input type="text" placeholder="동영상 주소를 입력해주세요." css={InputContainer} />
-        <button css={AddButton}><GrAddCircle size={24} color="#1E1E1E" /></button>
+      <div css={TitleContainer}>동영상 링크</div>
+      <input type="text" placeholder="동영상 주소를 입력해주세요." css={InputContainer} />
+      <button css={AddButton}><GrAddCircle size={24} color="#1E1E1E" /></button>
       </div>
 
       <div css={DivContainer}>
@@ -35,13 +33,33 @@ const AddPlaylist = () => {
 
       <div css={DivContainer}>
         <div css={TitleContainer}>카테고리 설정</div>
-        <Category />
-      </div>
+        <div css={CategoryStyle}>
+          <Category />
+        </div>
+        </div>
 
       <div css={DivContainer}>
         <div css={TitleContainer}>공개 설정</div>
-        <Radio name="setting" defaultChecked>공개</Radio>
-        <Radio name="setting">비공개</Radio>
+        <label css={RadioLabelStyle}>
+          <input
+            type="radio"
+            value="Open"
+            checked={visibility === "Open"}
+            onChange={handleVisibilityChange}
+            css={RadioInputStyle}
+          />
+          공개
+        </label>
+        <label css={RadioLabelStyle}>
+          <input
+            type="radio"
+            value="Close"
+            checked={visibility === "Close"}
+            onChange={handleVisibilityChange}
+            css={RadioInputStyle}
+          />
+          비공개
+        </label>
       </div>
     </>
   )
@@ -50,7 +68,7 @@ const AddPlaylist = () => {
 const DivContainer = css`
   position: relative;
   display: inline-block;
-  width: 315px;
+  width: 100%;
 `
 const TitleContainer = css`
   font-size: ${FontSize.md};
@@ -82,5 +100,16 @@ const AddButton = css`
   background-color: transparent;
   cursor: pointer;
 `
+const CategoryStyle = css`
+  margin-bottom: 35px;
+`
+const RadioLabelStyle = css`
+  margin-right: 20px;
+  display: inline-block;
+`;
+
+const RadioInputStyle = css`
+  margin-right: 8px;
+`;
 
 export default AddPlaylist;
