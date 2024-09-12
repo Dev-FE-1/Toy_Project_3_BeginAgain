@@ -6,32 +6,57 @@ import {
   CgProfile
 } from 'react-icons/cg'
 import { css } from '@emotion/react'
-import { Colors, Width } from '@/styles/Theme'
+import { Colors, Width, FontSize } from '@/styles/Theme'
 import NavigationItem from './NavigationItem'
+import { useLocation, useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
 
 const Navigation = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [path, setPath] = React.useState(location.pathname)
+
+  const handleNavigation = (path: string) => {
+    setPath(path)
+    navigate(path)
+  }
+
   return (
     <nav>
       <ul css={navbar}>
         <NavigationItem
           path="/"
           Icon={CgHome}
+          label="Home"
+          isActive={path === '/'}
+          onClick={() => handleNavigation('/')}
         />
         <NavigationItem
           path="/myplaylist"
           Icon={CgStack}
+          label="Playlist"
+          isActive={path === '/myplaylist'}
+          onClick={() => handleNavigation('/myplaylist')}
         />
-        <NavigationItem
-          path="/addplaylist"
-          Icon={CgMathPlus}
-        />
+        <div css={addButtonStyle}>
+          <NavigationItem
+            path="/addplaylist"
+            Icon={CgMathPlus}
+          />
+        </div>
         <NavigationItem
           path="/bookmark"
           Icon={CgBookmark}
+          label="bookmark"
+          isActive={path === '/bookmark'}
+          onClick={() => handleNavigation('/bookmark')}
         />
         <NavigationItem
           path="/profile"
           Icon={CgProfile}
+          label="profile"
+          isActive={path === '/profile'}
+          onClick={() => handleNavigation('/profile')}
         />
       </ul>
     </nav>
@@ -40,7 +65,7 @@ const Navigation = () => {
 
 const navbar = css`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   height: 72px;
   position: fixed;
@@ -50,9 +75,17 @@ const navbar = css`
   transform: translateX(-50%);
   background-color: ${Colors.black};
   color: ${Colors.lightGrey};
-  opacity: 0.8;
   z-index: 100;
-  border-radius: 10px 10px 0 0;
+  border-radius: 45px 45px 0 0;
+`
+
+const addButtonStyle = css`
+  background-color: ${Colors.paleBlue};
+  border-radius: 50%;
+  padding: 25px;
+  position: relative;
+  top: -14px;
+  font-size: ${FontSize.xxl};
 `
 
 export default Navigation

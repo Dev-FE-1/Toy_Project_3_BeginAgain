@@ -36,7 +36,7 @@ const longButtonStyle = css`
   border-radius: 3px;
   background-color: ${Colors.lightBlue};
   border: none;
-  font-size: ${FontSize.lg};
+  font-size: ${FontSize.md};
   color: ${Colors.white};
 `
 
