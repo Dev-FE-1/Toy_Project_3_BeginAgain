@@ -1,10 +1,11 @@
 import Header from '@/components/theLayout/theHeader/Header'
+import Category from '@/components/theCommon/Category'
 
 const Home = () => {
   return (
     <>
       <Header title="Home" />
-      <h1>Home</h1>
+      <Category />
     </>
   )
 }
