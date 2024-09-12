@@ -1,5 +1,5 @@
 import Header from '@/components/theLayout/theHeader/Header'
-import LongButton from '@/components/LongButton'
+import LongButton from '@/components/theCommon/LongButton'
 import { css } from '@emotion/react'
 
 const Profile = () => {
