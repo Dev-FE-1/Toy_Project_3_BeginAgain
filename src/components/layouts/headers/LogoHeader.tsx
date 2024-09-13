@@ -1,16 +1,16 @@
+import Logo from '@/assets/logo.png'
 import { css } from '@emotion/react'
 import { Colors, Width } from '@/styles/Theme'
-import { FontSize } from '@/styles/Theme'
 import { createPortal } from 'react-dom'
 
-interface HeaderProps {
-  title: string
-}
-
-const Header = ({ title }: HeaderProps) => {
+const LogoHeader = () => {
   return createPortal(
     <div css={headerStyle}>
-      <h1 css={titleStyle}>{title}</h1>
+      <img
+        src={Logo}
+        alt="Logo"
+        css={logoStyle}
+      />
     </div>,
     document.getElementById('header')!
   )
@@ -30,9 +30,9 @@ const headerStyle = css`
   color: ${Colors.white};
 `
 
-const titleStyle = css`
-  font-size: ${FontSize.xl};
-  color: ${Colors.black};
+const logoStyle = css`
+  height: 25px;
+  width: 75px;
 `
 
-export default Header
+export default LogoHeader

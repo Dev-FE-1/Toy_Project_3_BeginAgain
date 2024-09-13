@@ -175,6 +175,9 @@ const GlobalStyles = () => (
         width: 100%;
         overflow-y: auto;
       }
+      .nav-margin {
+        height: 150px;
+      }
     `}
   />
 )

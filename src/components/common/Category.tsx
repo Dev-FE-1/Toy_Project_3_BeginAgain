@@ -3,26 +3,14 @@ import { Colors } from '@/styles/Theme'
 import { FontSize } from '@/styles/Theme'
 
 const Category = () => {
+  const categories = ['전체', '상체', '하체', '스트레칭', '유산소', '전신']
   return (
     <ul css={CategoryContainer}>
-      <li>
-        <CategoryButton>전체</CategoryButton>
-      </li>
-      <li>
-        <CategoryButton>상체</CategoryButton>
-      </li>
-      <li>
-        <CategoryButton>하체</CategoryButton>
-      </li>
-      <li>
-        <CategoryButton>스트레칭</CategoryButton>
-      </li>
-      <li>
-        <CategoryButton>유산소</CategoryButton>
-      </li>
-      <li>
-        <CategoryButton>전신</CategoryButton>
-      </li>
+      {categories.map(category => (
+        <li key={category}>
+          <CategoryButton>{category}</CategoryButton>
+        </li>
+      ))}
     </ul>
   )
 }
@@ -53,7 +41,7 @@ const baseButtonStyle = css`
   border-radius: 5px;
   border: 1px solid ${Colors.lightBlue};
   cursor: pointer;
-  font-size: ${FontSize.sm}
+  font-size: ${FontSize.sm};
   line-height: 100%;
   letter-spacing: -0.18px;
   transition: background-color 0.3s ease;
