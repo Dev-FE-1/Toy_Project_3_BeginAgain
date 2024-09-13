@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import Header from '@/components/theLayout/theHeader/Header'
-import Category from '@/components/theCommon/Category'
-import Toast from '@/components/theCommon/Toast'
+import Category from '@/components/common/Category'
+import Toast from '@/components/common/Toast'
+import { useHeaderStore } from '@/stores/header'
 
 const Bookmark: React.FC = () => {
+  const setTitle = useHeaderStore(state => state.setTitle)
+  setTitle('Bookmark')
+
   const [isToastVisible, setIsToastVisible] = useState(false)
 
   const handleToastShow = () => {
@@ -12,7 +15,6 @@ const Bookmark: React.FC = () => {
 
   return (
     <>
-      <Header title="북마크" />
       <Category />
       <div
         onClick={handleToastShow}

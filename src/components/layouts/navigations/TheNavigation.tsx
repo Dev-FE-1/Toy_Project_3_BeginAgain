@@ -9,7 +9,7 @@ import { css } from '@emotion/react'
 import { Colors, Width, FontSize } from '@/styles/Theme'
 import NavigationItem from './NavigationItem'
 import { useLocation, useNavigate } from 'react-router-dom'
-import React, { useState } from 'react'
+import React from 'react'
 
 const Navigation = () => {
   const location = useLocation()

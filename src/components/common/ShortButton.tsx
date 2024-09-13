@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from '@emotion/react'
+import { css } from '@emotion/react'
 import { Colors, FontSize } from '@/styles/Theme'
 import { ReactNode } from 'react'
 
