@@ -32,15 +32,15 @@ const Navigation = () => {
           onClick={() => handleNavigation('/')}
         />
         <NavigationItem
-          path="/myplaylist"
+          path="/my-playlist"
           Icon={CgStack}
           label="Playlist"
-          isActive={path === '/myplaylist'}
-          onClick={() => handleNavigation('/myplaylist')}
+          isActive={path === '/my-playlist'}
+          onClick={() => handleNavigation('/my-playlist')}
         />
         <div css={addButtonStyle}>
           <NavigationItem
-            path="/addplaylist"
+            path="/add-playlist"
             Icon={CgMathPlus}
           />
         </div>
