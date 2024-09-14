@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Category from '@/components/common/Category'
 import Toast from '@/components/common/Toast'
 import { useHeaderStore } from '@/stores/header'
 
 const Bookmark: React.FC = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
-  setTitle('Bookmark')
+
+  useEffect(() => {
+    setTitle('Bookmark')
+  }, [setTitle])
 
   const [isToastVisible, setIsToastVisible] = useState(false)
 

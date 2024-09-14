@@ -47,14 +47,14 @@ const Navigation = () => {
         <NavigationItem
           path="/bookmark"
           Icon={CgBookmark}
-          label="bookmark"
+          label="Bookmark"
           isActive={path === '/bookmark'}
           onClick={() => handleNavigation('/bookmark')}
         />
         <NavigationItem
           path="/profile"
           Icon={CgProfile}
-          label="profile"
+          label="Profile"
           isActive={path === '/profile'}
           onClick={() => handleNavigation('/profile')}
         />

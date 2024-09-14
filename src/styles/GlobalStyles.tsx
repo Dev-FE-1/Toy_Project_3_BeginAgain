@@ -166,7 +166,7 @@ const GlobalStyles = () => (
           sans-serif;
         font-size: ${FontSize.md};
         font-weight: ${FontWeight.medium};
-        background-color: ${Colors.white};
+        background-color: ${Colors.lightGrey};
         color: ${Colors.black};
       }
       html {
@@ -176,7 +176,7 @@ const GlobalStyles = () => (
         overflow-y: auto;
       }
       .nav-margin {
-        height: 150px;
+        height: 100px;
       }
     `}
   />

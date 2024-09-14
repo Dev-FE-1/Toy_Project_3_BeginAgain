@@ -3,6 +3,7 @@ import { css } from '@emotion/react'
 import { getAuth, signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
+import { useEffect } from 'react'
 
 const pageStyle = css`
   display: flex;
@@ -12,7 +13,10 @@ const pageStyle = css`
 
 export default function Profile() {
   const setTitle = useHeaderStore(state => state.setTitle)
-  setTitle('Profile')
+
+  useEffect(() => {
+    setTitle('Profile')
+  }, [setTitle])
 
   const auth = getAuth()
   const user = auth.currentUser
