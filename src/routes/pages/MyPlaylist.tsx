@@ -1,7 +1,11 @@
 import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
+import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useHeaderStore } from '@/stores/header'
 import { useEffect } from 'react'
+import { getAuth } from 'firebase/auth'
+import MyPlaylists from '@/components/playlist/SavedPlaylists'
+import { css } from '@emotion/react'
 
 const MyPlaylist = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
@@ -10,17 +14,49 @@ const MyPlaylist = () => {
     setTitle('My Playlist')
   }, [setTitle])
 
+  const { data } = useFetchPlaylists()
+  const auth = getAuth()
+  const user = auth.currentUser
+
+  // 현재 사용자와 일치하는 플레이리스트 필터링
+  const filteredPlaylists = data?.filter(pl => pl.userId === user?.uid)
+
   return (
     <>
       <main>
         <Category />
-        <EmptyInfo
-          status="생성"
-          title="플레이리스트"
-        />
+        {filteredPlaylists && filteredPlaylists.length > 0 ? (
+          filteredPlaylists.map(pl => (
+            <div>
+              <MyPlaylists
+                key={pl.id}
+                feed={pl}
+              />
+            </div>
+          ))
+        ) : (
+          <div css={EmptyInfoStyle}>
+            <EmptyInfo
+              status="생성"
+              title="플레이리스트"
+            />
+          </div>
+        )}
+        <div className="nav-margin"></div>
       </main>
     </>
   )
 }
+
+const EmptyInfoStyle = css`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`
 
 export default MyPlaylist
