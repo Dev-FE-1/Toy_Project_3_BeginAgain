@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
-import { useFetchPlaylist } from '@/hooks/playlists'
-import {
-  useFetchComments,
-  useCreateComment,
-  useDeleteComment
-} from '@/hooks/comments'
+import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
+import { useFetchComments } from '@/hooks/useFetchComments'
+import { useCreateComment } from '@/hooks/useCreateComment'
+import { useDeleteComment } from '@/hooks/useDeleteComment'
 
 const PlaylistDetailPage = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
