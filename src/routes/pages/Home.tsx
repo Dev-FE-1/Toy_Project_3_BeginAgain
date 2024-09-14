@@ -2,10 +2,14 @@ import Category from '@/components/common/Category'
 import Feed from '@/components/playlist/Feed'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylists } from '@/hooks/playlists'
+import { useEffect } from 'react'
 
 export default function Home() {
   const setTitle = useHeaderStore(state => state.setTitle)
-  setTitle('Home')
+
+  useEffect(() => {
+    setTitle('Home')
+  }, [setTitle])
 
   const { data, isLoading } = useFetchPlaylists()
 
