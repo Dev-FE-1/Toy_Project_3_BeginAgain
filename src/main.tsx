@@ -1,11 +1,11 @@
 import { initializeApp } from 'firebase/app'
 initializeApp({
-  apiKey: 'AIzaSyAwMu9NhfMOYVvm477EbzUdmYBCstAL1ME',
-  authDomain: 'dev-camp-1.firebaseapp.com',
-  projectId: 'dev-camp-1',
-  storageBucket: 'dev-camp-1.appspot.com',
-  messagingSenderId: '1028693702983',
-  appId: '1:1028693702983:web:453a9a0feac42d18eeb462'
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 })
 
 import { StrictMode } from 'react'
