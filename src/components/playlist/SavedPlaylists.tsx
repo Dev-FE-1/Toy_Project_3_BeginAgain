@@ -1,4 +1,4 @@
-import { CgProfile, CgHeart, CgComment, CgBookmark } from 'react-icons/cg'
+import { CgProfile } from 'react-icons/cg'
 import { css } from '@emotion/react'
 import { FontSize } from '@/styles/Theme'
 import { Colors } from '@/styles/Theme'
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
+import { CgTrash, CgMoreVerticalAlt } from 'react-icons/cg'
 
 // interface FeedProps {
 //   userId: string
@@ -43,6 +44,7 @@ export default function SavedPlaylists({ feed }: { feed: PlayList }) {
         <span css={headerTextStyle}>{feed.id}</span>
       </div>
 
+      <div css={thumbnailBackgroundStyle}></div>
       <div
         css={thumbnailStyle}
         onClick={() => navigate(`/playlist-details/${feed.id}`)}>
@@ -54,32 +56,33 @@ export default function SavedPlaylists({ feed }: { feed: PlayList }) {
       </div>
 
       <div css={footerStyle}>
-        <div css={iconsStyle}>
-          <CgHeart css={heartIconStyle} />
-          <CgComment css={commentIconStyle} />
-          <CgBookmark css={bookmarkIconStyle} />
-        </div>
-
-        <div css={titleStyle}>
-          <p>{feed.title}</p>
+        <div>
+          <p css={titleStyle}>{feed.title}</p>
+          <p css={descriptionStyle}>{feed.description}</p>
+          {user && feed.userId === user.uid && (
+            <>
+              <CgTrash onClick={() => deletePlayList(feed)} />
+              <CgMoreVerticalAlt onClick={() => updatePlayList(feed)} />
+            </>
+          )}
         </div>
 
         <span css={timeRecordStyle}>
           {dayjs(feed.createdAt).format('YYYY년 M월 DD와우 HH시 mm분 ss초')}
         </span>
       </div>
-      {user && feed.userId === user.uid && (
-        <>
-          <button onClick={() => updatePlayList(feed)}>수정</button>
-          <button onClick={() => deletePlayList(feed)}>삭제</button>
-        </>
-      )}
     </div>
   )
 }
 
+const descriptionStyle = css`
+  font-size: ${FontSize.md};
+  margin-bottom: 10px;
+`
+
 const feedStyle = css`
   margin-top: 30px;
+  padding: 20px;
   cursor: pointer;
 `
 
@@ -97,10 +100,14 @@ const thumbnailStyle = css`
   margin-bottom: 10px;
 `
 
-// const thumbnailElementStyle = css`
-//   width: 100%;
-//   height: auto;
-// `
+const thumbnailBackgroundStyle = css`
+  border-radius: 12px 12px 0px 0px;
+  background: #d1e9f6;
+  height: 10px;
+  width: 95%;
+  display: flex;
+  align-items: center;
+`
 
 const footerStyle = css`
   display: flex;
