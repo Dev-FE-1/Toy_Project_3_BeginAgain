@@ -27,8 +27,12 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
   const { mutate: updatePlaylist } = useUpdatePlaylist()
   const { mutate: deletePlaylist } = useDeletePlaylist()
 
-  function extractVideoId(url: string) {
-    return url.replace('https://www.youtube.com/watch?v=', '')
+  function extractVideoId(url?: string) {
+    if (!url) {
+      console.error('URL is undefined or empty');
+      return ''; // 기본값 반환
+    }
+    return url.replace('https://www.youtube.com/watch?v=', '');
   }
 
   return (
