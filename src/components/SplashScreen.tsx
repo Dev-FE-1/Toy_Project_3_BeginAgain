@@ -13,7 +13,7 @@ export default function App() {
       setIsSplash(false)
       console.log(user)
       if (!user) {
-        navigate('/login')
+        navigate('/signin')
       }
     })
   }, [])

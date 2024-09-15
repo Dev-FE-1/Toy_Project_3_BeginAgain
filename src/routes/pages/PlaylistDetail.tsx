@@ -6,7 +6,7 @@ import { useFetchComments } from '@/hooks/useFetchComments'
 import { useCreateComment } from '@/hooks/useCreateComment'
 import { useDeleteComment } from '@/hooks/useDeleteComment'
 
-const PlaylistDetailPage = () => {
+const PlaylistDetail = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const PlaylistDetailPage = () => {
   async function addComment() {
     createComment({
       comment,
-      feedId: id as string
+      palylistId: id as string
     })
   }
 
@@ -59,7 +59,7 @@ const PlaylistDetailPage = () => {
                     onClick={() =>
                       deleteComment({
                         commentId: comment.id,
-                        feedId: id as string
+                        palylistId: id as string
                       })
                     }>
                     삭제
@@ -73,4 +73,4 @@ const PlaylistDetailPage = () => {
   )
 }
 
-export default PlaylistDetailPage
+export default PlaylistDetail

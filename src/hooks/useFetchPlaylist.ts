@@ -1,21 +1,10 @@
 // GET - useQuery
 // POST, PUT, PATCH, DELETE - useMutation
 
-import { useQuery, useMutation } from '@tanstack/react-query'
-import {
-  getFirestore,
-  collection,
-  doc,
-  getDocs,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where
-} from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
+import { useQuery } from '@tanstack/react-query'
+import { getFirestore, collection, doc, getDoc } from 'firebase/firestore'
 
-export interface PlayList {
+export interface Playlist {
   id: string
   urls: string[]
   title: string
@@ -26,17 +15,17 @@ export interface PlayList {
 }
 
 export const useFetchPlaylist = (id: string) => {
-  return useQuery<PlayList>({
+  return useQuery<Playlist>({
     queryKey: ['playlists', id],
     queryFn: async () => {
       const db = getFirestore()
-      const coll = collection(db, 'PlayLists')
+      const coll = collection(db, 'Playlists')
       const docRef = doc(coll, id)
       const docSnap = await getDoc(docRef)
       return {
         id: docSnap.id,
         ...docSnap.data()
-      } as PlayList
+      } as Playlist
     }
   })
 }

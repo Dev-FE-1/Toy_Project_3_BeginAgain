@@ -20,6 +20,7 @@ const AddPlaylist = () => {
   const [currentVideoUrl, setCurrentVideoUrl] = useState('')  
   const [videoTitle, setVideoTitle] = useState('')
   const [videoDescription, setVideoDescription] = useState('')
+  // const [videoCategory, setVideoCategory] = useState('')
   const [isPublic, setIsPublic] = useState(true)
   const [isDone, setIsDone] = useState(false)
   const [inputCount, setInputCount] = useState(0);
@@ -27,9 +28,8 @@ const AddPlaylist = () => {
   useEffect(() => {
     if (videoUrls && videoTitle) {
       return setIsDone(true)
-    } else {
-      return setIsDone(false)
     }
+    return setIsDone(false)
   }, [videoUrls, videoTitle, isPublic])
 
   const addVideoUrl = () => {
@@ -47,15 +47,15 @@ const AddPlaylist = () => {
     setInputCount(e.target.value.length);
   }
 
-  async function addPlayList() {
+  async function addPlaylist() {
     console.log(videoUrls, videoTitle, videoDescription, isPublic)
     const auth = getAuth()
     const db = getFirestore()
     const user = auth.currentUser
-    const coll = collection(db, 'PlayLists')
+    const coll = collection(db, 'Playlists')
 
     await addDoc(coll, {
-      urls: videoUrls,  
+      urls: videoUrls,
       title: videoTitle,
       description: videoDescription,
       isPublic,
@@ -65,14 +65,14 @@ const AddPlaylist = () => {
 
     // 좋아요!
     // await addDoc(coll, {
-    //   playListId: '', // 참조(ref)
+    //   playlistId: '', // 참조(ref)
     //   userId: user?.uid, // 참조
     //   createdAt: new Date().toISOString()
     // })
 
     // 댓글
     // await addDoc(coll, {
-    //   playListId: '', // 참조(ref)
+    //   playlistId: '', // 참조(ref)
     //   userId: user?.uid, // 참조
     //   comment: '너무 좋은 플레이리스트에요. 감사합니다!'
     //   createdAt: new Date().toISOString()
@@ -83,7 +83,7 @@ const AddPlaylist = () => {
 
   return (
     <>
-      {isDone && <button onClick={addPlayList}>완료</button>}
+      {isDone && <button onClick={addPlaylist}>완료</button>}
       <div css={DivContainer}>
         <div css={TitleContainer}>동영상 링크</div>
         <input
