@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
 import { useHeaderStore } from '@/stores/header'
 import Playlist from '@/components/playlist/Playlist'
 import { useFetchBookmark } from '@/hooks/useFetchBookmark'
-import { useLocation } from 'react-router-dom'
 
 interface Playlist {
   id: string
@@ -20,9 +20,9 @@ export default function Bookmark() {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { data: bookmarks, isLoading } = useFetchBookmark()
 
-  // URL과 제목을 받아오기 위한 useLocation 추가
+  // 북마크 아이콘을 통해 전달된 state를 받아옴
   const location = useLocation()
-  const { videoId, title } = location.state || {}
+  const { videoId, title } = location.state || {} // 전달된 state가 없으면 빈 객체
 
   useEffect(() => {
     setTitle('Bookmark')
