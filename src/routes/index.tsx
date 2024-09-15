@@ -5,9 +5,9 @@ import AddPlaylist from '@/routes/pages/AddPlaylist'
 import Bookmark from '@/routes/pages/Bookmark'
 import MyPlaylist from '@/routes/pages/MyPlaylist'
 import Profile from '@/routes/pages/Profile'
-import PlaylistDetailPage from '@/routes/pages/PlaylistDetailPage'
-import LogIn from '@/routes/pages/LogIn'
+import PlaylistDetail from '@/routes/pages/PlaylistDetail'
 import RequiresAuth from '@/routes/protected/RequiresAuth'
+import SignIn from './pages/SignIn'
 
 export const router = createBrowserRouter([
   {
@@ -17,7 +17,7 @@ export const router = createBrowserRouter([
         element: <RequiresAuth />,
         children: [
           { path: '/', element: <Home /> },
-          { path: '/playlist-details/:id', element: <PlaylistDetailPage /> },
+          { path: '/playlist-details/:id', element: <PlaylistDetail /> },
           { path: '/add-playlist', element: <AddPlaylist /> },
           { path: '/bookmark', element: <Bookmark /> },
           { path: '/my-playlist', element: <MyPlaylist /> },
@@ -26,5 +26,5 @@ export const router = createBrowserRouter([
       }
     ]
   },
-  { path: '/login', element: <LogIn /> }
+  { path: '/signIn', element: <SignIn /> }
 ])
