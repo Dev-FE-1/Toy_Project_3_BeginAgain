@@ -34,6 +34,7 @@ const headerStyle = css`
   transform: translateX(-50%);
   z-index: 100;
   color: ${Colors.white};
+  background-color: ${Colors.white};
 `
 
 const titleStyle = css`

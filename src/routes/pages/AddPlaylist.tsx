@@ -10,7 +10,10 @@ import { getFirestore, collection, addDoc } from 'firebase/firestore'
 
 const AddPlaylist = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
-  setTitle('Add Playlist')
+
+  useEffect(() => {
+    setTitle('Add Playlist')
+  }, [setTitle])
 
   const navigate = useNavigate()
   const [videoUrls, setVideoUrls] = useState<string[]>([])  

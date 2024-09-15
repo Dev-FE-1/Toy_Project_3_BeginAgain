@@ -20,28 +20,6 @@ interface Comment {
   feedId: string
 }
 
-export const useFetchComments = (feedId: string) => {
-  return useQuery<Comment[]>({
-    queryKey: ['comments', feedId],
-    queryFn: async () => {
-      const db = getFirestore()
-      const coll = collection(db, 'Comments')
-      const querySnapshot = await getDocs(
-        query(coll, where('feedId', '==', feedId))
-      )
-      return querySnapshot.docs.map(doc => {
-        return {
-          id: doc.id,
-          ...doc.data()
-        }
-      }) as Comment[]
-    },
-    select(data) {
-      return data.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    }
-  })
-}
-
 export const useCreateComment = () => {
   const queryClient = useQueryClient()
   return useMutation({
@@ -63,22 +41,6 @@ export const useCreateComment = () => {
         createdAt: new Date().toISOString(),
         feedId
       })
-    },
-    onSuccess: (_data, payload) => {
-      const { feedId } = payload
-      queryClient.invalidateQueries({ queryKey: ['comments', feedId] })
-    }
-  })
-}
-
-export const useDeleteComment = () => {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: async (payload: { commentId: string; feedId: string }) => {
-      const { commentId } = payload
-      const db = getFirestore()
-      const coll = collection(db, 'Comments')
-      await deleteDoc(doc(coll, commentId))
     },
     onSuccess: (_data, payload) => {
       const { feedId } = payload

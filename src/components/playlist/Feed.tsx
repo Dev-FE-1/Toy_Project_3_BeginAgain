@@ -5,7 +5,8 @@ import { Colors } from '@/styles/Theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
-import { useUpdatePlayList, useDeletePlayList } from '@/hooks/playlists'
+import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
+import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
 
 // interface FeedProps {
 //   userId: string
@@ -28,8 +29,8 @@ export default function Feed({ feed }: { feed: PlayList }) {
 
   const auth = getAuth()
   const user = auth.currentUser
-  const { mutate: updatePlayList } = useUpdatePlayList()
-  const { mutate: deletePlayList } = useDeletePlayList()
+  const { mutate: updatePlayList } = useUpdatePlaylist()
+  const { mutate: deletePlayList } = useDeletePlaylist()
 
   function extractVideoId(url: string) {
     return url.replace('https://www.youtube.com/watch?v=', '')
