@@ -1,15 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
   getFirestore,
   collection,
-  doc,
-  addDoc,
   getDocs,
-  deleteDoc,
   query,
   where
 } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
 import type { User } from 'firebase/auth'
 
 interface Comment {
@@ -17,17 +13,17 @@ interface Comment {
   user: User
   content: string
   createdAt: string
-  feedId: string
+  palylistId: string
 }
 
-export const useFetchComments = (feedId: string) => {
+export const useFetchComments = (palylistId: string) => {
   return useQuery<Comment[]>({
-    queryKey: ['comments', feedId],
+    queryKey: ['comments', palylistId],
     queryFn: async () => {
       const db = getFirestore()
       const coll = collection(db, 'Comments')
       const querySnapshot = await getDocs(
-        query(coll, where('feedId', '==', feedId))
+        query(coll, where('palylistId', '==', palylistId))
       )
       return querySnapshot.docs.map(doc => {
         return {

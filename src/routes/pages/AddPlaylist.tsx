@@ -30,12 +30,12 @@ const AddPlaylist = () => {
     return setIsDone(false)
   }, [videoUrl, videoTitle, isPublic])
 
-  async function addPlayList() {
+  async function addPlaylist() {
     console.log(videoUrl, videoTitle, videoDescription, isPublic)
     const auth = getAuth()
     const db = getFirestore()
     const user = auth.currentUser
-    const coll = collection(db, 'PlayLists')
+    const coll = collection(db, 'Playlists')
     await addDoc(coll, {
       urls: [videoUrl],
       title: videoTitle,
@@ -47,14 +47,14 @@ const AddPlaylist = () => {
 
     // 좋아요!
     // await addDoc(coll, {
-    //   playListId: '', // 참조(ref)
+    //   playlistId: '', // 참조(ref)
     //   userId: user?.uid, // 참조
     //   createdAt: new Date().toISOString()
     // })
 
     // 댓글
     // await addDoc(coll, {
-    //   playListId: '', // 참조(ref)
+    //   playlistId: '', // 참조(ref)
     //   userId: user?.uid, // 참조
     //   comment: '너무 좋은 플레이리스트에요. 감사합니다!'
     //   createdAt: new Date().toISOString()
@@ -68,7 +68,7 @@ const AddPlaylist = () => {
       <div css={DivContainer}>
         <div css={TitleContainer}>동영상 링크</div>
 
-        {isDone && <button onClick={addPlayList}>완료</button>}
+        {isDone && <button onClick={addPlaylist}>완료</button>}
 
         <input
           type="text"

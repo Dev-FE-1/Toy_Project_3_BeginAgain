@@ -7,14 +7,9 @@ import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
+import 'dayjs/locale/ko'
 
-// interface FeedProps {
-//   userId: string
-//   thumbnail: string
-//   title: string
-//   timeRecord: string
-// }
-interface PlayList {
+interface Playlist {
   id: string
   urls: string[]
   title: string
@@ -24,31 +19,31 @@ interface PlayList {
   createdAt: string
 }
 
-export default function Feed({ feed }: { feed: PlayList }) {
+export default function Playlist({ palylist }: { palylist: Playlist }) {
   const navigate = useNavigate()
 
   const auth = getAuth()
   const user = auth.currentUser
-  const { mutate: updatePlayList } = useUpdatePlaylist()
-  const { mutate: deletePlayList } = useDeletePlaylist()
+  const { mutate: updatePlaylist } = useUpdatePlaylist()
+  const { mutate: deletePlaylist } = useDeletePlaylist()
 
   function extractVideoId(url: string) {
     return url.replace('https://www.youtube.com/watch?v=', '')
   }
 
   return (
-    <div css={feedStyle}>
+    <div css={palylistStyle}>
       <div css={headerStyle}>
         <CgProfile css={profileIconStyle} />
-        <span css={headerTextStyle}>{feed.id}</span>
+        <span css={headerTextStyle}>{palylist.id}</span>
       </div>
 
       <div
-        css={thumbnailStyle}
-        onClick={() => navigate(`/playlist-details/${feed.id}`)}>
+        css={videoIdStyle}
+        onClick={() => navigate(`/playlist-details/${palylist.id}`)}>
         <img
           width="100%"
-          src={`https://img.youtube.com/vi/${extractVideoId(feed.urls[0])}/maxresdefault.jpg`}
+          src={`https://img.youtube.com/vi/${extractVideoId(palylist.urls[0])}/maxresdefault.jpg`}
           alt=""
         />
       </div>
@@ -61,24 +56,24 @@ export default function Feed({ feed }: { feed: PlayList }) {
         </div>
 
         <div css={titleStyle}>
-          <p>{feed.title}</p>
+          <p>{palylist.title}</p>
         </div>
 
         <span css={timeRecordStyle}>
-          {dayjs(feed.createdAt).format('YYYY년 M월 DD와우 HH시 mm분 ss초')}
+          {dayjs(palylist.createdAt).format('YYYY년 M월 DD일 HH시 mm분 ss초')}
         </span>
       </div>
-      {user && feed.userId === user.uid && (
+      {user && palylist.userId === user.uid && (
         <>
-          <button onClick={() => updatePlayList(feed)}>수정</button>
-          <button onClick={() => deletePlayList(feed)}>삭제</button>
+          <button onClick={() => updatePlaylist(palylist)}>수정</button>
+          <button onClick={() => deletePlaylist(palylist)}>삭제</button>
         </>
       )}
     </div>
   )
 }
 
-const feedStyle = css`
+const palylistStyle = css`
   margin-top: 30px;
   cursor: pointer;
 `
@@ -87,22 +82,19 @@ const headerStyle = css`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  margin-left: 20px;
 `
 
 const headerTextStyle = css`
   margin-left: 10px;
 `
 
-const thumbnailStyle = css`
+const videoIdStyle = css`
   margin-bottom: 10px;
 `
 
-// const thumbnailElementStyle = css`
-//   width: 100%;
-//   height: auto;
-// `
-
 const footerStyle = css`
+  margin-left: 20px;
   display: flex;
   flex-direction: column;
 `
@@ -128,13 +120,14 @@ const commentIconStyle = css`
 const bookmarkIconStyle = css`
   font-size: 30px;
   margin-left: auto;
+  margin-right: 20px;
 `
-
 const titleStyle = css`
   font-size: ${FontSize.lg};
   margin: 0;
   margin-bottom: 10px;
 `
+
 const timeRecordStyle = css`
   color: ${Colors.darkGrey};
   font-size: ${FontSize.sm};

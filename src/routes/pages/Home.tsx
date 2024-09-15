@@ -1,5 +1,5 @@
 import Category from '@/components/common/Category'
-import Feed from '@/components/playlist/Feed'
+import Playlist from '@/components/playlist/Playlist'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useEffect } from 'react'
@@ -20,9 +20,9 @@ export default function Home() {
       {data &&
         data.map(pl => {
           return (
-            <Feed
+            <Playlist
               key={pl.id}
-              feed={pl}></Feed>
+              palylist={pl}></Playlist>
           )
         })}
       <div className="nav-margin"></div>
