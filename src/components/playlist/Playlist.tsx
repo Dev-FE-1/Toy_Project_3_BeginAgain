@@ -26,8 +26,16 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
   const user = auth.currentUser
   const { mutate: updatePlaylist } = useUpdatePlaylist()
   const { mutate: deletePlaylist } = useDeletePlaylist()
+  const handleBookmarkClick = () => {
+    const videoId = extractVideoId(palylist.urls[0]) // 첫 번째 URL을 기준으로 videoId 추출
+    navigate('/bookmark', { state: { videoId, title: palylist.title } }) // 북마크 페이지로 이동할 때 videoId와 title 전달
+  }
 
-  function extractVideoId(url: string) {
+  function extractVideoId(url?: string) {
+    if (!url) {
+      console.error('URL is undefined or empty')
+      return '' // 기본값 반환
+    }
     return url.replace('https://www.youtube.com/watch?v=', '')
   }
 
@@ -52,7 +60,10 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
         <div css={iconsStyle}>
           <CgHeart css={heartIconStyle} />
           <CgComment css={commentIconStyle} />
-          <CgBookmark css={bookmarkIconStyle} />
+          <CgBookmark
+            css={bookmarkIconStyle}
+            onClick={handleBookmarkClick} // Bookmark 아이콘 클릭 시 북마크 페이지로 이동
+          />
         </div>
 
         <div css={titleStyle}>
