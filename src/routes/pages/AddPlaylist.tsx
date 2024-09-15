@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Category from '@/components/common/Category'
 import { css } from '@emotion/react'
 import { Colors, FontSize, FontWeight } from '@/styles/Theme'
-// import { GrAddCircle } from 'react-icons/gr'
+import { IoIosAddCircleOutline, IoIosRemove } from "react-icons/io"
 import { useHeaderStore } from '@/stores/header'
 import { getAuth } from 'firebase/auth'
 import { getFirestore, collection, addDoc } from 'firebase/firestore'
@@ -13,28 +13,46 @@ const AddPlaylist = () => {
   setTitle('Add Playlist')
 
   const navigate = useNavigate()
-  const [videoUrl, setVideoUrl] = useState('')
+  const [videoUrls, setVideoUrls] = useState<string[]>([])  
+  const [currentVideoUrl, setCurrentVideoUrl] = useState('')  
   const [videoTitle, setVideoTitle] = useState('')
   const [videoDescription, setVideoDescription] = useState('')
-  // const [videoCategory, setVideoCategory] = useState('')
   const [isPublic, setIsPublic] = useState(true)
   const [isDone, setIsDone] = useState(false)
+  const [inputCount, setInputCount] = useState(0);
 
   useEffect(() => {
-    if (videoUrl && videoTitle) {
+    if (videoUrls && videoTitle) {
       return setIsDone(true)
+    } else {
+      return setIsDone(false)
     }
-    return setIsDone(false)
-  }, [videoUrl, videoTitle, isPublic])
+  }, [videoUrls, videoTitle, isPublic])
+
+  const addVideoUrl = () => {
+    if (currentVideoUrl && !videoUrls.includes(currentVideoUrl)) {
+      setVideoUrls([...videoUrls, currentVideoUrl])
+      setCurrentVideoUrl('') 
+    }
+  }
+
+  const removeVideoUrl = (index: number) => {
+    setVideoUrls(videoUrls.filter((_, i) => i !== index))
+  }
+
+  const onInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputCount(e.target.value.length);
+  }
 
   async function addPlayList() {
-    console.log(videoUrl, videoTitle, videoDescription, isPublic)
+    console.log(videoUrls, videoTitle, videoDescription, isPublic)
     const auth = getAuth()
     const db = getFirestore()
     const user = auth.currentUser
     const coll = collection(db, 'PlayLists')
+
     await addDoc(coll, {
-      urls: [videoUrl],
+      urls: videoUrls,  
       title: videoTitle,
       description: videoDescription,
       isPublic,
@@ -62,24 +80,31 @@ const AddPlaylist = () => {
 
   return (
     <>
+      {isDone && <button onClick={addPlayList}>완료</button>}
       <div css={DivContainer}>
         <div css={TitleContainer}>동영상 링크</div>
-
-        {isDone && <button onClick={addPlayList}>완료</button>}
-
         <input
           type="text"
           placeholder="동영상 주소를 입력해주세요."
-          value={videoUrl}
-          onChange={e => setVideoUrl(e.target.value)}
-          css={InputContainer}
+          value={currentVideoUrl}
+          onChange={e => setCurrentVideoUrl(e.target.value)}
+          css={LinkInputContainer}
         />
-        {/* <button css={AddButton}>
-          <GrAddCircle
-            size={24}
-            color="#1E1E1E"
-          />
-        </button> */}
+        <button css={AddButton} onClick={addVideoUrl}>
+          <IoIosAddCircleOutline size='20' />
+        </button>
+        <ul css={DeleteButtonContainer}>
+          {videoUrls.map((url, index) => (
+            <li key={index} css={UrlStyle}>
+              {url}
+              <button
+                onClick={() => removeVideoUrl(index)}
+                css={DeleteButton}>
+                <IoIosRemove size='15' color='#D32F2F' />
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
 
       <div css={DivContainer}>
@@ -88,9 +113,17 @@ const AddPlaylist = () => {
           type="text"
           placeholder="제목을 입력해주세요."
           value={videoTitle}
-          onChange={e => setVideoTitle(e.target.value)}
-          css={InputContainer}
+          onChange={e => {
+            setVideoTitle(e.target.value);
+            onInputHandler(e);
+          }}
+          css={TitleInputContainer}
+          maxLength={30}
         />
+        <p css={SpanContainer}>
+          <span>{inputCount}</span>
+          <span>/30</span>
+        </p>
       </div>
 
       <div css={DivContainer}>
@@ -142,14 +175,17 @@ const DivContainer = css`
   position: relative;
   display: inline-block;
   width: 100%;
-`
+  transform: rotate(0);
+`;
+
 const TitleContainer = css`
   font-size: ${FontSize.md};
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-`
-const InputContainer = css`
+`;
+
+const InputBaseStyle = css`
   border: none;
   border-bottom: 2px solid #ebebeb;
   outline: none;
@@ -162,27 +198,102 @@ const InputContainer = css`
   padding-left: 10px;
   padding-right: 40px;
   box-sizing: border-box;
+  margin-bottom: 10px;
+`;
+
+const LinkInputContainer = css`
+  ${InputBaseStyle}
+`;
+
+const TitleInputContainer = css`
+  ${InputBaseStyle}
   margin-bottom: 35px;
-`
-// const AddButton = css`
-//   position: absolute;
-//   right: 0;
-//   bottom: 50px;
-//   transform: translateY(50%);
-//   border: none;
-//   background-color: transparent;
-//   cursor: pointer;
-// `
+`;
+
+const InputContainer = css`
+  ${InputBaseStyle}
+  margin-bottom: 35px;
+`;
+
+const SpanContainer = css`
+  display: inline-block;
+  z-index: 9;
+  position: fixed;
+  right: 0.5rem;
+  transform: translateY(50%);
+  border: none;
+  background-color: transparent;
+  color: ${Colors.grey};
+  font-size: ${FontSize.sm};
+`;
+
+const AddButton = css`
+  z-index: 9;
+  position: fixed;
+  top: 15px;
+  right: 0;
+  transform: translateY(50%);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+`;
+
+const DeleteButtonContainer = css`
+  position: relative;
+  overflow-y: scroll;
+  max-height: 4rem;
+  margin-bottom: 35px;
+  cursor: pointer;
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: ${Colors.lightGrey};
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: ${Colors.grey};
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: ${Colors.skyBlue};
+  }
+`;
+
+const DeleteButton = css`
+  position: absolute;
+  right: 0;
+  transform: translateY(23%);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+`;
+
+const UrlStyle = css`
+  display: flex;
+  margin-bottom: 10px;
+  align-items: center;
+  justify-content: space-between;
+  font-size: ${FontSize.xs};
+  color: ${Colors.darkGrey};
+`;
+
 const CategoryStyle = css`
   margin-bottom: 35px;
-`
+`;
+
 const RadioLabelStyle = css`
   margin-right: 20px;
   display: inline-block;
-`
+`;
 
 const RadioInputStyle = css`
   margin-right: 8px;
-`
+`;
+
 
 export default AddPlaylist
