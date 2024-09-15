@@ -26,7 +26,7 @@ const AddPlaylist = () => {
   const [inputCount, setInputCount] = useState(0);
 
   useEffect(() => {
-    if (videoUrls && videoTitle) {
+    if (videoUrls.length > 0 && videoTitle) {
       return setIsDone(true)
     }
     return setIsDone(false)
@@ -45,7 +45,7 @@ const AddPlaylist = () => {
 
   const onInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputCount(e.target.value.length);
-  }
+  };
 
   async function addPlaylist() {
     console.log(videoUrls, videoTitle, videoDescription, isPublic)
@@ -63,6 +63,8 @@ const AddPlaylist = () => {
       createdAt: new Date().toISOString()
     })
 
+    
+
     // 좋아요!
     // await addDoc(coll, {
     //   playlistId: '', // 참조(ref)
@@ -77,15 +79,17 @@ const AddPlaylist = () => {
     //   comment: '너무 좋은 플레이리스트에요. 감사합니다!'
     //   createdAt: new Date().toISOString()
     // })
-
-    navigate('/')
+    
+    navigate('/', { state: { showToast: true } });
   }
 
   return (
     <>
       {isDone && <button onClick={addPlaylist}>완료</button>}
       <div css={DivContainer}>
-        <div css={TitleContainer}>동영상 링크</div>
+        <div css={TitleContainer}>
+          <span css={requiredTitleStyle}>동영상 링크</span>
+        </div>
         <input
           type="text"
           placeholder="동영상 주소를 입력해주세요."
@@ -111,7 +115,9 @@ const AddPlaylist = () => {
       </div>
 
       <div css={DivContainer}>
-        <div css={TitleContainer}>플레이리스트 제목</div>
+        <div css={TitleContainer}>
+          <span css={requiredTitleStyle}>플레이리스트 제목</span>
+        </div>
         <input
           type="text"
           placeholder="제목을 입력해주세요."
@@ -141,7 +147,9 @@ const AddPlaylist = () => {
       </div>
 
       <div css={DivContainer}>
-        <div css={TitleContainer}>카테고리 설정</div>
+        <div css={TitleContainer}>
+          <div css={requiredTitleStyle}>카테고리 설정</div>
+        </div>
         <div css={CategoryStyle}>
           <Category />
         </div>
@@ -174,19 +182,28 @@ const AddPlaylist = () => {
   )
 }
 
+const requiredTitleStyle = css`
+  &::after {
+    content: '*';
+    color: red;
+    margin-left: 4px;
+  }
+`
+
 const DivContainer = css`
   position: relative;
   display: inline-block;
   width: 100%;
   transform: rotate(0);
-`;
+`
 
 const TitleContainer = css`
   font-size: ${FontSize.md};
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-`;
+  margin-left: 20px;
+`
 
 const InputBaseStyle = css`
   border: none;
@@ -198,25 +215,25 @@ const InputBaseStyle = css`
   height: 30px;
   width: 100%;
   letter-spacing: -0.2px;
-  padding-left: 10px;
+  padding-left: 30px;
   padding-right: 40px;
   box-sizing: border-box;
   margin-bottom: 10px;
-`;
+`
 
 const LinkInputContainer = css`
   ${InputBaseStyle}
-`;
+`
 
 const TitleInputContainer = css`
   ${InputBaseStyle}
   margin-bottom: 35px;
-`;
+`
 
 const InputContainer = css`
   ${InputBaseStyle}
   margin-bottom: 35px;
-`;
+`
 
 const SpanContainer = css`
   display: inline-block;
@@ -228,7 +245,7 @@ const SpanContainer = css`
   background-color: transparent;
   color: ${Colors.grey};
   font-size: ${FontSize.sm};
-`;
+`
 
 const AddButton = css`
   z-index: 9;
@@ -239,7 +256,7 @@ const AddButton = css`
   border: none;
   background-color: transparent;
   cursor: pointer;
-`;
+`
 
 const DeleteButtonContainer = css`
   position: relative;
@@ -265,37 +282,39 @@ const DeleteButtonContainer = css`
   ::-webkit-scrollbar-thumb:hover {
     background-color: ${Colors.skyBlue};
   }
-`;
+`
 
 const DeleteButton = css`
   position: absolute;
   right: 0;
+  margin-bottom: 7px;
   transform: translateY(23%);
   border: none;
   background-color: transparent;
   cursor: pointer;
-`;
+`
 
 const UrlStyle = css`
   display: flex;
-  margin-bottom: 10px;
+  margin-left: 20px;
+  margin-bottom: 5px;
   align-items: center;
   justify-content: space-between;
   font-size: ${FontSize.xs};
   color: ${Colors.darkGrey};
-`;
+`
 
 const CategoryStyle = css`
   margin-bottom: 35px;
-`;
+`
 
 const RadioLabelStyle = css`
-  margin-right: 20px;
+  margin-left: 20px;
   display: inline-block;
-`;
+`
 
 const RadioInputStyle = css`
-  margin-right: 8px;
-`;
+  margin-right: 10px;
+`
 
 export default AddPlaylist
