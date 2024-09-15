@@ -11,15 +11,15 @@
 export interface Like {
   id: string
   createdAt: string
-  feedId: string
+  palylistId: string
   userId: string
 }
 ```
 
 ```ts
-export const useFetchLike = (feedId: string) => {
+export const useFetchLike = (palylistId: string) => {
   return useQuery({
-    queryKey: ['likes', feedId],
+    queryKey: ['likes', palylistId],
     queryFn: async () => {
       const auth = getAuth()
       const user = auth.currentUser
@@ -27,9 +27,9 @@ export const useFetchLike = (feedId: string) => {
       const coll = collection(db, 'Likes')
       const querySnapshot = await getDocs(
         query(
-          coll, 
-          where('userId', '==', user.uid), 
-          where('feedId', '==', feedId)
+          coll,
+          where('userId', '==', user.uid),
+          where('palylistId', '==', palylistId)
         )
       )
       return !!querySnapshot.docs.length // true or false
