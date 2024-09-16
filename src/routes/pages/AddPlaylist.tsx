@@ -1,40 +1,40 @@
-import { useEffect, useState } from 'react';
-import Category from '@/components/common/Category';
-import { css } from '@emotion/react';
-import { Colors, FontSize, FontWeight } from '@/styles/Theme';
-import { IoIosAddCircleOutline, IoIosRemove } from 'react-icons/io';
-import { useHeaderStore } from '@/stores/header';
-import { useAddPlaylistStore } from '@/stores/addPlaylist';
+import { useEffect, useState } from 'react'
+import Category from '@/components/common/Category'
+import { css } from '@emotion/react'
+import { Colors, FontSize, FontWeight } from '@/styles/Theme'
+import { IoIosAddCircleOutline, IoIosRemove } from 'react-icons/io'
+import { useHeaderStore } from '@/stores/header'
+import { useAddPlaylistStore } from '@/stores/addPlaylist'
 
 const AddPlaylist = () => {
-  const setTitle = useHeaderStore((state) => state.setTitle);
-  const { setIsDone, setPlaylistData } = useAddPlaylistStore(); 
+  const setTitle = useHeaderStore((state) => state.setTitle)
+  const { setIsDone, setPlaylistData } = useAddPlaylistStore()
 
   useEffect(() => {
-    setTitle('Add Playlist');
-  }, [setTitle]);
+    setTitle('Add Playlist')
+  }, [setTitle])
 
-  const [videoUrls, setVideoUrls] = useState<string[]>([]);
-  const [currentVideoUrl, setCurrentVideoUrl] = useState('');
-  const [videoTitle, setVideoTitle] = useState('');
-  const [videoDescription, setVideoDescription] = useState('');
-  const [isPublic, setIsPublic] = useState(true);
-  const [titleInputCount, setTitleInputCount] = useState(0);
-  const [descriptionInputCount, setDescriptionInputCount] = useState(0);
+  const [videoUrls, setVideoUrls] = useState<string[]>([])
+  const [currentVideoUrl, setCurrentVideoUrl] = useState('')
+  const [videoTitle, setVideoTitle] = useState('')
+  const [videoDescription, setVideoDescription] = useState('')
+  const [isPublic, setIsPublic] = useState(true)
+  const [titleInputCount, setTitleInputCount] = useState(0)
+  const [descriptionInputCount, setDescriptionInputCount] = useState(0)
 
   useEffect(() => {
     if (videoUrls.length > 1 && videoTitle) {
-      setIsDone(true);  
+      setIsDone(true); 
       setPlaylistData(videoUrls, videoTitle, videoDescription, isPublic); 
     } else {
-      setIsDone(false);  
+      setIsDone(false)
     }
   }, [videoUrls, videoTitle, videoDescription, isPublic, setIsDone, setPlaylistData]);
 
   const addVideoUrl = () => {
     if (currentVideoUrl && !videoUrls.includes(currentVideoUrl)) {
       setVideoUrls([...videoUrls, currentVideoUrl]);
-      setCurrentVideoUrl('');
+      setCurrentVideoUrl('')
     }
   };
 
@@ -43,13 +43,13 @@ const AddPlaylist = () => {
   };
 
   const onTitleInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVideoTitle(e.target.value);
-    setTitleInputCount(e.target.value.length);
+    setVideoTitle(e.target.value)
+    setTitleInputCount(e.target.value.length)
   };
 
   const onDescriptionInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVideoDescription(e.target.value);
-    setDescriptionInputCount(e.target.value.length);
+    setVideoDescription(e.target.value)
+    setDescriptionInputCount(e.target.value.length)
   };
 
   return (
@@ -89,8 +89,8 @@ const AddPlaylist = () => {
           placeholder="제목을 입력해주세요."
           value={videoTitle}
           onChange={(e) => {
-            setVideoTitle(e.target.value);
-            onTitleInputHandler(e);
+            setVideoTitle(e.target.value)
+            onTitleInputHandler(e)
           }}
           css={TitleInputContainer}
           maxLength={15}
@@ -108,8 +108,8 @@ const AddPlaylist = () => {
           placeholder="설명을 입력해주세요."
           value={videoDescription}
           onChange={(e) => {
-            setVideoDescription(e.target.value);
-            onDescriptionInputHandler(e);
+            setVideoDescription(e.target.value)
+            onDescriptionInputHandler(e)
           }}
           css={InputContainer}
         />
@@ -152,8 +152,8 @@ const AddPlaylist = () => {
         </label>
       </div>
     </>
-  );
-};
+  )
+}
 
 const requiredTitleStyle = css`
   &::after {

@@ -15,7 +15,7 @@ export default function TheHeader() {
   const handleComplete = async () => {
     try {
       await savePlaylist();
-      navigate('/', { state: { showToast: true } }); 
+      navigate('/', { state: { showToast: true } })
     } catch (error) {
       console.error('저장 실패:', error)
     }
