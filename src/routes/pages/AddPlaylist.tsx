@@ -1,91 +1,59 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import Category from '@/components/common/Category'
 import { css } from '@emotion/react'
 import { Colors, FontSize, FontWeight } from '@/styles/Theme'
-import { IoIosAddCircleOutline, IoIosRemove } from "react-icons/io"
+import { IoIosAddCircleOutline, IoIosRemove } from 'react-icons/io'
 import { useHeaderStore } from '@/stores/header'
-import { getAuth } from 'firebase/auth'
-import { getFirestore, collection, addDoc } from 'firebase/firestore'
+import { useAddPlaylistStore } from '@/stores/addPlaylist'
 
 const AddPlaylist = () => {
-  const setTitle = useHeaderStore(state => state.setTitle)
+  const setTitle = useHeaderStore((state) => state.setTitle)
+  const { setIsDone, setPlaylistData } = useAddPlaylistStore()
 
   useEffect(() => {
     setTitle('Add Playlist')
   }, [setTitle])
 
-  const navigate = useNavigate()
-  const [videoUrls, setVideoUrls] = useState<string[]>([])  
-  const [currentVideoUrl, setCurrentVideoUrl] = useState('')  
+  const [videoUrls, setVideoUrls] = useState<string[]>([])
+  const [currentVideoUrl, setCurrentVideoUrl] = useState('')
   const [videoTitle, setVideoTitle] = useState('')
   const [videoDescription, setVideoDescription] = useState('')
-  // const [videoCategory, setVideoCategory] = useState('')
   const [isPublic, setIsPublic] = useState(true)
-  const [isDone, setIsDone] = useState(false)
-  const [inputCount, setInputCount] = useState(0);
+  const [titleInputCount, setTitleInputCount] = useState(0)
+  const [descriptionInputCount, setDescriptionInputCount] = useState(0)
 
   useEffect(() => {
-    if (videoUrls.length > 0 && videoTitle) {
-      return setIsDone(true)
+    if (videoUrls.length > 1 && videoTitle) {
+      setIsDone(true); 
+      setPlaylistData(videoUrls, videoTitle, videoDescription, isPublic); 
+    } else {
+      setIsDone(false)
     }
-    return setIsDone(false)
-  }, [videoUrls, videoTitle, isPublic])
+  }, [videoUrls, videoTitle, videoDescription, isPublic, setIsDone, setPlaylistData]);
 
   const addVideoUrl = () => {
     if (currentVideoUrl && !videoUrls.includes(currentVideoUrl)) {
-      setVideoUrls([...videoUrls, currentVideoUrl])
-      setCurrentVideoUrl('') 
+      setVideoUrls([...videoUrls, currentVideoUrl]);
+      setCurrentVideoUrl('')
     }
-  }
-
-  const removeVideoUrl = (index: number) => {
-    setVideoUrls(videoUrls.filter((_, i) => i !== index))
-  }
-
-  const onInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputCount(e.target.value.length);
   };
 
-  async function addPlaylist() {
-    console.log(videoUrls, videoTitle, videoDescription, isPublic)
-    const auth = getAuth()
-    const db = getFirestore()
-    const user = auth.currentUser
-    const coll = collection(db, 'Playlists')
+  const removeVideoUrl = (index: number) => {
+    setVideoUrls(videoUrls.filter((_, i) => i !== index));
+  };
 
-    await addDoc(coll, {
-      urls: videoUrls,
-      title: videoTitle,
-      description: videoDescription,
-      isPublic,
-      userId: user?.uid,
-      createdAt: new Date().toISOString()
-    })
+  const onTitleInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVideoTitle(e.target.value)
+    setTitleInputCount(e.target.value.length)
+  };
 
-    
-
-    // 좋아요!
-    // await addDoc(coll, {
-    //   playlistId: '', // 참조(ref)
-    //   userId: user?.uid, // 참조
-    //   createdAt: new Date().toISOString()
-    // })
-
-    // 댓글
-    // await addDoc(coll, {
-    //   playlistId: '', // 참조(ref)
-    //   userId: user?.uid, // 참조
-    //   comment: '너무 좋은 플레이리스트에요. 감사합니다!'
-    //   createdAt: new Date().toISOString()
-    // })
-    
-    navigate('/', { state: { showToast: true } });
-  }
+  const onDescriptionInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVideoDescription(e.target.value)
+    setDescriptionInputCount(e.target.value.length)
+  };
 
   return (
     <>
-      {isDone && <button onClick={addPlaylist}>완료</button>}
       <div css={DivContainer}>
         <div css={TitleContainer}>
           <span css={requiredTitleStyle}>동영상 링크</span>
@@ -94,20 +62,18 @@ const AddPlaylist = () => {
           type="text"
           placeholder="동영상 주소를 입력해주세요."
           value={currentVideoUrl}
-          onChange={e => setCurrentVideoUrl(e.target.value)}
+          onChange={(e) => setCurrentVideoUrl(e.target.value)}
           css={LinkInputContainer}
         />
         <button css={AddButton} onClick={addVideoUrl}>
-          <IoIosAddCircleOutline size='20' />
+          <IoIosAddCircleOutline size="20" />
         </button>
         <ul css={DeleteButtonContainer}>
           {videoUrls.map((url, index) => (
             <li key={index} css={UrlStyle}>
               {url}
-              <button
-                onClick={() => removeVideoUrl(index)}
-                css={DeleteButton}>
-                <IoIosRemove size='15' color='#D32F2F' />
+              <button onClick={() => removeVideoUrl(index)} css={DeleteButton}>
+                <IoIosRemove size="15" color="#D32F2F" />
               </button>
             </li>
           ))}
@@ -122,16 +88,16 @@ const AddPlaylist = () => {
           type="text"
           placeholder="제목을 입력해주세요."
           value={videoTitle}
-          onChange={e => {
-            setVideoTitle(e.target.value);
-            onInputHandler(e);
+          onChange={(e) => {
+            setVideoTitle(e.target.value)
+            onTitleInputHandler(e)
           }}
           css={TitleInputContainer}
-          maxLength={30}
+          maxLength={15}
         />
         <p css={SpanContainer}>
-          <span>{inputCount}</span>
-          <span>/30</span>
+          <span>{titleInputCount}</span>
+          <span>/15</span>
         </p>
       </div>
 
@@ -141,9 +107,16 @@ const AddPlaylist = () => {
           type="text"
           placeholder="설명을 입력해주세요."
           value={videoDescription}
-          onChange={e => setVideoDescription(e.target.value)}
+          onChange={(e) => {
+            setVideoDescription(e.target.value)
+            onDescriptionInputHandler(e)
+          }}
           css={InputContainer}
         />
+        <p css={SpanContainer}>
+          <span>{descriptionInputCount}</span>
+          <span>/30</span>
+        </p>
       </div>
 
       <div css={DivContainer}>
@@ -188,24 +161,17 @@ const requiredTitleStyle = css`
     color: red;
     margin-left: 4px;
   }
-`
+`;
 
-const DivContainer = css`
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  transform: rotate(0);
-`
+const commonButtonStyle = css`
+  z-index: 1;
+  position: fixed;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+`;
 
-const TitleContainer = css`
-  font-size: ${FontSize.md};
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  margin-left: 20px;
-`
-
-const InputBaseStyle = css`
+const commonInputStyle = css`
   border: none;
   border-bottom: 2px solid #ebebeb;
   outline: none;
@@ -218,103 +184,108 @@ const InputBaseStyle = css`
   padding-left: 30px;
   padding-right: 40px;
   box-sizing: border-box;
+  margin-bottom: 35px;
+`;
+
+const DivContainer = css`
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  transform: rotate(0);
+`;
+
+const TitleContainer = css`
+  font-size: ${FontSize.md};
+  display: flex;
+  align-items: center;
   margin-bottom: 10px;
-`
+  margin-left: 20px;
+`;
 
 const LinkInputContainer = css`
-  ${InputBaseStyle}
-`
+  ${commonInputStyle}
+  margin-bottom: 10px;
+`;
 
 const TitleInputContainer = css`
-  ${InputBaseStyle}
-  margin-bottom: 35px;
-`
+  ${commonInputStyle}
+`;
 
 const InputContainer = css`
-  ${InputBaseStyle}
-  margin-bottom: 35px;
-`
+  ${commonInputStyle}
+`;
 
 const SpanContainer = css`
   display: inline-block;
-  z-index: 9;
+  z-index: 1;
   position: fixed;
   right: 0.5rem;
   transform: translateY(50%);
-  border: none;
   background-color: transparent;
   color: ${Colors.grey};
   font-size: ${FontSize.sm};
-`
+`;
 
 const AddButton = css`
-  z-index: 9;
-  position: fixed;
+  ${commonButtonStyle}
   top: 15px;
-  right: 0;
+  right: 5px;
   transform: translateY(50%);
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-`
+`;
 
 const DeleteButtonContainer = css`
   position: relative;
+  margin-left: 1.5rem;
   overflow-y: scroll;
-  max-height: 4rem;
+  max-width: 24rem;
+  max-height: 3rem;
   margin-bottom: 35px;
   cursor: pointer;
 
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 7px;
   }
-
   ::-webkit-scrollbar-track {
     background: ${Colors.lightGrey};
     border-radius: 10px;
   }
-
   ::-webkit-scrollbar-thumb {
     background-color: ${Colors.grey};
     border-radius: 10px;
   }
-
   ::-webkit-scrollbar-thumb:hover {
     background-color: ${Colors.skyBlue};
   }
-`
+`;
 
 const DeleteButton = css`
+  ${commonButtonStyle}
   position: absolute;
   right: 0;
   margin-bottom: 7px;
   transform: translateY(23%);
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-`
+`;
 
 const UrlStyle = css`
   display: flex;
-  margin-left: 20px;
   margin-bottom: 5px;
   align-items: center;
   justify-content: space-between;
   font-size: ${FontSize.xs};
   color: ${Colors.darkGrey};
-`
+`;
 
 const CategoryStyle = css`
   margin-bottom: 35px;
-`
+`;
 
 const RadioLabelStyle = css`
   margin-left: 20px;
   display: inline-block;
-`
+`;
 
 const RadioInputStyle = css`
   margin-right: 10px;
-`
+`;
 
-export default AddPlaylist
+export default AddPlaylist;
