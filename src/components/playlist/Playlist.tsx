@@ -1,13 +1,13 @@
-import { CgProfile, CgHeart, CgComment, CgBookmark } from 'react-icons/cg'
+import { CgHeart, CgComment, CgBookmark } from 'react-icons/cg'
+import { VscHeartFilled } from 'react-icons/vsc'
 import { css } from '@emotion/react'
 import { FontSize } from '@/styles/Theme'
 import { Colors } from '@/styles/Theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useFetchComments } from '@/hooks/useFetchComments'
 import { getAuth } from 'firebase/auth'
-import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
-import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
-import 'dayjs/locale/ko'
 
 interface Playlist {
   id: string
@@ -26,12 +26,19 @@ export default function Playlist({
 }) {
   console.log('Playlist prop:', playlist)
 
+  const [isHeartFilled, setIsHeartFilled] = useState(false)
+  const [commentCount, setCommentCount] = useState(0)
   const navigate = useNavigate()
-
   const auth = getAuth()
   const user = auth.currentUser
-  const { mutate: updatePlaylist } = useUpdatePlaylist()
-  const { mutate: deletePlaylist } = useDeletePlaylist()
+
+  const { data: comments } = useFetchComments(playlist?.id || '')
+
+  useEffect(() => {
+    if (comments) {
+      setCommentCount(comments.length)
+    }
+  }, [comments])
 
   if (!playlist) {
     return <div>Playlist가 없습니다.</div>
@@ -41,10 +48,21 @@ export default function Playlist({
     return url.replace('https://www.youtube.com/watch?v=', '')
   }
 
+  function handleHeartClick() {
+    setIsHeartFilled(!isHeartFilled)
+  }
+
+  const profileImageUrl =
+    user?.photoURL || 'https://example.com/default-profile.png'
+
   return (
     <div css={playlistStyle}>
       <div css={headerStyle}>
-        <CgProfile css={profileIconStyle} />
+        <img
+          css={profileImageStyle}
+          src={profileImageUrl}
+          alt="Profile"
+        />
         <span css={headerTextStyle}>{playlist.id}</span>
       </div>
 
@@ -60,25 +78,31 @@ export default function Playlist({
 
       <div css={footerStyle}>
         <div css={iconsStyle}>
-          <CgHeart css={heartIconStyle} />
-          <CgComment css={commentIconStyle} />
+          {isHeartFilled ? (
+            <VscHeartFilled
+              css={filledHeartIconStyle}
+              onClick={handleHeartClick}
+            />
+          ) : (
+            <CgHeart
+              css={emptyHeartIconStyle}
+              onClick={handleHeartClick}
+            />
+          )}
+          <div
+            css={commentContainerStyle}
+            onClick={() => navigate(`/playlist-details/${playlist.id}`)}>
+            <CgComment css={commentIconStyle} />
+            <span css={commentCountStyle}>{commentCount}</span>
+          </div>
           <CgBookmark css={bookmarkIconStyle} />
         </div>
 
         <div css={titleStyle}>
           <p>{playlist.title}</p>
         </div>
-
-        <span css={timeRecordStyle}>
-          {dayjs(playlist.createdAt).format('YYYY년 M월 DD일 HH시 mm분 ss초')}
-        </span>
+        <span css={timeRecordStyle}>{dayjs(playlist.createdAt).fromNow()}</span>
       </div>
-      {user && playlist.userId === user.uid && (
-        <>
-          <button onClick={() => updatePlaylist(playlist)}>수정</button>
-          <button onClick={() => deletePlaylist(playlist)}>삭제</button>
-        </>
-      )}
     </div>
   )
 }
@@ -97,6 +121,7 @@ const headerStyle = css`
 
 const headerTextStyle = css`
   margin-left: 10px;
+  color: ${Colors.black};
 `
 
 const videoIdStyle = css`
@@ -114,26 +139,61 @@ const iconsStyle = css`
   margin-bottom: 10px;
 `
 
-const profileIconStyle = css`
-  font-size: 30px;
+const profileImageStyle = css`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: ${Colors.lightGrey};
 `
 
-const heartIconStyle = css`
+const emptyHeartIconStyle = css`
   font-size: 24px;
+  margin-right: 30px;
+  color: ${Colors.charcoalGrey};
+  cursor: pointer;
+  transition:
+    color 0.9s ease,
+    transform 0.9s ease;
+`
+
+const filledHeartIconStyle = css`
+  font-size: 24px;
+  margin-right: 30px;
+  color: ${Colors.red};
+  cursor: pointer;
+  transition:
+    color 0.9s ease,
+    transform 0.9s ease;
+`
+
+const commentContainerStyle = css`
+  display: flex;
+  align-items: center;
+  color: ${Colors.charcoalGrey};
+  cursor: pointer;
   margin-right: 30px;
 `
 
 const commentIconStyle = css`
   font-size: 24px;
+  margin-right: 7px;
+`
+
+const commentCountStyle = css`
+  font-size: ${FontSize.xl};
 `
 
 const bookmarkIconStyle = css`
   font-size: 30px;
   margin-left: auto;
   margin-right: 20px;
+  color: ${Colors.charcoalGrey};
 `
+
 const titleStyle = css`
   font-size: ${FontSize.lg};
+  color: ${Colors.black};
   margin: 0;
   margin-bottom: 10px;
 `
