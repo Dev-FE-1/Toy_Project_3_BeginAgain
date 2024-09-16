@@ -17,13 +17,13 @@ export interface Playlist {
 
 export const useUpdatePlaylist = () => {
   return useMutation({
-    mutationFn: async (palylist: Playlist) => {
+    mutationFn: async (playlist: Playlist) => {
       const db = getFirestore()
       const auth = getAuth()
       const user = auth.currentUser
       const coll = collection(db, 'Playlists')
-      const docRef = doc(coll, palylist.id)
-      if (user && palylist.userId === user.uid) {
+      const docRef = doc(coll, playlist.id)
+      if (user && playlist.userId === user.uid) {
         await updateDoc(docRef, {
           title: '박영웅'
         })

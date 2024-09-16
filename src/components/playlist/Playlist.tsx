@@ -9,7 +9,6 @@ import { useFetchComments } from '@/hooks/useFetchComments'
 import { getAuth } from 'firebase/auth'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
-import { useState } from 'react'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 
@@ -46,8 +45,10 @@ export default function Playlist({
 
   const { mutate: updatePlaylist } = useUpdatePlaylist()
   const { mutate: deletePlaylist } = useDeletePlaylist()
-  const { toggleBookmark, isBookmarked } = useToggleBookmark(palylist.id)
-
+  // playlist가 정의된 경우에만 useToggleBookmark를 호출하도록 수정
+  const { toggleBookmark, isBookmarked } = playlist
+    ? useToggleBookmark(playlist.id)
+    : { toggleBookmark: () => {}, isBookmarked: false }
 
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isToastVisible, setIsToastVisible] = useState(false)
@@ -76,12 +77,12 @@ export default function Playlist({
     user?.photoURL || 'https://example.com/default-profile.png'
 
   function extractVideoId(url?: string) {
-  if (!url) {
-    console.error('URL is undefined or empty')
-    return '' // 기본 값 반환
+    if (!url) {
+      console.error('URL is undefined or empty')
+      return '' // 기본 값 반환
+    }
+    return url.replace('https://www.youtube.com/watch?v=', '')
   }
-  return url.replace('https://www.youtube.com/watch?v=', '')
-}
 
   return (
     <div css={playlistStyle}>
@@ -91,15 +92,15 @@ export default function Playlist({
           src={profileImageUrl}
           alt="Profile"
         />
-        <span css={headerTextStyle}>{playlist.id}</span>
+        <span css={headerTextStyle}>{playlist?.id}</span>
       </div>
 
       <div
         css={videoIdStyle}
-        onClick={() => navigate(`/playlist-details/${playlist.id}`)}>
+        onClick={() => navigate(`/playlist-details/${playlist?.id}`)}>
         <img
           width="100%"
-          src={`https://img.youtube.com/vi/${extractVideoId(playlist.urls[0])}/maxresdefault.jpg`}
+          src={`https://img.youtube.com/vi/${extractVideoId(playlist?.urls[0])}/maxresdefault.jpg`}
           alt=""
         />
       </div>
@@ -119,12 +120,12 @@ export default function Playlist({
           )}
           <div
             css={commentContainerStyle}
-            onClick={() => navigate(`/playlist-details/${playlist.id}`)}>
+            onClick={() => navigate(`/playlist-details/${playlist?.id}`)}>
             <CgComment css={commentIconStyle} />
             <span css={commentCountStyle}>{commentCount}</span>
           </div>
 
-          {user && user.uid === palylist.userId ? (
+          {user && user.uid === playlist?.userId ? (
             <CgBookmark
               css={[bookmarkIconStyle, disabledBookmarkStyle]}
               color={' '}
@@ -136,13 +137,14 @@ export default function Playlist({
               color={isBookmarked ? 'gold' : ''}
             />
           )}
-
         </div>
 
         <div css={titleStyle}>
-          <p>{playlist.title}</p>
+          <p>{playlist?.title}</p>
         </div>
-        <span css={timeRecordStyle}>{dayjs(playlist.createdAt).fromNow()}</span>
+        <span css={timeRecordStyle}>
+          {dayjs(playlist?.createdAt).fromNow()}
+        </span>
       </div>
       <Toast
         message={toastMessage || ''}
