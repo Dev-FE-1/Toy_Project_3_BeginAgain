@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
-import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 import { useState } from 'react'
 import 'dayjs/locale/ko'
 import Toast from '@/components/common/Toast'
+import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 
 interface Playlist {
   id: string
@@ -31,7 +31,6 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
 
   const { toggleBookmark, isBookmarked } = useToggleBookmark(palylist.id)
 
-  // 토스트 메시지와 상태를 관리하는 useState
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isToastVisible, setIsToastVisible] = useState(false)
 
@@ -72,7 +71,7 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
         <img
           width="100%"
           src={`https://img.youtube.com/vi/${extractVideoId(palylist.urls[0])}/maxresdefault.jpg`}
-          alt="thumbnail"
+          alt="  "
         />
       </div>
 
@@ -81,17 +80,16 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
           <CgHeart css={heartIconStyle} />
           <CgComment css={commentIconStyle} />
 
-          {/* 현재 로그인한 사용자와 플레이리스트 소유자가 같으면 클릭할 수 없게 설정 */}
           {user && user.uid === palylist.userId ? (
             <CgBookmark
-              css={[bookmarkIconStyle, disabledBookmarkStyle]} // 클릭 비활성화 스타일 추가
+              css={[bookmarkIconStyle, disabledBookmarkStyle]}
               color={' '}
             />
           ) : (
             <CgBookmark
-              onClick={handleBookmark} // 북마크 핸들러 연결
+              onClick={handleBookmark}
               css={bookmarkIconStyle}
-              color={isBookmarked ? 'gold' : ''} // 북마크 여부에 따른 색상 변경
+              color={isBookmarked ? 'gold' : ''}
             />
           )}
         </div>
@@ -112,7 +110,6 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
         </>
       )}
 
-      {/* 토스트 메시지 표시 */}
       <Toast
         message={toastMessage || ''}
         isVisible={isToastVisible}
@@ -122,7 +119,6 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
   )
 }
 
-// 스타일 정의
 const palylistStyle = css`
   margin-top: 30px;
   cursor: pointer;
