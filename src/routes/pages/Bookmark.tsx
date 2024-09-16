@@ -1,44 +1,62 @@
-import React, { useState, useEffect } from 'react'
 import Category from '@/components/common/Category'
-import Toast from '@/components/common/Toast'
+import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
+import Playlist from '@/components/playlist/Playlist'
+import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useHeaderStore } from '@/stores/header'
+import { useEffect } from 'react'
+import { getAuth } from 'firebase/auth'
+import { css } from '@emotion/react'
+import { useBookmarkStore } from '@/stores/useBookmark'
 
-const Bookmark: React.FC = () => {
+const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
+  const { data: playlists } = useFetchPlaylists()
+  const auth = getAuth()
+  const user = auth.currentUser
+
+  const bookmarks = useBookmarkStore(state => state.bookmarks)
 
   useEffect(() => {
-    setTitle('Bookmark')
+    setTitle('Bookmarks')
   }, [setTitle])
 
-  const [isToastVisible, setIsToastVisible] = useState(false)
+  const userBookmarks = user ? bookmarks[user.uid] || [] : []
 
-  const handleToastShow = () => {
-    setIsToastVisible(true)
-  }
+  const filteredPlaylists = playlists?.filter(pl =>
+    userBookmarks.includes(pl.id)
+  )
 
   return (
-    <>
+    <main>
       <Category />
-      <div
-        onClick={handleToastShow}
-        style={{
-          cursor: 'pointer',
-          padding: '20px',
-          backgroundColor: '#f0f0f0',
-          textAlign: 'center'
-        }}>
-        <h1>토스트테스트</h1>
-      </div>
-      {isToastVisible && (
-        <Toast
-          message="북마크페이지에 토스트 해보기!"
-          duration={2000}
-          isVisible={isToastVisible}
-          onHide={() => setIsToastVisible(false)}
-        />
+      {filteredPlaylists && filteredPlaylists.length > 0 ? (
+        filteredPlaylists.map(pl => (
+          <div key={pl.id}>
+            <Playlist palylist={pl} />
+          </div>
+        ))
+      ) : (
+        <div css={EmptyInfoStyle}>
+          <EmptyInfo
+            status="북마크된"
+            title="플레이리스트"
+          />
+        </div>
       )}
-    </>
+      <div className="nav-margin"></div>
+    </main>
   )
 }
+
+const EmptyInfoStyle = css`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`
 
 export default Bookmark

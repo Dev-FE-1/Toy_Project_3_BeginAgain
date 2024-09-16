@@ -1,13 +1,15 @@
 import { CgProfile, CgHeart, CgComment, CgBookmark } from 'react-icons/cg'
 import { css } from '@emotion/react'
-import { FontSize } from '@/styles/Theme'
-import { Colors } from '@/styles/Theme'
+import { FontSize, Colors } from '@/styles/Theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
+import { useState } from 'react'
 import 'dayjs/locale/ko'
+import Toast from '@/components/common/Toast'
+import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 
 interface Playlist {
   id: string
@@ -32,14 +34,34 @@ export default function Playlist({
   const user = auth.currentUser
   const { mutate: updatePlaylist } = useUpdatePlaylist()
   const { mutate: deletePlaylist } = useDeletePlaylist()
+  const { toggleBookmark, isBookmarked } = useToggleBookmark(palylist.id)
 
-  if (!playlist) {
-    return <div>Playlist가 없습니다.</div>
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const [isToastVisible, setIsToastVisible] = useState(false)
+
+  const handleBookmark = () => {
+    toggleBookmark()
+
+    if (!isBookmarked) {
+      setToastMessage('북마크가 추가되었습니다.')
+    } else {
+      setToastMessage('북마크가 제거되었습니다.')
+    }
+
+    setIsToastVisible(true)
   }
 
-  function extractVideoId(url: string) {
-    return url.replace('https://www.youtube.com/watch?v=', '')
+  const hideToast = () => {
+    setIsToastVisible(false)
   }
+
+  function extractVideoId(url?: string) {
+  if (!url) {
+    console.error('URL is undefined or empty')
+    return '' // 기본 값 반환
+  }
+  return url.replace('https://www.youtube.com/watch?v=', '')
+}
 
   return (
     <div css={playlistStyle}>
@@ -62,7 +84,19 @@ export default function Playlist({
         <div css={iconsStyle}>
           <CgHeart css={heartIconStyle} />
           <CgComment css={commentIconStyle} />
-          <CgBookmark css={bookmarkIconStyle} />
+
+          {user && user.uid === palylist.userId ? (
+            <CgBookmark
+              css={[bookmarkIconStyle, disabledBookmarkStyle]}
+              color={' '}
+            />
+          ) : (
+            <CgBookmark
+              onClick={handleBookmark}
+              css={bookmarkIconStyle}
+              color={isBookmarked ? 'gold' : ''}
+            />
+          )}
         </div>
 
         <div css={titleStyle}>
@@ -79,6 +113,12 @@ export default function Playlist({
           <button onClick={() => deletePlaylist(playlist)}>삭제</button>
         </>
       )}
+
+      <Toast
+        message={toastMessage || ''}
+        isVisible={isToastVisible}
+        onHide={hideToast}
+      />
     </div>
   )
 }
@@ -131,7 +171,14 @@ const bookmarkIconStyle = css`
   font-size: 30px;
   margin-left: auto;
   margin-right: 20px;
+  cursor: pointer;
 `
+
+const disabledBookmarkStyle = css`
+  pointer-events: none;
+  opacity: 0.5;
+`
+
 const titleStyle = css`
   font-size: ${FontSize.lg};
   margin: 0;
