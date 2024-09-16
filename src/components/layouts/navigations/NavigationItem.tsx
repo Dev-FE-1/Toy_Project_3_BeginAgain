@@ -9,6 +9,7 @@ interface NavigationItemProps {
   label?: string
   isActive?: boolean
   onClick?: () => void
+  blockActiveColor?: boolean
 }
 
 const NavigationItem = ({
@@ -16,14 +17,15 @@ const NavigationItem = ({
   Icon,
   label,
   isActive,
-  onClick
+  onClick,
+  blockActiveColor
 }: NavigationItemProps) => {
   return (
     <NavLink
       to={path}
       css={navLinkStyle}
       onClick={onClick}>
-      <div css={[iconStyle, isActive && activeIconStyle]}>
+      <div css={[iconStyle, isActive && !blockActiveColor && activeIconStyle]}>
         <Icon css={icon} />
         {label}
       </div>
