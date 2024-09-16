@@ -5,8 +5,8 @@ import { getAuth } from 'firebase/auth'
 export const useCreateComment = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (payload: { comment: string; palylistId: string }) => {
-      const { comment, palylistId } = payload
+    mutationFn: async (payload: { comment: string; playlistId: string }) => {
+      const { comment, playlistId } = payload
       const db = getFirestore()
       const auth = getAuth()
       const user = auth.currentUser
@@ -21,12 +21,12 @@ export const useCreateComment = () => {
         },
         content: comment,
         createdAt: new Date().toISOString(),
-        palylistId
+        playlistId
       })
     },
     onSuccess: (_data, payload) => {
-      const { palylistId } = payload
-      queryClient.invalidateQueries({ queryKey: ['comments', palylistId] })
+      const { playlistId } = payload
+      queryClient.invalidateQueries({ queryKey: ['comments', playlistId] })
     }
   })
 }
