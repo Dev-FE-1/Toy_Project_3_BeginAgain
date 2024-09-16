@@ -32,7 +32,7 @@ const Bookmark = () => {
       {filteredPlaylists && filteredPlaylists.length > 0 ? (
         filteredPlaylists.map(pl => (
           <div key={pl.id}>
-            <Playlist palylist={pl} />
+            <Playlist playlist={pl} />
           </div>
         ))
       ) : (

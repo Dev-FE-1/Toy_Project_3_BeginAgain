@@ -26,7 +26,7 @@ interface PlayList {
   createdAt: string
 }
 
-export default function SavedPlaylists({ feed }: { feed: PlayList }) {
+export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isToastVisible, setIsToastVisible] = useState(false)
@@ -36,7 +36,7 @@ export default function SavedPlaylists({ feed }: { feed: PlayList }) {
   const { mutate: deletePlayList } = useDeletePlaylist()
 
   const handleDelete = () => {
-    deletePlayList(feed)
+    deletePlayList(playlist)
     setIsModalOpen(false)
     setIsToastVisible(true)
   }
@@ -52,27 +52,27 @@ export default function SavedPlaylists({ feed }: { feed: PlayList }) {
 
   return (
     <>
-      <div css={feedStyle}>
-        <div css={thumbnailBackgroundStyle}></div>
+      <div css={playlistStyle}>
+        <div css={videoIdBackgroundStyle}></div>
         <div
-          onClick={() => navigate(`/playlist-details/${feed.id}`)}
-          css={thumbnailImageStyle}>
+          onClick={() => navigate(`/playlist-details/${playlist.id}`)}
+          css={videoIdImageStyle}>
           <img
-            css={thumbnailStyle}
+            css={videoIdStyle}
             width="100%"
-            src={`https://img.youtube.com/vi/${extractVideoId(feed.urls[0])}/maxresdefault.jpg`}
+            src={`https://img.youtube.com/vi/${extractVideoId(playlist.urls[0])}/maxresdefault.jpg`}
             alt=""
           />
         </div>
 
         <div css={playlistInfoLayoutStyle}>
           <div css={infoLeftStyle}>
-            <p css={titleStyle}>{feed.title}</p>
-            <p>{feed.description}</p>
+            <p css={titleStyle}>{playlist.title}</p>
+            <p>{playlist.description}</p>
           </div>
           <div css={infoRightStyle}>
             <div css={buttonStyle}>
-              <CgLock onClick={() => updatePlayList(feed)} />
+              <CgLock onClick={() => updatePlayList(playlist)} />
               {/* <CgLockUnlock /> */}
               {/* 공개/비공개 여부에 따라 lock/unlock 아이콘 변경되는 로직 추가 필요 */}
               <CgTrash
@@ -80,7 +80,9 @@ export default function SavedPlaylists({ feed }: { feed: PlayList }) {
                 className="trashIcon"
               />
             </div>
-            <span css={timeRecordStyle}>{dayjs(feed.createdAt).fromNow()}</span>
+            <span css={timeRecordStyle}>
+              {dayjs(playlist.createdAt).fromNow()}
+            </span>
           </div>
         </div>
       </div>
@@ -115,16 +117,16 @@ const infoRightStyle = css`
   flex-direction: column;
 `
 
-const feedStyle = css`
+const playlistStyle = css`
   padding: 20px;
 `
 
-const thumbnailStyle = css`
+const videoIdStyle = css`
   margin-bottom: 15px;
   border-radius: 5px;
 `
 
-const thumbnailBackgroundStyle = css`
+const videoIdBackgroundStyle = css`
   border-radius: 12px 12px 0px 0px;
   background: ${Colors.lightGrey};
   height: 9px;
@@ -132,7 +134,7 @@ const thumbnailBackgroundStyle = css`
   margin: 0 10px;
 `
 
-const thumbnailImageStyle = css`
+const videoIdImageStyle = css`
   cursor: pointer;
 `
 

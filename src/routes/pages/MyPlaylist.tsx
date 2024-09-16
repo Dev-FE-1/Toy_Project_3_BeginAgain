@@ -31,7 +31,7 @@ const MyPlaylist = () => {
           filteredPlaylists.map(pl => (
             <SavedPlaylists
               key={pl.id}
-              feed={pl}
+              playlist={pl}
             />
           ))
         ) : (
