@@ -7,7 +7,9 @@ import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
-import { CgTrash, CgMoreVerticalAlt } from 'react-icons/cg'
+import { CgTrash, CgLock, CgLockUnlock } from 'react-icons/cg'
+import Modal from '@/components/common/TheModal'
+import { useState } from 'react'
 
 // interface FeedProps {
 //   userId: string
@@ -26,12 +28,21 @@ interface PlayList {
 }
 
 export default function SavedPlaylists({ feed }: { feed: PlayList }) {
+  const [isModalOpen, setModalOpen] = useState(false)
   const navigate = useNavigate()
 
   const auth = getAuth()
   const user = auth.currentUser
   const { mutate: updatePlayList } = useUpdatePlaylist()
   const { mutate: deletePlayList } = useDeletePlaylist()
+
+  const openModal = () => setModalOpen(true)
+  const closeModal = () => setModalOpen(false)
+
+  const handleDelete = () => {
+    deletePlayList(feed.id)
+    closeModal() // 모달을 닫습니다.
+  }
 
   function extractVideoId(url: string) {
     return url.replace('https://www.youtube.com/watch?v=', '')
@@ -45,32 +56,30 @@ export default function SavedPlaylists({ feed }: { feed: PlayList }) {
       </div>
 
       <div css={thumbnailBackgroundStyle}></div>
-      <div
-        css={thumbnailStyle}
-        onClick={() => navigate(`/playlist-details/${feed.id}`)}>
+      <div onClick={() => navigate(`/playlist-details/${feed.id}`)}>
         <img
+          css={thumbnailStyle}
           width="100%"
           src={`https://img.youtube.com/vi/${extractVideoId(feed.urls[0])}/maxresdefault.jpg`}
           alt=""
         />
       </div>
 
-      <div css={footerStyle}>
-        <div>
-          <p css={titleStyle}>{feed.title}</p>
-          <p css={descriptionStyle}>{feed.description}</p>
-          {user && feed.userId === user.uid && (
-            <>
-              <CgTrash onClick={() => deletePlayList(feed)} />
-              <CgMoreVerticalAlt onClick={() => updatePlayList(feed)} />
-            </>
-          )}
-        </div>
-
-        <span css={timeRecordStyle}>
-          {dayjs(feed.createdAt).format('YYYY년 M월 DD와우 HH시 mm분 ss초')}
-        </span>
+      <div>
+        <p css={titleStyle}>{feed.title}</p>
+        <p css={descriptionStyle}>{feed.description}</p>
       </div>
+      <CgTrash onClick={openModal} />
+
+      <span css={timeRecordStyle}>
+        {dayjs(feed.createdAt).format('YYYY년 M월 DD와우 HH시 mm분 ss초')}
+      </span>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onDelete={handleDelete}
+      />
     </div>
   )
 }
@@ -81,7 +90,6 @@ const descriptionStyle = css`
 `
 
 const feedStyle = css`
-  margin-top: 30px;
   padding: 20px;
   cursor: pointer;
 `
@@ -98,15 +106,15 @@ const headerTextStyle = css`
 
 const thumbnailStyle = css`
   margin-bottom: 10px;
+  border-radius: 5px;
 `
 
 const thumbnailBackgroundStyle = css`
   border-radius: 12px 12px 0px 0px;
-  background: #d1e9f6;
-  height: 10px;
+  background: ${Colors.lightGrey};
+  height: 9px;
   width: 95%;
-  display: flex;
-  align-items: center;
+  margin: 0 10px;
 `
 
 const footerStyle = css`
@@ -123,20 +131,6 @@ const profileIconStyle = css`
   font-size: 30px;
 `
 
-const heartIconStyle = css`
-  font-size: 24px;
-  margin-right: 30px;
-`
-
-const commentIconStyle = css`
-  font-size: 24px;
-`
-
-const bookmarkIconStyle = css`
-  font-size: 30px;
-  margin-left: auto;
-`
-
 const titleStyle = css`
   font-size: ${FontSize.lg};
   margin: 0;
@@ -145,4 +139,16 @@ const titleStyle = css`
 const timeRecordStyle = css`
   color: ${Colors.darkGrey};
   font-size: ${FontSize.sm};
+`
+
+const playlistInfoLayoutStyle = css`
+  display: flex;
+  justify-content: space-between;
+`
+
+const buttonStyle = css`
+  font-size: ${FontSize.xl};
+  color: ${Colors.charcoalGrey};
+  display: flex;
+  gap: 10px;
 `
