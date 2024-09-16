@@ -1,180 +1,147 @@
-import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { useHeaderStore } from '@/stores/header'
-import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
-import { useFetchComments } from '@/hooks/useFetchComments'
-import { useCreateComment } from '@/hooks/useCreateComment'
-import { useDeleteComment } from '@/hooks/useDeleteComment'
-import { CgChevronUp, CgChevronDown } from 'react-icons/cg'
 import { css } from '@emotion/react'
-import { Colors } from '@/styles/Theme'
 import { FontSize } from '@/styles/Theme'
+import { Colors } from '@/styles/Theme'
+import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
-
-const PlaylistDetail = () => {
-  const setTitle = useHeaderStore(state => state.setTitle)
-
-  useEffect(() => {
-    setTitle('Playlist Detail')
-  }, [setTitle])
-
-  const { id } = useParams()
-  const { data, isLoading } = useFetchPlaylist(id as string)
-  const { data: comments } = useFetchComments(id as string)
-  const [comment, setComment] = useState('')
-  const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
-
+import { useState } from 'react'
+import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
+import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
+import { CgTrash, CgLock, CgLockUnlock } from 'react-icons/cg'
+import Toast from '@/components/common/Toast'
+import Modal from '@/components/common/TheModal'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/ko'
+dayjs.locale('ko')
+dayjs.extend(relativeTime)
+interface PlayList {
+  id: string
+  urls: string[]
+  title: string
+  description: string
+  isPublic: boolean
+  userId: string
+  createdAt: string
+}
+export default function SavedPlaylists({ feed }: { feed: PlayList }) {
+  const navigate = useNavigate()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isToastVisible, setIsToastVisible] = useState(false)
   const auth = getAuth()
   const user = auth.currentUser
-
-  const { mutate: createComment } = useCreateComment()
-  const { mutate: deleteComment } = useDeleteComment()
-
-  async function addComment() {
-    createComment({
-      comment,
-      playlistId: id as string
-    })
+  const { mutate: updatePlayList } = useUpdatePlaylist()
+  const { mutate: deletePlayList } = useDeletePlaylist()
+  const handleDelete = () => {
+    deletePlayList(feed)
+    setIsModalOpen(false)
+    setIsToastVisible(true)
   }
-
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setIsToastVisible(false)
+  }
+  function extractVideoId(url: string) {
+    return url.replace('https://www.youtube.com/watch?v=', '')
+  }
   return (
-    <div css={playlistDetailContainer}>
-      {isLoading && <div>비디오를 불러오는 중...</div>}
-
-      <div css={sectionOneContainer}>
-        {data?.playlist ? (
-          <video
-            controls
-            width="100%">
-            <source
-              src={data.playlist}
-              type="video/mp4"
-            />
-          </video>
-        ) : (
-          <p>비디오가 없습니다.</p>
-        )}
-      </div>
-
-      {data && (
-        <>
-          <div css={sectionTwoContainer}>
-            <h2 css={titleStyle}>{data.title}</h2>
-            <button
-              onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}>
-              {isDescriptionVisible ? <CgChevronUp /> : <CgChevronDown />}
-            </button>
-            {isDescriptionVisible && (
-              <p css={descriptionStyle}>{data.description}</p>
-            )}
+    <>
+      <div css={feedStyle}>
+        <div css={thumbnailBackgroundStyle}></div>
+        <div
+          onClick={() => navigate(`/playlist-details/${feed.id}`)}
+          css={thumbnailImageStyle}>
+          <img
+            css={thumbnailStyle}
+            width="100%"
+            src={`https://img.youtube.com/vi/${extractVideoId(feed.urls[0])}/maxresdefault.jpg`}
+            alt=""
+          />
+        </div>
+        <div css={playlistInfoLayoutStyle}>
+          <div css={infoLeftStyle}>
+            <p css={titleStyle}>{feed.title}</p>
+            <p>{feed.description}</p>
           </div>
-
-          <div css={sectionThreeContainer}>
-            {user && (
-              <>
-                <img
-                  src={user.photoURL || ''}
-                  alt={user.displayName || 'User'}
-                  width="50"
-                  height="50"
-                  css={profileImageStyle}
-                />
-                <span>{user.displayName}</span>
-              </>
-            )}
-          </div>
-
-          <div css={sectionFourContainer}>
-            <div className="comment">
-              <p>댓글</p>
-              <input
-                type="text"
-                value={comment}
-                onChange={e => setComment(e.target.value)}
+          <div css={infoRightStyle}>
+            <div css={buttonStyle}>
+              <CgLock onClick={() => updatePlayList(feed)} />
+              {/* <CgLockUnlock /> */}
+              {/* 공개/비공개 여부에 따라 lock/unlock 아이콘 변경되는 로직 추가 필요 */}
+              <CgTrash
+                onClick={() => setIsModalOpen(true)}
+                className="trashIcon"
               />
-              <button onClick={addComment}>댓글 추가</button>
             </div>
-
-            {comments &&
-              comments.map(comment => (
-                <div key={comment.id}>
-                  <img
-                    src={comment.user.photoURL as string}
-                    alt={comment.user.displayName as string}
-                    width="20"
-                  />
-                  <span>{comment.user.displayName}</span>
-                  <span>{comment.content}</span>
-                  <button
-                    onClick={() =>
-                      deleteComment({
-                        commentId: comment.id,
-                        playlistId: id as string
-                      })
-                    }>
-                    삭제
-                  </button>
-                </div>
-              ))}
+            <span css={timeRecordStyle}>{dayjs(feed.createdAt).fromNow()}</span>
           </div>
-        </>
+        </div>
+      </div>
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onDelete={handleDelete}
+        />
       )}
-    </div>
+      {isToastVisible && (
+        <Toast
+          message="플레이리스트가 삭제되었습니다."
+          isVisible={isToastVisible}
+          onHide={() => setIsToastVisible(false)}
+        />
+      )}
+    </>
   )
 }
-
-export default PlaylistDetail
-
-const playlistDetailContainer = css`
-  // margin: 20px;
-  // padding: 20px;
-  // border: 1px solid #e0e0e0;
-  // border-radius: 8px;
-  // background-color: ${Colors.darkGrey};
+const infoLeftStyle = css`
+  font-size: ${FontSize.md};
+  margin-bottom: 10px;
+  font-weight: 500;
 `
-
-const sectionOneContainer = css`
-  margin-bottom: 20px;
-  video {
-    border-radius: 10px;
-  }
+const infoRightStyle = css`
+  gap: 7px;
+  display: flex;
+  flex-direction: column;
 `
-
-const sectionTwoContainer = css`
-  border-bottom: 1px solid ${Colors.lightGrey};
+const feedStyle = css`
+  padding: 20px;
 `
-
+const thumbnailStyle = css`
+  margin-bottom: 15px;
+  border-radius: 5px;
+`
+const thumbnailBackgroundStyle = css`
+  border-radius: 12px 12px 0px 0px;
+  background: ${Colors.lightGrey};
+  height: 9px;
+  width: 95%;
+  margin: 0 10px;
+`
+const thumbnailImageStyle = css`
+  cursor: pointer;
+`
 const titleStyle = css`
   font-size: ${FontSize.lg};
-  color: ${Colors.black};
-  margin-top: 10px;
+  margin: 0;
   margin-bottom: 10px;
-  padding: 20px;
+  font-weight: 500;
 `
-
-const descriptionStyle = css`
-  font-size: ${FontSize.md};
+const timeRecordStyle = css`
+  color: ${Colors.darkGrey};
+  font-size: ${FontSize.sm};
+  text-align: right;
 `
-
-const sectionThreeContainer = css`
-  padding: 20px;
+const playlistInfoLayoutStyle = css`
+  display: flex;
+  justify-content: space-between;
 `
-
-const profileImageStyle = css`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-`
-
-const sectionFourContainer = css`
-  font-size: ${FontSize.md};
-  color: ${Colors.black};
-  margin-bottom: 10px;
-  background-color: ${Colors.lightGrey};
-  border-radius: 8px;
-  margin-top: 10px;
-  padding: 20px 20px;
-  margin-left: 20px;
-  margin-right: 20px;
+const buttonStyle = css`
+  font-size: ${FontSize.xxl};
+  color: ${Colors.charcoalGrey};
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  .trashIcon {
+    cursor: pointer;
+  }
 `
