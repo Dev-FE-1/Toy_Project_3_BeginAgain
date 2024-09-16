@@ -75,7 +75,7 @@ const navbar = css`
   transform: translateX(-50%);
   background-color: ${Colors.black};
   color: ${Colors.lightGrey};
-  z-index: 100;
+  z-index: 2;
   border-radius: 45px 45px 0 0;
 `
 

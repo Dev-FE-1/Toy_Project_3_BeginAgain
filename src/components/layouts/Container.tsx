@@ -16,7 +16,6 @@ const containerStyle = css`
   max-width: ${Width.max};
   margin: 0 auto;
   background-color: ${Colors.white};
-  z-index: 99;
   height: 100%;
 `
 export default Container

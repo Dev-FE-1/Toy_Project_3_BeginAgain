@@ -32,7 +32,7 @@ const headerStyle = css`
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
+  z-index: 2;
   color: ${Colors.white};
   background-color: ${Colors.white};
 `

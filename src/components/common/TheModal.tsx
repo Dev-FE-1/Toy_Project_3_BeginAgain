@@ -1,15 +1,15 @@
-import React from 'react';
-import { css } from '@emotion/react';
-import { Colors, FontSize, FontWeight } from '@/styles/Theme';
+import React from 'react'
+import { css } from '@emotion/react'
+import { Colors, FontSize, FontWeight } from '@/styles/Theme'
 
 type ModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onDelete: () => void;
-};
+  isOpen: boolean
+  onClose: () => void
+  onDelete: () => void
+}
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onDelete }) => {
-  if (!isOpen) return null;
+  if (!isOpen) return null
   return (
     <div css={overlayStyle}>
       <div css={modalStyle}>
@@ -17,8 +17,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onDelete }) => {
           css={css`
             font-size: ${FontSize.lg};
             font-weight: ${FontWeight.semiBold};
-          `}
-        >
+          `}>
           선택한 컨텐츠를 삭제하시겠습니까?
         </p>
         <p
@@ -26,37 +25,39 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onDelete }) => {
             font-size: ${FontSize.md};
             font-weight: ${FontWeight.thin};
             padding-top: 10px;
-          `}
-        >
+          `}>
           삭제된 컨텐츠는 복구할 수 없습니다.
         </p>
 
         <div css={buttonContainerStyle}>
-          <button onClick={onClose} css={closeButtonStyle}>
+          <button
+            onClick={onClose}
+            css={closeButtonStyle}>
             취소
           </button>
 
-          <button onClick={onDelete} css={deleteButtonStyle}>
+          <button
+            onClick={onDelete}
+            css={deleteButtonStyle}>
             삭제
           </button>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const overlayStyle = css`
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-`;
+  z-index: 9;
+  width: 430px;
+  height: 100%;
+`
 
 const modalStyle = css`
   background-color: ${Colors.white};
@@ -67,13 +68,13 @@ const modalStyle = css`
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
   color: ${Colors.black};
-`;
+`
 
 const buttonContainerStyle = css`
   display: flex;
   justify-content: space-between;
   margin-top: 30px;
-`;
+`
 
 const closeButtonStyle = css`
   height: 35px;
@@ -84,7 +85,7 @@ const closeButtonStyle = css`
   font-weight: ${FontWeight.semiBold};
   cursor: pointer;
   border-radius: 3px;
-`;
+`
 
 const deleteButtonStyle = css`
   height: 35px;
@@ -97,6 +98,6 @@ const deleteButtonStyle = css`
   font-weight: ${FontWeight.semiBold};
   cursor: pointer;
   border-radius: 3px;
-`;
+`
 
-export default Modal;
+export default Modal
