@@ -17,7 +17,7 @@ const toastStyle = css`
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
+  z-index: 9;
   transition: opacity 0.5s ease-in-out;
   opacity: 1;
 `
