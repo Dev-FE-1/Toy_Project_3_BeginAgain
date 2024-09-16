@@ -1,15 +1,17 @@
-import { CgProfile } from 'react-icons/cg'
 import { css } from '@emotion/react'
 import { FontSize } from '@/styles/Theme'
 import { Colors } from '@/styles/Theme'
-import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
 import { CgTrash, CgLock, CgLockUnlock } from 'react-icons/cg'
-import Modal from '@/components/common/TheModal'
-import { useState } from 'react'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/ko'
+
+dayjs.locale('ko')
+dayjs.extend(relativeTime)
 
 // interface FeedProps {
 //   userId: string
@@ -28,7 +30,6 @@ interface PlayList {
 }
 
 export default function SavedPlaylists({ feed }: { feed: PlayList }) {
-  const [isModalOpen, setModalOpen] = useState(false)
   const navigate = useNavigate()
 
   const auth = getAuth()
@@ -36,27 +37,16 @@ export default function SavedPlaylists({ feed }: { feed: PlayList }) {
   const { mutate: updatePlayList } = useUpdatePlaylist()
   const { mutate: deletePlayList } = useDeletePlaylist()
 
-  const openModal = () => setModalOpen(true)
-  const closeModal = () => setModalOpen(false)
-
-  const handleDelete = () => {
-    deletePlayList(feed.id)
-    closeModal() // 모달을 닫습니다.
-  }
-
   function extractVideoId(url: string) {
     return url.replace('https://www.youtube.com/watch?v=', '')
   }
 
   return (
     <div css={feedStyle}>
-      <div css={headerStyle}>
-        <CgProfile css={profileIconStyle} />
-        <span css={headerTextStyle}>{feed.id}</span>
-      </div>
-
       <div css={thumbnailBackgroundStyle}></div>
-      <div onClick={() => navigate(`/playlist-details/${feed.id}`)}>
+      <div
+        onClick={() => navigate(`/playlist-details/${feed.id}`)}
+        css={thumbnailImageStyle}>
         <img
           css={thumbnailStyle}
           width="100%"
@@ -65,43 +55,42 @@ export default function SavedPlaylists({ feed }: { feed: PlayList }) {
         />
       </div>
 
-      <div>
-        <p css={titleStyle}>{feed.title}</p>
-        <p css={descriptionStyle}>{feed.description}</p>
+      <div css={playlistInfoLayoutStyle}>
+        <div>
+          <p css={titleStyle}>{feed.title}</p>
+          <p css={infoLeftStyle}>{feed.description}</p>
+        </div>
+        <div css={infoRightStyle}>
+          <div css={buttonStyle}>
+            <CgLock onClick={() => updatePlayList(feed)} />
+            {/* <CgLockUnlock /> */}
+            {/* 공개/비공개 여부에 따라 lock/unlock 아이콘 변경되는 로직 추가 필요 */}
+            <CgTrash
+              onClick={() => deletePlayList(feed)}
+              className="trashIcon"
+            />
+          </div>
+          <span css={timeRecordStyle}>{dayjs(feed.createdAt).fromNow()}</span>
+        </div>
       </div>
-      <CgTrash onClick={openModal} />
-
-      <span css={timeRecordStyle}>
-        {dayjs(feed.createdAt).format('YYYY년 M월 DD와우 HH시 mm분 ss초')}
-      </span>
-
-      <Modal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onDelete={handleDelete}
-      />
     </div>
   )
 }
 
-const descriptionStyle = css`
+const infoLeftStyle = css`
   font-size: ${FontSize.md};
   margin-bottom: 10px;
+  font-weight: 500;
+`
+
+const infoRightStyle = css`
+  gap: 7px;
+  display: flex;
+  flex-direction: column;
 `
 
 const feedStyle = css`
   padding: 20px;
-  cursor: pointer;
-`
-
-const headerStyle = css`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-`
-
-const headerTextStyle = css`
-  margin-left: 10px;
 `
 
 const thumbnailStyle = css`
@@ -117,28 +106,20 @@ const thumbnailBackgroundStyle = css`
   margin: 0 10px;
 `
 
-const footerStyle = css`
-  display: flex;
-  flex-direction: column;
-`
-
-const iconsStyle = css`
-  display: flex;
-  margin-bottom: 10px;
-`
-
-const profileIconStyle = css`
-  font-size: 30px;
+const thumbnailImageStyle = css`
+  cursor: pointer;
 `
 
 const titleStyle = css`
   font-size: ${FontSize.lg};
   margin: 0;
   margin-bottom: 10px;
+  font-weight: 500;
 `
 const timeRecordStyle = css`
   color: ${Colors.darkGrey};
   font-size: ${FontSize.sm};
+  gap: 10px;
 `
 
 const playlistInfoLayoutStyle = css`
@@ -147,8 +128,13 @@ const playlistInfoLayoutStyle = css`
 `
 
 const buttonStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${FontSize.xxl};
   color: ${Colors.charcoalGrey};
   display: flex;
   gap: 10px;
+  align-items: center;
+
+  .trashIcon {
+    cursor: pointer;
+  }
 `
