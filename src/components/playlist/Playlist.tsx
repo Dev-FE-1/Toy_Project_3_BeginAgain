@@ -1,13 +1,15 @@
 import { CgProfile, CgHeart, CgComment, CgBookmark } from 'react-icons/cg'
 import { css } from '@emotion/react'
-import { FontSize } from '@/styles/Theme'
-import { Colors } from '@/styles/Theme'
+import { FontSize, Colors } from '@/styles/Theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { getAuth } from 'firebase/auth'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
+import { useToggleBookmark } from '@/hooks/useToggleBookmark'
+import { useState } from 'react'
 import 'dayjs/locale/ko'
+import Toast from '@/components/common/Toast'
 
 interface Playlist {
   id: string
@@ -27,12 +29,34 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
   const { mutate: updatePlaylist } = useUpdatePlaylist()
   const { mutate: deletePlaylist } = useDeletePlaylist()
 
+  const { toggleBookmark, isBookmarked } = useToggleBookmark(palylist.id)
+
+  // 토스트 메시지와 상태를 관리하는 useState
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const [isToastVisible, setIsToastVisible] = useState(false)
+
+  const handleBookmark = () => {
+    toggleBookmark()
+
+    if (!isBookmarked) {
+      setToastMessage('북마크가 추가되었습니다.')
+    } else {
+      setToastMessage('북마크가 제거되었습니다.')
+    }
+
+    setIsToastVisible(true)
+  }
+
+  const hideToast = () => {
+    setIsToastVisible(false)
+  }
+
   function extractVideoId(url?: string) {
     if (!url) {
-      console.error('URL is undefined or empty');
-      return ''; // 기본값 반환
+      console.error('URL is undefined or empty')
+      return '' // 기본값 반환
     }
-    return url.replace('https://www.youtube.com/watch?v=', '');
+    return url.replace('https://www.youtube.com/watch?v=', '')
   }
 
   return (
@@ -48,7 +72,7 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
         <img
           width="100%"
           src={`https://img.youtube.com/vi/${extractVideoId(palylist.urls[0])}/maxresdefault.jpg`}
-          alt=""
+          alt="thumbnail"
         />
       </div>
 
@@ -56,7 +80,20 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
         <div css={iconsStyle}>
           <CgHeart css={heartIconStyle} />
           <CgComment css={commentIconStyle} />
-          <CgBookmark css={bookmarkIconStyle} />
+
+          {/* 현재 로그인한 사용자와 플레이리스트 소유자가 같으면 클릭할 수 없게 설정 */}
+          {user && user.uid === palylist.userId ? (
+            <CgBookmark
+              css={[bookmarkIconStyle, disabledBookmarkStyle]} // 클릭 비활성화 스타일 추가
+              color={' '}
+            />
+          ) : (
+            <CgBookmark
+              onClick={handleBookmark} // 북마크 핸들러 연결
+              css={bookmarkIconStyle}
+              color={isBookmarked ? 'gold' : ''} // 북마크 여부에 따른 색상 변경
+            />
+          )}
         </div>
 
         <div css={titleStyle}>
@@ -67,16 +104,25 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
           {dayjs(palylist.createdAt).format('YYYY년 M월 DD일 HH시 mm분 ss초')}
         </span>
       </div>
+
       {user && palylist.userId === user.uid && (
         <>
           <button onClick={() => updatePlaylist(palylist)}>수정</button>
           <button onClick={() => deletePlaylist(palylist)}>삭제</button>
         </>
       )}
+
+      {/* 토스트 메시지 표시 */}
+      <Toast
+        message={toastMessage || ''}
+        isVisible={isToastVisible}
+        onHide={hideToast}
+      />
     </div>
   )
 }
 
+// 스타일 정의
 const palylistStyle = css`
   margin-top: 30px;
   cursor: pointer;
@@ -125,7 +171,14 @@ const bookmarkIconStyle = css`
   font-size: 30px;
   margin-left: auto;
   margin-right: 20px;
+  cursor: pointer;
 `
+
+const disabledBookmarkStyle = css`
+  pointer-events: none;
+  opacity: 0.5;
+`
+
 const titleStyle = css`
   font-size: ${FontSize.lg};
   margin: 0;
