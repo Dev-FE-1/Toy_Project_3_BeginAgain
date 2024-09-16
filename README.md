@@ -11,15 +11,15 @@
 export interface Like {
   id: string
   createdAt: string
-  palylistId: string
+  playlistId: string
   userId: string
 }
 ```
 
 ```ts
-export const useFetchLike = (palylistId: string) => {
+export const useFetchLike = (playlistId: string) => {
   return useQuery({
-    queryKey: ['likes', palylistId],
+    queryKey: ['likes', playlistId],
     queryFn: async () => {
       const auth = getAuth()
       const user = auth.currentUser
@@ -29,7 +29,7 @@ export const useFetchLike = (palylistId: string) => {
         query(
           coll,
           where('userId', '==', user.uid),
-          where('palylistId', '==', palylistId)
+          where('playlistId', '==', playlistId)
         )
       )
       return !!querySnapshot.docs.length // true or false

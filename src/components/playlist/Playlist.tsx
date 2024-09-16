@@ -21,14 +21,19 @@ interface Playlist {
   createdAt: string
 }
 
-export default function Playlist({ palylist }: { palylist: Playlist }) {
+export default function Playlist({
+  playlist
+}: {
+  playlist: Playlist | undefined
+}) {
+  console.log('Playlist prop:', playlist)
+
   const navigate = useNavigate()
 
   const auth = getAuth()
   const user = auth.currentUser
   const { mutate: updatePlaylist } = useUpdatePlaylist()
   const { mutate: deletePlaylist } = useDeletePlaylist()
-
   const { toggleBookmark, isBookmarked } = useToggleBookmark(palylist.id)
 
   const [toastMessage, setToastMessage] = useState<string | null>(null)
@@ -51,27 +56,27 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
   }
 
   function extractVideoId(url?: string) {
-    if (!url) {
-      console.error('URL is undefined or empty')
-      return '' // 기본값 반환
-    }
-    return url.replace('https://www.youtube.com/watch?v=', '')
+  if (!url) {
+    console.error('URL is undefined or empty')
+    return '' // 기본 값 반환
   }
+  return url.replace('https://www.youtube.com/watch?v=', '')
+}
 
   return (
-    <div css={palylistStyle}>
+    <div css={playlistStyle}>
       <div css={headerStyle}>
         <CgProfile css={profileIconStyle} />
-        <span css={headerTextStyle}>{palylist.id}</span>
+        <span css={headerTextStyle}>{playlist.id}</span>
       </div>
 
       <div
         css={videoIdStyle}
-        onClick={() => navigate(`/playlist-details/${palylist.id}`)}>
+        onClick={() => navigate(`/playlist-details/${playlist.id}`)}>
         <img
           width="100%"
-          src={`https://img.youtube.com/vi/${extractVideoId(palylist.urls[0])}/maxresdefault.jpg`}
-          alt="  "
+          src={`https://img.youtube.com/vi/${extractVideoId(playlist.urls[0])}/maxresdefault.jpg`}
+          alt=""
         />
       </div>
 
@@ -95,18 +100,17 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
         </div>
 
         <div css={titleStyle}>
-          <p>{palylist.title}</p>
+          <p>{playlist.title}</p>
         </div>
 
         <span css={timeRecordStyle}>
-          {dayjs(palylist.createdAt).format('YYYY년 M월 DD일 HH시 mm분 ss초')}
+          {dayjs(playlist.createdAt).format('YYYY년 M월 DD일 HH시 mm분 ss초')}
         </span>
       </div>
-
-      {user && palylist.userId === user.uid && (
+      {user && playlist.userId === user.uid && (
         <>
-          <button onClick={() => updatePlaylist(palylist)}>수정</button>
-          <button onClick={() => deletePlaylist(palylist)}>삭제</button>
+          <button onClick={() => updatePlaylist(playlist)}>수정</button>
+          <button onClick={() => deletePlaylist(playlist)}>삭제</button>
         </>
       )}
 
@@ -119,7 +123,7 @@ export default function Playlist({ palylist }: { palylist: Playlist }) {
   )
 }
 
-const palylistStyle = css`
+const playlistStyle = css`
   margin-top: 30px;
   cursor: pointer;
 `

@@ -48,3 +48,5 @@ export default function Profile() {
     </>
   )
 }
+
+// 로그아웃에 커서 넣어주기
