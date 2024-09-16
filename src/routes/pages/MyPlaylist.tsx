@@ -4,7 +4,7 @@ import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useHeaderStore } from '@/stores/header'
 import { useEffect } from 'react'
 import { getAuth } from 'firebase/auth'
-import MyPlaylists from '@/routes/pages/SavedPlaylists'
+import SavedPlaylists from '@/routes/pages/SavedPlaylists'
 import { css } from '@emotion/react'
 
 const MyPlaylist = () => {
@@ -29,7 +29,7 @@ const MyPlaylist = () => {
         </div>
         {filteredPlaylists && filteredPlaylists.length > 0 ? (
           filteredPlaylists.map(pl => (
-            <MyPlaylists
+            <SavedPlaylists
               key={pl.id}
               feed={pl}
             />
