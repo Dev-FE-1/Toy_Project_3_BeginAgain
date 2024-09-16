@@ -8,6 +8,10 @@ import Profile from '@/routes/pages/Profile'
 import PlaylistDetail from '@/routes/pages/PlaylistDetail'
 import RequiresAuth from '@/routes/protected/RequiresAuth'
 import SignIn from './pages/SignIn'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 export const router = createBrowserRouter([
   {
