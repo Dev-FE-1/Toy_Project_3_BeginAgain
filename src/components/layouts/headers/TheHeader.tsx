@@ -1,13 +1,25 @@
 import { css } from '@emotion/react'
-import { Colors, Width } from '@/styles/Theme'
-import { FontSize } from '@/styles/Theme'
+import { Colors, Width, FontSize } from '@/styles/Theme'
 import { CgChevronLeft } from 'react-icons/cg'
 import { useHeaderStore } from '@/stores/header'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useAddPlaylistStore } from '@/stores/addPlaylist'
 
 export default function TheHeader() {
   const title = useHeaderStore(state => state.title)
   const navigate = useNavigate()
+  const location = useLocation()
+  const { isDone, savePlaylist } = useAddPlaylistStore()
+  const isAddPlaylist = location.pathname === '/add-playlist'
+
+  const handleComplete = async () => {
+    try {
+      await savePlaylist();
+      navigate('/', { state: { showToast: true } })
+    } catch (error) {
+      console.error('저장 실패:', error)
+    }
+  }
 
   return (
     <header css={headerStyle}>
@@ -18,6 +30,15 @@ export default function TheHeader() {
         />
       )}
       <h1 css={titleStyle}>{title}</h1>
+      {isAddPlaylist && (
+        <button
+          css={successBtn(isDone)} 
+          onClick={isDone ? handleComplete : undefined}  
+          disabled={!isDone}
+        >
+          완료
+        </button>
+      )}
     </header>
   )
 }
@@ -47,3 +68,14 @@ const iconStyle = css`
   color: ${Colors.black};
   margin-right: 12px;
 `
+
+const successBtn = (isDone: boolean) => css`
+  position: absolute;
+  display: sticky;
+  right: 10px;
+  background-color: transparent; 
+  color: ${isDone ? Colors.lightBlue : Colors.grey};  
+  font-size: ${FontSize.md};
+  border: none;
+  cursor: ${isDone ? 'pointer' : 'default'};  
+`;

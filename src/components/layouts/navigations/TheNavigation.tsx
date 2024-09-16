@@ -9,15 +9,12 @@ import { css } from '@emotion/react'
 import { Colors, Width, FontSize } from '@/styles/Theme'
 import NavigationItem from './NavigationItem'
 import { useLocation, useNavigate } from 'react-router-dom'
-import React from 'react'
 
 const Navigation = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const [path, setPath] = React.useState(location.pathname)
 
   const handleNavigation = (path: string) => {
-    setPath(path)
     navigate(path)
   }
 
@@ -28,34 +25,37 @@ const Navigation = () => {
           path="/"
           Icon={CgHome}
           label="Home"
-          isActive={path === '/'}
+          isActive={location.pathname === '/'}
           onClick={() => handleNavigation('/')}
         />
         <NavigationItem
           path="/my-playlist"
           Icon={CgStack}
           label="Playlist"
-          isActive={path === '/my-playlist'}
+          isActive={location.pathname === '/my-playlist'}
           onClick={() => handleNavigation('/my-playlist')}
         />
         <div css={addButtonStyle}>
           <NavigationItem
             path="/add-playlist"
             Icon={CgMathPlus}
+            isActive={location.pathname === '/add-playlist'}
+            onClick={() => handleNavigation('/add-playlist')}
+            blockActiveColor={true}
           />
         </div>
         <NavigationItem
           path="/bookmark"
           Icon={CgBookmark}
           label="Bookmark"
-          isActive={path === '/bookmark'}
+          isActive={location.pathname === '/bookmark'}
           onClick={() => handleNavigation('/bookmark')}
         />
         <NavigationItem
           path="/profile"
           Icon={CgProfile}
           label="Profile"
-          isActive={path === '/profile'}
+          isActive={location.pathname === '/profile'}
           onClick={() => handleNavigation('/profile')}
         />
       </ul>
