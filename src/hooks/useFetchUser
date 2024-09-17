@@ -1,0 +1,26 @@
+import { useEffect, useState } from 'react'
+import { getFirestore, doc, getDoc } from 'firebase/firestore'
+
+export function useFetchUser(userId: string | undefined) {
+  const [userData, setUserData] = useState<any>(null)
+  const db = getFirestore()
+
+  useEffect(() => {
+    if (!userId) return
+
+    const fetchUserData = async () => {
+      const userRef = doc(db, 'users', userId)
+      const userSnap = await getDoc(userRef)
+
+      if (userSnap.exists()) {
+        setUserData(userSnap.data())
+      } else {
+        console.log('No such user!')
+      }
+    }
+
+    fetchUserData()
+  }, [userId])
+
+  return userData
+}

@@ -7,8 +7,6 @@ import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useFetchComments } from '@/hooks/useFetchComments'
 import { getAuth } from 'firebase/auth'
-import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
-import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 
@@ -43,8 +41,6 @@ export default function Playlist({
     }
   }, [comments])
 
-  const { mutate: updatePlaylist } = useUpdatePlaylist()
-  const { mutate: deletePlaylist } = useDeletePlaylist()
   // playlist가 정의된 경우에만 useToggleBookmark를 호출하도록 수정
   const { toggleBookmark, isBookmarked } = playlist
     ? useToggleBookmark(playlist.id)
@@ -54,15 +50,17 @@ export default function Playlist({
   const [isToastVisible, setIsToastVisible] = useState(false)
 
   const handleBookmark = () => {
-    toggleBookmark()
+    if (playlist) {
+      toggleBookmark()
 
-    if (!isBookmarked) {
-      setToastMessage('북마크가 추가되었습니다.')
-    } else {
-      setToastMessage('북마크가 제거되었습니다.')
+      if (!isBookmarked) {
+        setToastMessage('북마크가 추가되었습니다.')
+      } else {
+        setToastMessage('북마크가 제거되었습니다.')
+      }
+
+      setIsToastVisible(true)
     }
-
-    setIsToastVisible(true)
   }
 
   const hideToast = () => {
