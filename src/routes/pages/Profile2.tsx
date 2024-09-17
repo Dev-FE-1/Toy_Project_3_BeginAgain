@@ -19,22 +19,22 @@ const profileStyle = css`
   border-radius: 50%;
 `
 const textStyle = css`
-  margin-top: 3rem;
-  border-bottom: 2px solid #ebebeb;
-  font-size: ${FontSize.md};
-  height: 55px;
-  width: 100%;
-  padding-left: 20px;
+margin-top: 3rem;
+border-bottom: 2px solid #ebebeb;
+font-size: ${FontSize.md};
+height: 55px;
+width: 100%;
+padding-left: 20px;
 `
 const titleText = css`
-  color: ${Colors.black};
+  Color: ${Colors.black};
   margin-bottom: 10px;
 `
 const inputText = css`
   color: ${Colors.grey};
 `
 const logoutBtn = css`
-  margin-top: 12em;
+margin-top: 12em;
 `
 
 export default function Profile() {
@@ -50,7 +50,7 @@ export default function Profile() {
 
   async function logOut() {
     await signOut(auth)
-    navigate('/SignIn')
+    navigate('/login')
   }
   return (
     <>
