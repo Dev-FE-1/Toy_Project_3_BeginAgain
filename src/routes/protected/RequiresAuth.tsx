@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Outlet, Navigate } from 'react-router-dom'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import type { User } from 'firebase/auth'
 
 export default function RequiresAuth() {
@@ -10,7 +11,6 @@ export default function RequiresAuth() {
 
   useEffect(() => {
     setIsLoading(true)
-    const auth = getAuth()
     onAuthStateChanged(auth, user => {
       setUser(user)
       setIsLoading(false)

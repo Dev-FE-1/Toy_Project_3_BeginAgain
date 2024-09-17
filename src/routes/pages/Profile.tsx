@@ -1,6 +1,7 @@
 import LongButton from '@/components/common/LongButton'
 import { css } from '@emotion/react'
-import { getAuth, signOut } from 'firebase/auth'
+import { signOut } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import { useNavigate } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import { useEffect } from 'react'
@@ -18,13 +19,12 @@ export default function Profile() {
     setTitle('Profile')
   }, [setTitle])
 
-  const auth = getAuth()
   const user = auth.currentUser
   const navigate = useNavigate()
 
   async function logOut() {
     await signOut(auth)
-    navigate('/login')
+    navigate('/SignIn')
   }
   return (
     <>

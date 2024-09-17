@@ -4,14 +4,13 @@ import Playlist from '@/components/playlist/Playlist'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useHeaderStore } from '@/stores/header'
 import { useEffect } from 'react'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import { css } from '@emotion/react'
 import { useBookmarkStore } from '@/stores/useBookmark'
 
 const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { data: playlists } = useFetchPlaylists()
-  const auth = getAuth()
   const user = auth.currentUser
 
   const bookmarks = useBookmarkStore(state => state.bookmarks)
