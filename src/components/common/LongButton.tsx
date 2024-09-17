@@ -38,6 +38,7 @@ const longButtonStyle = css`
   border: none;
   font-size: ${FontSize.md};
   color: ${Colors.white};
+  cursor: pointer;
 `
 
 export default LongButton

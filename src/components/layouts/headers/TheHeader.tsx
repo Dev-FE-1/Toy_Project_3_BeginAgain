@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Colors, Width, FontSize } from '@/styles/Theme'
+import { Colors, Width, FontSize} from '@/styles/Theme'
 import { CgChevronLeft } from 'react-icons/cg'
 import { useHeaderStore } from '@/stores/header'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -11,6 +11,7 @@ export default function TheHeader() {
   const location = useLocation()
   const { isDone, savePlaylist } = useAddPlaylistStore()
   const isAddPlaylist = location.pathname === '/add-playlist'
+  const isProfile = location.pathname === '/profile'
 
   const handleComplete = async () => {
     try {
@@ -30,6 +31,7 @@ export default function TheHeader() {
         />
       )}
       <h1 css={titleStyle}>{title}</h1>
+
       {isAddPlaylist && (
         <button
           css={successBtn(isDone)} 
@@ -39,6 +41,9 @@ export default function TheHeader() {
           완료
         </button>
       )}
+
+      {isProfile && (<button css={editBtn}>수정</button>)}
+
     </header>
   )
 }
@@ -78,4 +83,15 @@ const successBtn = (isDone: boolean) => css`
   font-size: ${FontSize.md};
   border: none;
   cursor: ${isDone ? 'pointer' : 'default'};  
+`;
+
+const editBtn = css`
+  position: absolute;
+  display: sticky;
+  right: 10px;
+  background-color: transparent; 
+  color: ${Colors.lightBlue};  
+  font-size: ${FontSize.md};
+  border: none; 
+  cursor: pointer;
 `;
