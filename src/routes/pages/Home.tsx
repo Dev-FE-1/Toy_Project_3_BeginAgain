@@ -53,13 +53,15 @@ export default function Home() {
     </>
   )
 }
-// 좋아요!
+
+// // 좋아요!
 // await addDoc(coll, {
 //   playlistId: '', // 참조(ref)
 //   userId: user?.uid, // 참조
 //   createdAt: new Date().toISOString()
 // })
-// 댓글
+
+// //댓글
 // await addDoc(coll, {
 //   playlistId: '', // 참조(ref)
 //   userId: user?.uid, // 참조
