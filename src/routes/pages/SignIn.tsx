@@ -8,7 +8,6 @@ import LongButton from '@/components/common/LongButton'
 import Input from '@/components/common/Input'
 import firebaseApp from '@/api/firebaseApp'
 import { Colors } from '@/styles/Theme'
-import { create } from 'zustand'
 
 const containerStyle = css`
   height: 100vh;
