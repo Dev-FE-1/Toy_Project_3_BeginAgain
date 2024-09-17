@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useFetchComments } from '@/hooks/useFetchComments'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 
@@ -30,7 +30,6 @@ export default function Playlist({
   const [isHeartFilled, setIsHeartFilled] = useState(false)
   const [commentCount, setCommentCount] = useState(0)
   const navigate = useNavigate()
-  const auth = getAuth()
   const user = auth.currentUser
 
   const { data: comments } = useFetchComments(playlist?.id || '')

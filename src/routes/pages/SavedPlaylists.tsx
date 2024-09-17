@@ -2,7 +2,7 @@ import { css } from '@emotion/react'
 import { FontSize } from '@/styles/Theme'
 import { Colors } from '@/styles/Theme'
 import { useNavigate } from 'react-router-dom'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import { useState } from 'react'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
@@ -30,7 +30,6 @@ export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isToastVisible, setIsToastVisible] = useState(false)
-  const auth = getAuth()
   const user = auth.currentUser
   const { mutate: updatePlayList } = useUpdatePlaylist()
   const { mutate: deletePlayList } = useDeletePlaylist()
