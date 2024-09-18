@@ -1,7 +1,7 @@
 import { CgHeart, CgComment } from 'react-icons/cg'
 import { VscHeartFilled } from 'react-icons/vsc'
 import { css } from '@emotion/react'
-import theme from '@/styles/theme'
+import Theme from '@/styles/theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
@@ -9,6 +9,7 @@ import { useFetchComments } from '@/hooks/useFetchComments'
 import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
+import { useFetchBookmarks } from '@/hooks/useFetchBookmark'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 
 interface Playlist {
@@ -41,15 +42,26 @@ export default function Playlist({
     }
   }, [comments])
 
-  const { toggleBookmark, isBookmarked } = useToggleBookmark(playlist?.id)
+  // const { mutate: createComment } = useCreateComment()
+  // const { mutate: toggleBookmark, isBookmarked } = useToggleBookmark(playlist?.id || '')
+  const { mutate: toggleBookmark } = useToggleBookmark(playlist?.id || '')
+  const { data: BookmarkedData } = useFetchBookmarks(playlist?.id || '')
+  const [isBookmarked, setIsBookmarked] = useState(false)
 
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isToastVisible, setIsToastVisible] = useState(false)
 
-  const handleBookmark = () => {
-    if (playlist) {
-      toggleBookmark()
+  useEffect(() => {
+    if (BookmarkedData) {
+      setIsBookmarked(BookmarkedData.length > 0)
+    } else {
+      setIsBookmarked(false)
+    }
+  }, [BookmarkedData])
 
+  const handleBookmark = () => {
+    if (playlist && BookmarkedData !== undefined) {
+      toggleBookmark(isBookmarked)
       if (!isBookmarked) {
         setToastMessage('북마크가 추가되었습니다.')
       } else {
@@ -167,7 +179,7 @@ const headerStyle = css`
 
 const headerTextStyle = css`
   margin-left: 10px;
-  color: ${theme.colors.black};
+  color: ${Theme.colors.black};
 `
 
 const videoIdStyle = css`
@@ -190,13 +202,13 @@ const profileImageStyle = css`
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  background-color: ${theme.colors.lightGrey};
+  background-color: ${Theme.colors.lightGrey};
 `
 
 const emptyHeartIconStyle = css`
   font-size: 24px;
   margin-right: 30px;
-  color: ${theme.colors.charcoalGrey};
+  color: ${Theme.colors.charcoalGrey};
   cursor: pointer;
   transition:
     color 0.9s ease,
@@ -206,7 +218,7 @@ const emptyHeartIconStyle = css`
 const filledHeartIconStyle = css`
   font-size: 24px;
   margin-right: 30px;
-  color: ${theme.colors.red};
+  color: ${Theme.colors.red};
   cursor: pointer;
   transition:
     color 0.9s ease,
@@ -216,7 +228,7 @@ const filledHeartIconStyle = css`
 const commentContainerStyle = css`
   display: flex;
   align-items: center;
-  color: ${theme.colors.charcoalGrey};
+  color: ${Theme.colors.charcoalGrey};
   cursor: pointer;
   margin-right: 30px;
 `
@@ -227,21 +239,21 @@ const commentIconStyle = css`
 `
 
 const commentCountStyle = css`
-  font-size: ${theme.fontSize.xl};
+  font-size: ${Theme.fontSize.xl};
 `
 
 const bookmarkIconStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${Theme.fontSize.xl};
   margin-left: auto;
   margin-right: 20px;
-  color: ${theme.colors.charcoalGrey};
+  color: ${Theme.colors.charcoalGrey};
   cursor: pointer;
 `
 const fillbookmarkIconStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${Theme.fontSize.xl};
   margin-left: auto;
   margin-right: 20px;
-  color: ${Colors.charcoalGrey};
+  color: ${Theme.colors.charcoalGrey};
   cursor: pointer;
   transition:
     color 0.9s ease,
@@ -254,13 +266,13 @@ const disabledBookmarkStyle = css`
 `
 
 const titleStyle = css`
-  font-size: ${theme.fontSize.lg};
-  color: ${theme.colors.black};
+  font-size: ${Theme.fontSize.lg};
+  color: ${Theme.colors.black};
   margin: 0;
   margin-bottom: 10px;
 `
 
 const timeRecordStyle = css`
-  color: ${theme.colors.darkGrey};
-  font-size: ${theme.fontSize.sm};
+  color: ${Theme.colors.darkGrey};
+  font-size: ${Theme.fontSize.sm};
 `

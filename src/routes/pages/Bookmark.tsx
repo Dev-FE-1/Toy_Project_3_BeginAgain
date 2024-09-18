@@ -11,7 +11,7 @@ import { CgFormatJustify } from 'react-icons/cg'
 import { useNavigate } from 'react-router-dom'
 import Modal from '@/components/common/TheModal'
 import Toast from '@/components/common/Toast'
-import { FontSize, Colors } from '@/styles/Theme'
+import Theme from '@/styles/theme'
 
 function extractVideoId(url?: string) {
   if (!url) {
@@ -119,6 +119,7 @@ const Bookmark = () => {
       )}
       {isToastVisible && (
         <Toast
+          // message="북마크가 해제되었습니다."
           message="북마크가 해제되었습니다."
           isVisible={isToastVisible}
           onHide={() => setIsToastVisible(false)}
@@ -170,17 +171,17 @@ const titleStyle = css`
 `
 
 const bookmarkIconStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${Theme.fontSize.xl};
   margin-right: 10px;
   cursor: pointer;
-  color: ${Colors.charcoalGrey};
+  color: ${Theme.colors.charcoalGrey};
   transition: color 0.3s ease;
 `
 
 const hamburgerIconStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${Theme.fontSize.xl};
   cursor: pointer;
-  color: ${Colors.charcoalGrey};
+  color: ${Theme.colors.charcoalGrey};
   transition: color 0.3s ease;
 `
 
