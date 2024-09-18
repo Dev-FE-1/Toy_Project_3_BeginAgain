@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
 import { useFetchComments } from '@/hooks/useFetchComments'
@@ -12,111 +12,115 @@ import { auth } from '@/api/firebaseApp'
 
 const PlaylistDetail = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
-
-  useEffect(() => {
-    setTitle('Playlist Detail')
-  }, [setTitle])
-
   const { id } = useParams()
-  const { data, isLoading } = useFetchPlaylist(id as string)
+  const location = useLocation()
+  const { playlist } = location.state || {}
+  const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
   const { data: comments } = useFetchComments(id as string)
   const [comment, setComment] = useState('')
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
 
   const user = auth.currentUser
-
   const { mutate: createComment } = useCreateComment()
   const { mutate: deleteComment } = useDeleteComment()
 
-  async function addComment() {
-    createComment({
-      comment,
-      playlistId: id as string
-    })
+  useEffect(() => {
+    setTitle('Playlist Detail')
+  }, [setTitle])
+
+  if (isLoading) {
+    return <div>로딩 중...</div>
   }
+
+  if (!playlistData) {
+    return <div>플레이리스트 데이터를 가져오지 못했습니다.</div>
+  }
+
+  const addComment = () => {
+    createComment({ comment, playlistId: id as string })
+    setComment('')
+  }
+
+  const videoUrl = playlistData.urls[0]
 
   return (
     <div css={playlistDetailContainer}>
-      {isLoading && <div>비디오를 불러오는 중...</div>}
-
       <div css={sectionOneContainer}>
-        {data?.playlist ? (
-          <video
-            controls
-            width="100%">
-            <source
-              src={data.playlist}
-              type="video/mp4"
-            />
-          </video>
+        {videoUrl ? (
+          <iframe
+            width="100%"
+            height="240px"
+            src={videoUrl.replace('watch?v=', 'embed/')}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title="YouTube video"></iframe>
         ) : (
           <p>비디오가 없습니다.</p>
         )}
       </div>
 
-      {data && (
-        <>
-          <div css={sectionTwoContainer}>
-            <h2 css={titleStyle}>{data.title}</h2>
-            <button
-              onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}>
-              {isDescriptionVisible ? <CgChevronUp /> : <CgChevronDown />}
-            </button>
-            {isDescriptionVisible && (
-              <p css={descriptionStyle}>{data.description}</p>
-            )}
-          </div>
+      <div css={sectionTwoContainer}>
+        <h2 css={titleStyle}>{playlistData.title}</h2>
+        <div css={buttonContainerStyle}>
+          <button
+            css={buttonStyle}
+            onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}>
+            {isDescriptionVisible ? <CgChevronUp /> : <CgChevronDown />}
+          </button>
+        </div>
+        {isDescriptionVisible && (
+          <p css={descriptionStyle}>{playlistData.description}</p>
+        )}
+      </div>
 
-          <div css={sectionThreeContainer}>
-            {user && (
-              <>
-                <img
-                  src={user.photoURL || ''}
-                  alt={user.displayName || 'User'}
-                  width="50"
-                  height="50"
-                  css={profileImageStyle}
-                />
-                <span>{user.displayName}</span>
-              </>
-            )}
-          </div>
+      <div css={sectionThreeContainer}>
+        {user && (
+          <>
+            <img
+              src={user.photoURL || ''}
+              alt={user.displayName || 'User'}
+              width="50"
+              height="50"
+              css={profileImageStyle}
+            />
+            <span>{user.displayName}</span>
+          </>
+        )}
+      </div>
 
-          <div css={sectionFourContainer}>
-            <div className="comment">
-              <p>댓글</p>
-              <input
-                type="text"
-                value={comment}
-                onChange={e => setComment(e.target.value)}
+      <div css={sectionFourContainer}>
+        <div className="comment">
+          <p>댓글</p>
+          <input
+            type="text"
+            value={comment}
+            onChange={e => setComment(e.target.value)}
+          />
+          <button onClick={addComment}>댓글 추가</button>
+        </div>
+
+        {comments &&
+          comments.map(comment => (
+            <div key={comment.id}>
+              <img
+                src={comment.user.photoURL as string}
+                alt={comment.user.displayName as string}
+                width="20"
               />
-              <button onClick={addComment}>댓글 추가</button>
+              <span>{comment.user.displayName}</span>
+              <span>{comment.content}</span>
+              <button
+                onClick={() =>
+                  deleteComment({
+                    commentId: comment.id,
+                    playlistId: id as string
+                  })
+                }>
+                삭제
+              </button>
             </div>
-
-            {comments &&
-              comments.map(comment => (
-                <div key={comment.id}>
-                  <img
-                    src={comment.user.photoURL as string}
-                    alt={comment.user.displayName as string}
-                    width="20"
-                  />
-                  <span>{comment.user.displayName}</span>
-                  <span>{comment.content}</span>
-                  <button
-                    onClick={() =>
-                      deleteComment({
-                        commentId: comment.id,
-                        playlistId: id as string
-                      })
-                    }>
-                    삭제
-                  </button>
-                </div>
-              ))}
-          </div>
-        </>
-      )}
+          ))}
+      </div>
     </div>
   )
 }
@@ -132,9 +136,7 @@ const playlistDetailContainer = css`
 `
 
 const sectionOneContainer = css`
-  margin-bottom: 20px;
-  video {
-    border-radius: 10px;
+  iframe {
   }
 `
 
@@ -149,9 +151,30 @@ const titleStyle = css`
   margin-bottom: 10px;
   padding: 20px;
 `
+const buttonStyle = css`
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: ${theme.colors.charcoalGrey};
+  padding: 0;
+  margin: 0;
+  transition: color 0.3s ease;
+  &:hover {
+    color: ${theme.colors.grey};
+  }
+`
+
+const buttonContainerStyle = css`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 10px;
+`
 
 const descriptionStyle = css`
   font-size: ${theme.fontSize.md};
+  padding: 20px;
 `
 
 const sectionThreeContainer = css`
@@ -159,8 +182,9 @@ const sectionThreeContainer = css`
 `
 
 const profileImageStyle = css`
-  width: 50px;
-  height: 50px;
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
   border-radius: 50%;
   object-fit: cover;
 `
@@ -168,11 +192,8 @@ const profileImageStyle = css`
 const sectionFourContainer = css`
   font-size: ${theme.fontSize.md};
   color: ${theme.colors.black};
-  margin-bottom: 10px;
+  margin: 10px 0;
   background-color: ${theme.colors.lightGrey};
   border-radius: 8px;
-  margin-top: 10px;
-  padding: 20px 20px;
-  margin-left: 20px;
-  margin-right: 20px;
+  padding: 20px;
 `
