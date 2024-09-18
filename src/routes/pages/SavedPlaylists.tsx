@@ -54,7 +54,7 @@ export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
       <div css={playlistStyle}>
         <div css={videoIdBackgroundStyle}></div>
         <div
-          onClick={() => navigate(`/playlist-details/${playlist.id}`)}
+          onClick={() => navigate(`/saved-playlists`)}
           css={videoIdImageStyle}>
           <img
             css={videoIdStyle}
