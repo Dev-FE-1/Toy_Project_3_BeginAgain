@@ -1,6 +1,5 @@
 import { css } from '@emotion/react'
-import { FontSize } from '@/styles/Theme'
-import { Colors } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import { useNavigate } from 'react-router-dom'
 import { auth } from '@/api/firebaseApp'
 import { useState } from 'react'
@@ -54,7 +53,7 @@ export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
       <div css={playlistStyle}>
         <div css={videoIdBackgroundStyle}></div>
         <div
-          onClick={() => navigate(`/playlist-details/${playlist.id}`)}
+          onClick={() => navigate(`/saved-playlists`)}
           css={videoIdImageStyle}>
           <img
             css={videoIdStyle}
@@ -105,7 +104,7 @@ export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
 }
 
 const infoLeftStyle = css`
-  font-size: ${FontSize.md};
+  font-size: ${theme.fontSize.md};
   margin-bottom: 10px;
   font-weight: 500;
 `
@@ -127,7 +126,7 @@ const videoIdStyle = css`
 
 const videoIdBackgroundStyle = css`
   border-radius: 12px 12px 0px 0px;
-  background: ${Colors.lightGrey};
+  background: ${theme.colors.lightGrey};
   height: 9px;
   width: 95%;
   margin: 0 10px;
@@ -138,14 +137,14 @@ const videoIdImageStyle = css`
 `
 
 const titleStyle = css`
-  font-size: ${FontSize.lg};
+  font-size: ${theme.fontSize.lg};
   margin: 0;
   margin-bottom: 10px;
   font-weight: 500;
 `
 const timeRecordStyle = css`
-  color: ${Colors.darkGrey};
-  font-size: ${FontSize.sm};
+  color: ${theme.colors.darkGrey};
+  font-size: ${theme.fontSize.sm};
   text-align: right;
 `
 
@@ -155,8 +154,8 @@ const playlistInfoLayoutStyle = css`
 `
 
 const buttonStyle = css`
-  font-size: ${FontSize.xxl};
-  color: ${Colors.charcoalGrey};
+  font-size: ${theme.fontSize.xxl};
+  color: ${theme.colors.charcoalGrey};
   display: flex;
   gap: 10px;
   align-items: center;

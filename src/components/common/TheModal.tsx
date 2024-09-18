@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Colors, FontSize, FontWeight } from '@/styles/Theme'
+import theme from '@/styles/theme'
 
 type ModalProps = {
   isOpen: boolean
@@ -14,15 +14,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onDelete }) => {
       <div css={modalStyle}>
         <p
           css={css`
-            font-size: ${FontSize.lg};
-            font-weight: ${FontWeight.semiBold};
+            font-size: ${theme.fontSize.lg};
+            font-weight: ${theme.fontWeight.semiBold};
           `}>
           선택한 컨텐츠를 삭제하시겠습니까?
         </p>
         <p
           css={css`
-            font-size: ${FontSize.md};
-            font-weight: ${FontWeight.thin};
+            font-size: ${theme.fontSize.md};
+            font-weight: ${theme.fontWeight.thin};
             padding-top: 10px;
           `}>
           삭제된 컨텐츠는 복구할 수 없습니다.
@@ -59,14 +59,14 @@ const overlayStyle = css`
 `
 
 const modalStyle = css`
-  background-color: ${Colors.white};
+  background-color: ${theme.colors.white};
   padding: 30px;
   border-radius: 5px;
   width: 356px;
   height: 160px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
-  color: ${Colors.black};
+  color: ${theme.colors.black};
 `
 
 const buttonContainerStyle = css`
@@ -78,10 +78,10 @@ const buttonContainerStyle = css`
 const closeButtonStyle = css`
   height: 35px;
   width: 160px;
-  background-color: ${Colors.lightGrey};
+  background-color: ${theme.colors.lightGrey};
   border: none;
-  font-size: ${FontSize.md};
-  font-weight: ${FontWeight.semiBold};
+  font-size: ${theme.fontSize.md};
+  font-weight: ${theme.fontWeight.semiBold};
   cursor: pointer;
   border-radius: 3px;
 `
@@ -90,11 +90,11 @@ const deleteButtonStyle = css`
   height: 35px;
   width: 160px;
   margin-left: 8px;
-  background-color: ${Colors.lightBlue};
+  background-color: ${theme.colors.lightBlue};
   border: none;
-  color: ${Colors.white};
-  font-size: ${FontSize.md};
-  font-weight: ${FontWeight.semiBold};
+  color: ${theme.colors.white};
+  font-size: ${theme.fontSize.md};
+  font-weight: ${theme.fontWeight.semiBold};
   cursor: pointer;
   border-radius: 3px;
 `

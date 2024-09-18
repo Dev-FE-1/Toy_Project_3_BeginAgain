@@ -6,7 +6,7 @@ import {
   CgProfile
 } from 'react-icons/cg'
 import { css } from '@emotion/react'
-import { Colors, Width, FontSize } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import NavigationItem from './NavigationItem'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -25,37 +25,30 @@ const Navigation = () => {
           path="/"
           Icon={CgHome}
           label="Home"
-          isActive={location.pathname === '/'}
           onClick={() => handleNavigation('/')}
         />
         <NavigationItem
           path="/my-playlist"
           Icon={CgStack}
           label="Playlist"
-          isActive={location.pathname === '/my-playlist'}
           onClick={() => handleNavigation('/my-playlist')}
         />
-        <div css={addButtonStyle}>
-          <NavigationItem
-            path="/add-playlist"
-            Icon={CgMathPlus}
-            isActive={location.pathname === '/add-playlist'}
-            onClick={() => handleNavigation('/add-playlist')}
-            blockActiveColor={true}
-          />
-        </div>
+        <NavigationItem
+          path="/add-playlist"
+          Icon={CgMathPlus}
+          onClick={() => handleNavigation('/add-playlist')}
+          customStyle={addButtonStyle}
+        />
         <NavigationItem
           path="/bookmark"
           Icon={CgBookmark}
           label="Bookmark"
-          isActive={location.pathname === '/bookmark'}
           onClick={() => handleNavigation('/bookmark')}
         />
         <NavigationItem
           path="/profile"
           Icon={CgProfile}
           label="Profile"
-          isActive={location.pathname === '/profile'}
           onClick={() => handleNavigation('/profile')}
         />
       </ul>
@@ -69,23 +62,37 @@ const navbar = css`
   align-items: center;
   height: 72px;
   position: fixed;
-  width: ${Width.max};
+  width: ${theme.width.max};
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  background-color: ${Colors.black};
-  color: ${Colors.lightGrey};
+  background-color: ${theme.colors.black};
+  color: ${theme.colors.lightGrey};
   z-index: 2;
   border-radius: 45px 45px 0 0;
 `
 
 const addButtonStyle = css`
-  background-color: ${Colors.paleBlue};
+  background-color: ${theme.colors.paleBlue};
   border-radius: 50%;
-  padding: 25px;
+  width: 72px;
+  height: 72px;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   top: -14px;
-  font-size: ${FontSize.xxl};
+  div {
+    svg {
+      font-size: 40px;
+      stroke-width: 0;
+    }
+  }
+  &.active {
+    div {
+      color: ${theme.colors.black};
+    }
+  }
 `
 
 export default Navigation

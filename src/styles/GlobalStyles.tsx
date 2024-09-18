@@ -1,11 +1,11 @@
 import { Global, css } from '@emotion/react'
-import { Colors } from '@/styles/Theme'
-import { FontSize, FontWeight } from '@/styles/Theme'
+import theme from '@/styles/theme'
+import fontStyles from '@/styles/globalFonts'
 
 const GlobalStyles = () => (
   <Global
     styles={css`
-      @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+      ${fontStyles}
       // css 리셋
       html,
       body,
@@ -138,6 +138,13 @@ const GlobalStyles = () => (
         border-collapse: collapse;
         border-spacing: 0;
       }
+      // a링크 스타일 초기화
+      a:link,
+      a:visited,
+      a:hover,
+      a:focus {
+        text-decoration: none;
+      }
       // 모든 요소의 box-sizing을 border-box로 설정
       // 패딩과 테두리를 포함한 크기 계산을 보장하고, 모든 요소의 기본 여백을 제거
       * {
@@ -164,10 +171,10 @@ const GlobalStyles = () => (
           'Segoe UI Emoji',
           'Segoe UI Symbol',
           sans-serif;
-        font-size: ${FontSize.md};
-        font-weight: ${FontWeight.medium};
-        background-color: ${Colors.lightGrey};
-        color: ${Colors.black};
+        font-size: ${theme.fontSize.md};
+        font-weight: ${theme.fontWeight.medium};
+        background-color: ${theme.colors.lightGrey};
+        color: ${theme.colors.black};
       }
       html {
         font-size: 16px;

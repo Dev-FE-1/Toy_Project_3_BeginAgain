@@ -1,7 +1,7 @@
 import { CgHeart, CgComment } from 'react-icons/cg'
 import { VscHeartFilled } from 'react-icons/vsc'
 import { css } from '@emotion/react'
-import { FontSize, Colors } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
@@ -167,7 +167,7 @@ const headerStyle = css`
 
 const headerTextStyle = css`
   margin-left: 10px;
-  color: ${Colors.black};
+  color: ${theme.colors.black};
 `
 
 const videoIdStyle = css`
@@ -190,13 +190,13 @@ const profileImageStyle = css`
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  background-color: ${Colors.lightGrey};
+  background-color: ${theme.colors.lightGrey};
 `
 
 const emptyHeartIconStyle = css`
   font-size: 24px;
   margin-right: 30px;
-  color: ${Colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   cursor: pointer;
   transition:
     color 0.9s ease,
@@ -206,7 +206,7 @@ const emptyHeartIconStyle = css`
 const filledHeartIconStyle = css`
   font-size: 24px;
   margin-right: 30px;
-  color: ${Colors.red};
+  color: ${theme.colors.red};
   cursor: pointer;
   transition:
     color 0.9s ease,
@@ -216,7 +216,7 @@ const filledHeartIconStyle = css`
 const commentContainerStyle = css`
   display: flex;
   align-items: center;
-  color: ${Colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   cursor: pointer;
   margin-right: 30px;
 `
@@ -227,14 +227,14 @@ const commentIconStyle = css`
 `
 
 const commentCountStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${theme.fontSize.xl};
 `
 
 const bookmarkIconStyle = css`
   font-size: ${FontSize.xl};
   margin-left: auto;
   margin-right: 20px;
-  color: ${Colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   cursor: pointer;
 `
 const fillbookmarkIconStyle = css`
@@ -254,13 +254,13 @@ const disabledBookmarkStyle = css`
 `
 
 const titleStyle = css`
-  font-size: ${FontSize.lg};
-  color: ${Colors.black};
+  font-size: ${theme.fontSize.lg};
+  color: ${theme.colors.black};
   margin: 0;
   margin-bottom: 10px;
 `
 
 const timeRecordStyle = css`
-  color: ${Colors.darkGrey};
-  font-size: ${FontSize.sm};
+  color: ${theme.colors.darkGrey};
+  font-size: ${theme.fontSize.sm};
 `

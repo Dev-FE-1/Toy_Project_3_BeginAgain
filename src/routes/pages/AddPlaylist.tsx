@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import Category from '@/components/common/Category'
 import { css } from '@emotion/react'
-import { Colors, FontSize, FontWeight } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import { IoIosAddCircleOutline, IoIosRemove } from 'react-icons/io'
 import { useHeaderStore } from '@/stores/header'
 import { useAddPlaylistStore } from '@/stores/addPlaylist'
 
 const AddPlaylist = () => {
-  const setTitle = useHeaderStore((state) => state.setTitle)
+  const setTitle = useHeaderStore(state => state.setTitle)
   const { setIsDone, setPlaylistData } = useAddPlaylistStore()
 
   useEffect(() => {
@@ -24,33 +24,42 @@ const AddPlaylist = () => {
 
   useEffect(() => {
     if (videoUrls.length > 1 && videoTitle) {
-      setIsDone(true); 
-      setPlaylistData(videoUrls, videoTitle, videoDescription, isPublic); 
+      setIsDone(true)
+      setPlaylistData(videoUrls, videoTitle, videoDescription, isPublic)
     } else {
       setIsDone(false)
     }
-  }, [videoUrls, videoTitle, videoDescription, isPublic, setIsDone, setPlaylistData]);
+  }, [
+    videoUrls,
+    videoTitle,
+    videoDescription,
+    isPublic,
+    setIsDone,
+    setPlaylistData
+  ])
 
   const addVideoUrl = () => {
     if (currentVideoUrl && !videoUrls.includes(currentVideoUrl)) {
-      setVideoUrls([...videoUrls, currentVideoUrl]);
+      setVideoUrls([...videoUrls, currentVideoUrl])
       setCurrentVideoUrl('')
     }
-  };
+  }
 
   const removeVideoUrl = (index: number) => {
-    setVideoUrls(videoUrls.filter((_, i) => i !== index));
-  };
+    setVideoUrls(videoUrls.filter((_, i) => i !== index))
+  }
 
   const onTitleInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVideoTitle(e.target.value)
     setTitleInputCount(e.target.value.length)
-  };
+  }
 
-  const onDescriptionInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onDescriptionInputHandler = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setVideoDescription(e.target.value)
     setDescriptionInputCount(e.target.value.length)
-  };
+  }
 
   return (
     <>
@@ -62,18 +71,27 @@ const AddPlaylist = () => {
           type="text"
           placeholder="동영상 주소를 입력해주세요."
           value={currentVideoUrl}
-          onChange={(e) => setCurrentVideoUrl(e.target.value)}
+          onChange={e => setCurrentVideoUrl(e.target.value)}
           css={LinkInputContainer}
         />
-        <button css={AddButton} onClick={addVideoUrl}>
+        <button
+          css={AddButton}
+          onClick={addVideoUrl}>
           <IoIosAddCircleOutline size="20" />
         </button>
         <ul css={DeleteButtonContainer}>
           {videoUrls.map((url, index) => (
-            <li key={index} css={UrlStyle}>
+            <li
+              key={index}
+              css={UrlStyle}>
               {url}
-              <button onClick={() => removeVideoUrl(index)} css={DeleteButton}>
-                <IoIosRemove size="15" color="#D32F2F" />
+              <button
+                onClick={() => removeVideoUrl(index)}
+                css={DeleteButton}>
+                <IoIosRemove
+                  size="15"
+                  color="#D32F2F"
+                />
               </button>
             </li>
           ))}
@@ -88,7 +106,7 @@ const AddPlaylist = () => {
           type="text"
           placeholder="제목을 입력해주세요."
           value={videoTitle}
-          onChange={(e) => {
+          onChange={e => {
             setVideoTitle(e.target.value)
             onTitleInputHandler(e)
           }}
@@ -107,7 +125,7 @@ const AddPlaylist = () => {
           type="text"
           placeholder="설명을 입력해주세요."
           value={videoDescription}
-          onChange={(e) => {
+          onChange={e => {
             setVideoDescription(e.target.value)
             onDescriptionInputHandler(e)
           }}
@@ -161,7 +179,7 @@ const requiredTitleStyle = css`
     color: red;
     margin-left: 4px;
   }
-`;
+`
 
 const commonButtonStyle = css`
   z-index: 1;
@@ -169,15 +187,15 @@ const commonButtonStyle = css`
   border: none;
   background-color: transparent;
   cursor: pointer;
-`;
+`
 
 const commonInputStyle = css`
   border: none;
   border-bottom: 2px solid #ebebeb;
   outline: none;
-  font-size: ${FontSize.md};
-  font-weight: ${FontWeight.medium};
-  color: ${Colors.black};
+  font-size: ${theme.fontSize.md};
+  font-weight: ${theme.fontWeight.medium};
+  color: ${theme.colors.black};
   height: 30px;
   width: 100%;
   letter-spacing: -0.2px;
@@ -185,35 +203,35 @@ const commonInputStyle = css`
   padding-right: 40px;
   box-sizing: border-box;
   margin-bottom: 35px;
-`;
+`
 
 const DivContainer = css`
   position: relative;
   display: inline-block;
   width: 100%;
   transform: rotate(0);
-`;
+`
 
 const TitleContainer = css`
-  font-size: ${FontSize.md};
+  font-size: ${theme.fontSize.md};
   display: flex;
   align-items: center;
   margin-bottom: 10px;
   margin-left: 20px;
-`;
+`
 
 const LinkInputContainer = css`
   ${commonInputStyle}
   margin-bottom: 10px;
-`;
+`
 
 const TitleInputContainer = css`
   ${commonInputStyle}
-`;
+`
 
 const InputContainer = css`
   ${commonInputStyle}
-`;
+`
 
 const SpanContainer = css`
   display: inline-block;
@@ -222,16 +240,16 @@ const SpanContainer = css`
   right: 0.5rem;
   transform: translateY(50%);
   background-color: transparent;
-  color: ${Colors.grey};
-  font-size: ${FontSize.sm};
-`;
+  color: ${theme.colors.grey};
+  font-size: ${theme.fontSize.sm};
+`
 
 const AddButton = css`
   ${commonButtonStyle}
   top: 15px;
   right: 5px;
   transform: translateY(50%);
-`;
+`
 
 const DeleteButtonContainer = css`
   position: relative;
@@ -246,17 +264,17 @@ const DeleteButtonContainer = css`
     width: 7px;
   }
   ::-webkit-scrollbar-track {
-    background: ${Colors.lightGrey};
+    background: ${theme.colors.lightGrey};
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: ${Colors.grey};
+    background-color: ${theme.colors.grey};
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background-color: ${Colors.skyBlue};
+    background-color: ${theme.colors.skyBlue};
   }
-`;
+`
 
 const DeleteButton = css`
   ${commonButtonStyle}
@@ -264,28 +282,28 @@ const DeleteButton = css`
   right: 0;
   margin-bottom: 7px;
   transform: translateY(23%);
-`;
+`
 
 const UrlStyle = css`
   display: flex;
   margin-bottom: 5px;
   align-items: center;
   justify-content: space-between;
-  font-size: ${FontSize.xs};
-  color: ${Colors.darkGrey};
-`;
+  font-size: ${theme.fontSize.xs};
+  color: ${theme.colors.darkGrey};
+`
 
 const CategoryStyle = css`
   margin-bottom: 35px;
-`;
+`
 
 const RadioLabelStyle = css`
   margin-left: 20px;
   display: inline-block;
-`;
+`
 
 const RadioInputStyle = css`
   margin-right: 10px;
-`;
+`
 
-export default AddPlaylist;
+export default AddPlaylist

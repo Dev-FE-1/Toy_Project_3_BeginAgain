@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Colors, FontSize } from '@/styles/Theme'
+import theme from '@/styles/theme'
 
 interface EmptyInfoProps {
   title: string
@@ -28,12 +28,12 @@ const sentenceContainerStyle = css`
   align-items: center;
 `
 const firstSentenceStyle = css`
-  font-size: ${FontSize.lg};
-  color: ${Colors.charcoalGrey};
+  font-size: ${theme.fontSize.lg};
+  color: ${theme.colors.charcoalGrey};
 `
 
 const secondSentenceStyle = css`
-  font-size: ${FontSize.md};
-  color: ${Colors.grey};
+  font-size: ${theme.fontSize.md};
+  color: ${theme.colors.grey};
 `
 export default EmptyInfo

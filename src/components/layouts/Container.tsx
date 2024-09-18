@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { css } from '@emotion/react'
-import { Width, Colors } from '@/styles/Theme'
+import theme from '@/styles/theme'
 
 const Container = () => {
   return (
@@ -13,9 +13,9 @@ const Container = () => {
 const containerStyle = css`
   position: relative;
   width: 100%;
-  max-width: ${Width.max};
+  max-width: ${theme.width.max};
   margin: 0 auto;
-  background-color: ${Colors.white};
+  background-color: ${theme.colors.white};
   height: 100%;
 `
 export default Container

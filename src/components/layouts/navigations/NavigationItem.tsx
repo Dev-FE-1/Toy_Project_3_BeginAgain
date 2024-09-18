@@ -1,31 +1,30 @@
 import { NavLink } from 'react-router-dom'
-import { css } from '@emotion/react'
+import { SerializedStyles, css } from '@emotion/react'
 import { IconType } from 'react-icons'
-import { FontSize, Colors } from '@/styles/Theme'
+import theme from '@/styles/theme'
 
 interface NavigationItemProps {
   path: string
   Icon: IconType
   label?: string
-  isActive?: boolean
   onClick?: () => void
-  blockActiveColor?: boolean
+  customStyle?: SerializedStyles
 }
 
 const NavigationItem = ({
   path,
   Icon,
   label,
-  isActive,
   onClick,
-  blockActiveColor
+  customStyle
 }: NavigationItemProps) => {
   return (
     <NavLink
       to={path}
-      css={navLinkStyle}
-      onClick={onClick}>
-      <div css={[iconStyle, isActive && !blockActiveColor && activeIconStyle]}>
+      css={[navLinkStyle, customStyle]}
+      onClick={onClick}
+      className={({ isActive }) => (isActive ? 'active' : undefined)}>
+      <div css={iconStyle}>
         <Icon css={icon} />
         {label}
       </div>
@@ -37,6 +36,11 @@ const navLinkStyle = css`
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+  &.active {
+    div {
+      color: ${theme.colors.paleBlue};
+    }
+  }
 `
 
 const iconStyle = css`
@@ -44,8 +48,8 @@ const iconStyle = css`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  font-size: ${FontSize.xs};
-  color: ${Colors.charcoalGrey};
+  font-size: ${theme.fontSize.xs};
+  color: ${theme.colors.charcoalGrey};
   gap: 3px;
 `
 
@@ -54,7 +58,4 @@ const icon = css`
   opacity: 0.8;
 `
 
-const activeIconStyle = css`
-  color: ${Colors.paleBlue};
-`
 export default NavigationItem
