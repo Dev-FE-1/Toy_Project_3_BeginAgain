@@ -3,7 +3,7 @@ import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useHeaderStore } from '@/stores/header'
 import { useEffect } from 'react'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import SavedPlaylists from '@/routes/pages/SavedPlaylists'
 import { css } from '@emotion/react'
 
@@ -15,7 +15,6 @@ const MyPlaylist = () => {
   }, [setTitle])
 
   const { data } = useFetchPlaylists()
-  const auth = getAuth()
   const user = auth.currentUser
 
   // 현재 사용자와 일치하는 플레이리스트 필터링

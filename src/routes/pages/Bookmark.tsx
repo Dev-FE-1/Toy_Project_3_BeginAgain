@@ -1,81 +1,18 @@
-// import Category from '@/components/common/Category'
-// import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
-// import Playlist from '@/components/playlist/Playlist'
-// import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
-// import { useHeaderStore } from '@/stores/header'
-// import { useEffect } from 'react'
-// import { getAuth } from 'firebase/auth'
-// import { css } from '@emotion/react'
-// import { useBookmarkStore } from '@/stores/useBookmark'
-
-// const Bookmark = () => {
-//   const setTitle = useHeaderStore(state => state.setTitle)
-//   const { data: playlists } = useFetchPlaylists()
-//   const auth = getAuth()
-//   const user = auth.currentUser
-
-//   const bookmarks = useBookmarkStore(state => state.bookmarks)
-
-//   useEffect(() => {
-//     setTitle('Bookmarks')
-//   }, [setTitle])
-
-//   const userBookmarks = user ? bookmarks[user.uid] || [] : []
-
-//   const filteredPlaylists = playlists?.filter(pl =>
-//     userBookmarks.includes(pl.id)
-//   )
-
-//   return (
-//     <main>
-//       <Category />
-//       {filteredPlaylists && filteredPlaylists.length > 0 ? (
-//         filteredPlaylists.map(pl => (
-//           <div key={pl.id}>
-//             <Playlist playlist={pl} />
-//           </div>
-//         ))
-//       ) : (
-//         <div css={EmptyInfoStyle}>
-//           <EmptyInfo
-//             status="북마크"
-//             title="플레이리스트"
-//           />
-//         </div>
-//       )}
-//       <div className="nav-margin"></div>
-//     </main>
-//   )
-// }
-
-// const EmptyInfoStyle = css`
-//   position: absolute;
-//   top: 50%;
-//   left: 50%;
-//   transform: translate(-50%, -50%);
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 100%;
-// `
-
-// export default Bookmark
-
 import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useHeaderStore } from '@/stores/header'
 import { useEffect, useState } from 'react'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import { css } from '@emotion/react'
 import { useBookmarkStore } from '@/stores/useBookmark'
 import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
+import { CgFormatJustify } from 'react-icons/cg'
 import { useNavigate } from 'react-router-dom'
 import Modal from '@/components/common/TheModal'
 import Toast from '@/components/common/Toast'
 import { FontSize, Colors } from '@/styles/Theme'
 
-// YouTube URL에서 videoId를 추출하는 함수
 function extractVideoId(url?: string) {
   if (!url) {
     console.error('URL is undefined or empty')
@@ -87,7 +24,6 @@ function extractVideoId(url?: string) {
 const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { data: playlists } = useFetchPlaylists()
-  const auth = getAuth()
   const user = auth.currentUser
   const navigate = useNavigate()
 
@@ -129,25 +65,14 @@ const Bookmark = () => {
   }
 
   return (
-    <main css={mainStyle}>
-      <Category /> {/* 카테고리 컴포넌트 */}
+    <>
+      <Category />
       {filteredPlaylists && filteredPlaylists.length > 0 ? (
         filteredPlaylists.map(pl => (
           <div
             key={pl.id}
             css={playlistItemStyle}>
-            {/* 비디오 썸네일 클릭 시 디테일 페이지로 이동 */}
-            <img
-              src={`https://img.youtube.com/vi/${extractVideoId(pl.urls[0])}/hqdefault.jpg`}
-              alt={pl.title}
-              css={videoIdStyle}
-              onClick={() => navigate(`/playlist-details/${pl.id}`)} // 클릭 시 이동
-            />
-
-            {/* 비디오 제목과 북마크 아이콘 */}
-            <div css={playlistInfoStyle}>
-              <p css={titleStyle}>{pl.title}</p> {/* 제목 스타일 */}
-              {/* 북마크 상태에 따라 아이콘 변경 */}
+            <div css={leftSectionStyle}>
               {user && bookmarks[user.uid]?.includes(pl.id) ? (
                 <FaBookmark
                   css={bookmarkIconStyle}
@@ -160,6 +85,19 @@ const Bookmark = () => {
                 />
               )}
             </div>
+
+            <img
+              src={`https://img.youtube.com/vi/${extractVideoId(pl.urls[0])}/hqdefault.jpg`}
+              alt={pl.title}
+              css={videoIdStyle}
+              onClick={() => navigate(`/playlist-details/${pl.id}`)}
+            />
+            <div css={playlistInfoStyle}>
+              <p css={titleStyle}>{pl.title}</p>
+
+              {/* 오른쪽에 햄버거 */}
+              <CgFormatJustify css={hamburgerIconStyle} />
+            </div>
           </div>
         ))
       ) : (
@@ -171,7 +109,7 @@ const Bookmark = () => {
         </div>
       )}
       <div className="nav-margin"></div>
-      {/* 모달 컴포넌트 */}
+
       {isModalOpen && (
         <Modal
           isOpen={isModalOpen}
@@ -179,7 +117,6 @@ const Bookmark = () => {
           onDelete={handleDelete}
         />
       )}
-      {/* 토스트 컴포넌트 */}
       {isToastVisible && (
         <Toast
           message="북마크가 해제되었습니다."
@@ -187,16 +124,9 @@ const Bookmark = () => {
           onHide={() => setIsToastVisible(false)}
         />
       )}
-    </main>
+    </>
   )
 }
-
-// CSS 스타일 정의
-const mainStyle = css`
-  padding: 20px;
-  background-color: #f9f9f9;
-  min-height: 100vh;
-`
 
 const playlistItemStyle = css`
   display: flex;
@@ -204,12 +134,17 @@ const playlistItemStyle = css`
   padding: 10px;
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
+  margin-top: 10px;
+`
+
+const leftSectionStyle = css`
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
 `
 
 const videoIdStyle = css`
-  width: 60px;
+  width: 80px;
   height: 60px;
   object-fit: cover;
   border-radius: 8px;
@@ -222,6 +157,7 @@ const playlistInfoStyle = css`
   align-items: center;
   width: 100%;
   padding-left: 10px;
+  margin-left: 10px;
 `
 
 const titleStyle = css`
@@ -234,6 +170,14 @@ const titleStyle = css`
 `
 
 const bookmarkIconStyle = css`
+  font-size: ${FontSize.xl};
+  margin-right: 10px;
+  cursor: pointer;
+  color: ${Colors.charcoalGrey};
+  transition: color 0.3s ease;
+`
+
+const hamburgerIconStyle = css`
   font-size: ${FontSize.xl};
   cursor: pointer;
   color: ${Colors.charcoalGrey};

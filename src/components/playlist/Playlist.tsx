@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useFetchComments } from '@/hooks/useFetchComments'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
@@ -31,7 +31,6 @@ export default function Playlist({
   const [isHeartFilled, setIsHeartFilled] = useState(false)
   const [commentCount, setCommentCount] = useState(0)
   const navigate = useNavigate()
-  const auth = getAuth()
   const user = auth.currentUser
 
   const { data: comments } = useFetchComments(playlist?.id || '')
@@ -122,7 +121,9 @@ export default function Playlist({
           </div>
 
           {user && user.uid === playlist?.userId ? (
-            <FaBookmark css={[fillbookmarkIconStyle, disabledBookmarkStyle]} />
+            <FaRegBookmark
+              css={[bookmarkIconStyle, disabledBookmarkStyle]} // 비워진 북마크 아이콘 사용
+            />
           ) : isBookmarked ? (
             <FaBookmark
               onClick={handleBookmark}
@@ -230,14 +231,14 @@ const commentCountStyle = css`
 `
 
 const bookmarkIconStyle = css`
-  font-size: 20px;
+  font-size: ${FontSize.xl};
   margin-left: auto;
   margin-right: 20px;
   color: ${Colors.charcoalGrey};
   cursor: pointer;
 `
 const fillbookmarkIconStyle = css`
-  font-size: 20px;
+  font-size: ${FontSize.xl};
   margin-left: auto;
   margin-right: 20px;
   color: ${Colors.charcoalGrey};

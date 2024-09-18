@@ -4,7 +4,6 @@ import { ReactNode } from 'react'
 
 interface LongButtonProps {
   children: ReactNode
-  text: string
   onClick: () => void
   type?: 'button' | 'submit'
 }

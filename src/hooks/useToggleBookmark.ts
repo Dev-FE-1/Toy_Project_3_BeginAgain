@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import { useBookmarkStore } from '@/stores/useBookmark'
 
 export const useToggleBookmark = (playlistId?: string) => {
   const [isBookmarked, setIsBookmarked] = useState(false)
-  const auth = getAuth()
   const user = auth.currentUser
   const addBookmark = useBookmarkStore(state => state.addBookmark)
   const removeBookmark = useBookmarkStore(state => state.removeBookmark)
