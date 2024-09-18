@@ -1,6 +1,5 @@
 import { css } from '@emotion/react'
-import { Colors } from '@/styles/Theme'
-import { FontSize } from '@/styles/Theme'
+import theme from '@/styles/theme'
 
 const Category = () => {
   const categories = ['전체', '상체', '하체', '스트레칭', '유산소', '전신']
@@ -39,9 +38,9 @@ const baseButtonStyle = css`
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  border: 1px solid ${Colors.lightBlue};
+  border: 1px solid ${theme.colors.lightBlue};
   cursor: pointer;
-  font-size: ${FontSize.sm};
+  font-size: ${theme.fontSize.sm};
   line-height: 100%;
   letter-spacing: -0.18px;
   transition: background-color 0.3s ease;
@@ -49,19 +48,19 @@ const baseButtonStyle = css`
 
 const buttonStyle = {
   primary: css`
-    background-color: ${Colors.white};
-    color: ${Colors.lightBlue};
+    background-color: ${theme.colors.white};
+    color: ${theme.colors.lightBlue};
     &:hover {
-      background-color: ${Colors.lightBlue};
-      color: ${Colors.white};
+      background-color: ${theme.colors.lightBlue};
+      color: ${theme.colors.white};
     }
   `,
   secondary: css`
-    background-color: ${Colors.lightBlue};
-    color: ${Colors.white};
+    background-color: ${theme.colors.lightBlue};
+    color: ${theme.colors.white};
     &:hover {
-      background-color: ${Colors.white};
-      color: ${Colors.lightBlue};
+      background-color: ${theme.colors.white};
+      color: ${theme.colors.lightBlue};
     }
   `
 }

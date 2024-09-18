@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { css } from '@emotion/react'
-import { Colors } from '@/styles/Theme'
-import { FontSize } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import { CgCheckO } from 'react-icons/cg'
 
 const toastStyle = css`
@@ -9,10 +8,10 @@ const toastStyle = css`
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background-color: ${Colors.charcoalGrey};
-  color: ${Colors.white};
+  background-color: ${theme.colors.charcoalGrey};
+  color: ${theme.colors.white};
   border-radius: 6px;
-  font-size: ${FontSize.md};
+  font-size: ${theme.fontSize.md};
   position: fixed;
   bottom: 100px;
   left: 50%;
@@ -53,8 +52,8 @@ const Toast: React.FC<ToastProps> = ({
   return (
     <div css={isVisible ? toastStyle : hiddenStyle}>
       <CgCheckO
-        size={FontSize.md.replace('px', '')}
-        color={Colors.white}
+        size={theme.fontSize.md.replace('px', '')}
+        color={theme.colors.white}
       />
       <span>{message}</span>
     </div>

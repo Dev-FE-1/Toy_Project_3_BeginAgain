@@ -7,7 +7,7 @@ import { css } from '@emotion/react'
 import LongButton from '@/components/common/LongButton'
 import Input from '@/components/common/Input'
 import firebaseApp from '@/api/firebaseApp'
-import { Colors } from '@/styles/Theme'
+import theme from '@/styles/theme'
 
 const containerStyle = css`
   height: 100vh;
@@ -49,8 +49,8 @@ const buttonContainerStyle = css`
 `
 
 const signInButtonStyle = css`
-  background-color: ${Colors.black};
-  color: ${Colors.black};
+  background-color: ${theme.colors.black};
+  color: ${theme.colors.black};
 `
 
 export default function SignIn() {
@@ -89,7 +89,10 @@ export default function SignIn() {
           />
         </div>
         <div css={buttonContainerStyle}>
-          <LongButton onClick={SignInWithGoogle}>로그인</LongButton>
+          <LongButton
+            onClick={SignInWithGoogle}
+            children={undefined}
+            text={'로그인'}></LongButton>
           <LongButton
             css={signInButtonStyle}
             onClick={SignInWithGoogle}>

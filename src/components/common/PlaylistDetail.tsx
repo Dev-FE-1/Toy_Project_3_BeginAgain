@@ -6,9 +6,8 @@ import { useFetchComments } from '@/hooks/useFetchComments'
 import { useCreateComment } from '@/hooks/useCreateComment'
 import { useDeleteComment } from '@/hooks/useDeleteComment'
 import { CgChevronUp, CgChevronDown } from 'react-icons/cg'
+import theme from '@/styles/theme'
 import { css } from '@emotion/react'
-import { Colors } from '@/styles/Theme'
-import { FontSize } from '@/styles/Theme'
 import { getAuth } from 'firebase/auth'
 
 const PlaylistDetail = () => {
@@ -121,7 +120,7 @@ const playlistDetailContainer = css`
   // padding: 20px;
   // border: 1px solid #e0e0e0;
   // border-radius: 8px;
-  // background-color: ${Colors.darkGrey};
+  // background-color: ${theme.colors.darkGrey};
 `
 
 const sectionOneContainer = css`
@@ -129,21 +128,21 @@ const sectionOneContainer = css`
 `
 
 const sectionTwoContainer = css`
-  border-bottom: 1px solid ${Colors.lightGrey};
+  border-bottom: 1px solid ${theme.colors.lightGrey};
 `
 
 const titleStyle = css`
-  font-size: ${FontSize.lg};
-  color: ${Colors.black};
+  font-size: ${theme.fontSize.lg};
+  color: ${theme.colors.black};
   margin-top: 10px;
   margin-bottom: 10px;
   padding: 20px;
 `
 const descriptionStyle = css`
-  font-size: ${FontSize.md};
-  // color: ${Colors.darkGrey};
+  font-size: ${theme.fontSize.md};
+  // color: ${theme.colors.darkGrey};
   // margin-bottom: 20px;
-  // background-color: ${Colors.red};
+  // background-color: ${theme.colors.red};
 `
 
 const sectionThreeContainer = css`
@@ -158,10 +157,10 @@ const profileImageStyle = css`
 `
 
 const sectionFourContainer = css`
-  font-size: ${FontSize.md};
-  color: ${Colors.black};
+  font-size: ${theme.fontSize.md};
+  color: ${theme.colors.black};
   margin-bottom: 10px;
-  background-color: ${Colors.lightGrey};
+  background-color: ${theme.colors.lightGrey};
   border-radius: 8px;
   margin-top: 10px;
   padding: 20px 20px;

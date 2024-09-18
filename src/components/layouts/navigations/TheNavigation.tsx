@@ -6,7 +6,7 @@ import {
   CgProfile
 } from 'react-icons/cg'
 import { css } from '@emotion/react'
-import { Colors, Width, FontSize } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import NavigationItem from './NavigationItem'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -69,23 +69,23 @@ const navbar = css`
   align-items: center;
   height: 72px;
   position: fixed;
-  width: ${Width.max};
+  width: ${theme.width.max};
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  background-color: ${Colors.black};
-  color: ${Colors.lightGrey};
+  background-color: ${theme.colors.black};
+  color: ${theme.colors.lightGrey};
   z-index: 2;
   border-radius: 45px 45px 0 0;
 `
 
 const addButtonStyle = css`
-  background-color: ${Colors.paleBlue};
+  background-color: ${theme.colors.paleBlue};
   border-radius: 50%;
   padding: 25px;
   position: relative;
   top: -14px;
-  font-size: ${FontSize.xxl};
+  font-size: ${theme.fontSize.xxl};
 `
 
 export default Navigation

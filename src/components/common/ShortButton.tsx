@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Colors, FontSize } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import { ReactNode } from 'react'
 
 interface ShortButtonProps {
@@ -43,14 +43,14 @@ const baseButtonStyle = css`
 
 const buttonStyle = {
   confirm: css`
-    background-color: ${Colors.lightBlue};
-    font-size: ${FontSize.md};
-    color: ${Colors.white};
+    background-color: ${theme.colors.lightBlue};
+    font-size: ${theme.fontSize.md};
+    color: ${theme.colors.white};
   `,
   cancel: css`
-    background-color: ${Colors.lightGrey};
-    font-size: ${FontSize.md};
-    color: ${Colors.black};
+    background-color: ${theme.colors.lightGrey};
+    font-size: ${theme.fontSize.md};
+    color: ${theme.colors.black};
   `
 }
 

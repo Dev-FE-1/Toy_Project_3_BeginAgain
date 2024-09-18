@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Colors, FontSize } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import { ReactNode } from 'react'
 
 interface LongButtonProps {
@@ -34,10 +34,10 @@ const longButtonStyle = css`
   gap: 10px;
   flex-shrink: 0;
   border-radius: 3px;
-  background-color: ${Colors.lightBlue};
+  background-color: ${theme.colors.lightBlue};
   border: none;
-  font-size: ${FontSize.md};
-  color: ${Colors.white};
+  font-size: ${theme.fontSize.md};
+  color: ${theme.colors.white};
   cursor: pointer;
 `
 

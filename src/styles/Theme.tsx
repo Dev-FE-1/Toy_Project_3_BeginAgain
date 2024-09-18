@@ -1,4 +1,4 @@
-export const Colors = {
+export const colors = {
   lightBlue: '#7695FF',
   skyBlue: '#9DBDFF',
   paleBlue: '#D1E9F6',
@@ -10,7 +10,7 @@ export const Colors = {
   white: '#FFFFFF',
   grey: '#B3B3B3'
 }
-export const FontSize = {
+export const fontSize = {
   xs: '12px',
   sm: '14px',
   md: '16px',
@@ -19,7 +19,7 @@ export const FontSize = {
   xxl: '24px'
 }
 
-export const FontWeight = {
+export const fontWeight = {
   thin: 100,
   extraLight: 200,
   light: 300,
@@ -31,6 +31,27 @@ export const FontWeight = {
   black: 900
 }
 
-export const Width = {
+export const width = {
   max: '430px'
 }
+
+export type ColorsType = typeof colors
+export type FontSizeType = typeof fontSize
+export type FontWeightType = typeof fontWeight
+export type WidthType = typeof width
+
+interface Theme {
+  colors: ColorsType
+  fontSize: FontSizeType
+  fontWeight: FontWeightType
+  width: WidthType
+}
+
+const theme: Theme = {
+  colors,
+  fontSize,
+  fontWeight,
+  width
+}
+
+export default theme

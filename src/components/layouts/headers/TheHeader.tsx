@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Colors, Width, FontSize } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import { CgChevronLeft } from 'react-icons/cg'
 import { useHeaderStore } from '@/stores/header'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -11,43 +11,43 @@ const headerStyle = css`
   align-items: center;
   height: 72px;
   position: sticky;
-  width: ${Width.max};
+  width: ${theme.width.max};
   top: 0;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
-  color: ${Colors.white};
-  background-color: ${Colors.white};
+  color: ${theme.colors.white};
+  background-color: ${theme.colors.white};
 `
 const titleStyle = css`
-  font-size: ${FontSize.xl};
-  color: ${Colors.black};
+  font-size: ${theme.fontSize.xl};
+  color: ${theme.colors.black};
 `
 const iconStyle = css`
   font-size: 24px;
-  color: ${Colors.black};
+  color: ${theme.colors.black};
   margin-right: 12px;
 `
 const successBtn = (isDone: boolean) => css`
   position: absolute;
   display: sticky;
   right: 10px;
-  background-color: transparent; 
-  color: ${isDone ? Colors.lightBlue : Colors.grey};  
-  font-size: ${FontSize.md};
+  background-color: transparent;
+  color: ${isDone ? theme.colors.lightBlue : theme.colors.grey};
+  font-size: ${theme.fontSize.md};
   border: none;
-  cursor: ${isDone ? 'pointer' : 'default'};  
-`;
+  cursor: ${isDone ? 'pointer' : 'default'};
+`
 const editBtn = css`
   position: absolute;
   display: sticky;
   right: 10px;
-  background-color: transparent; 
-  color: ${Colors.lightBlue};  
-  font-size: ${FontSize.md};
-  border: none; 
+  background-color: transparent;
+  color: ${theme.colors.lightBlue};
+  font-size: ${theme.fontSize.md};
+  border: none;
   cursor: pointer;
-`;
+`
 
 export default function TheHeader() {
   const title = useHeaderStore(state => state.title)
@@ -59,7 +59,7 @@ export default function TheHeader() {
 
   const handleComplete = async () => {
     try {
-      await savePlaylist();
+      await savePlaylist()
       navigate('/', { state: { showToast: true } })
     } catch (error) {
       console.error('저장 실패:', error)
@@ -77,14 +77,13 @@ export default function TheHeader() {
       <h1 css={titleStyle}>{title}</h1>
       {isAddPlaylist && (
         <button
-          css={successBtn(isDone)} 
-          onClick={isDone ? handleComplete : undefined}  
-          disabled={!isDone}
-        >
+          css={successBtn(isDone)}
+          onClick={isDone ? handleComplete : undefined}
+          disabled={!isDone}>
           완료
         </button>
       )}
-      {isProfile && (<button css={editBtn}>수정</button>)}
+      {isProfile && <button css={editBtn}>수정</button>}
     </header>
   )
 }

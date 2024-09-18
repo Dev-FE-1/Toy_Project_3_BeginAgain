@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { css } from '@emotion/react'
 import { IconType } from 'react-icons'
-import { FontSize, Colors } from '@/styles/Theme'
+import theme from '@/styles/theme'
 
 interface NavigationItemProps {
   path: string
@@ -44,8 +44,8 @@ const iconStyle = css`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  font-size: ${FontSize.xs};
-  color: ${Colors.charcoalGrey};
+  font-size: ${theme.fontSize.xs};
+  color: ${theme.colors.charcoalGrey};
   gap: 3px;
 `
 
@@ -55,6 +55,6 @@ const icon = css`
 `
 
 const activeIconStyle = css`
-  color: ${Colors.paleBlue};
+  color: ${theme.colors.paleBlue};
 `
 export default NavigationItem

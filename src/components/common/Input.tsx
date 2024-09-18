@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { Colors, FontSize } from '@/styles/Theme'
+import theme from '@/styles/theme'
 import { ChangeEvent, useState } from 'react'
 import { FaRegEyeSlash, FaEyeSlash } from 'react-icons/fa'
 
@@ -15,10 +15,10 @@ const inputStyle = css`
   height: 48px;
   padding: 12px 16px;
   border-radius: 3px;
-  border: 1px solid ${Colors.lightGrey};
-  font-size: ${FontSize.md};
-  color: ${Colors.black};
-  background-color: ${Colors.white};
+  border: 1px solid ${theme.colors.lightGrey};
+  font-size: ${theme.fontSize.md};
+  color: ${theme.colors.black};
+  background-color: ${theme.colors.white};
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -29,7 +29,7 @@ const iconStyle = css`
   position: absolute;
   right: 16px;
   cursor: pointer;
-  color: ${Colors.grey};
+  color: ${theme.colors.grey};
 `
 
 const Input = ({ type = 'text', placeholder, value, onChange }: InputProps) => {
