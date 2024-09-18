@@ -11,6 +11,7 @@ export default function Home() {
   const setTitle = useHeaderStore(state => state.setTitle)
   const location = useLocation()
   const [showToast, setShowToast] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     setTitle('Home')
