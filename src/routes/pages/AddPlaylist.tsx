@@ -210,6 +210,7 @@ const DivContainer = css`
   display: inline-block;
   width: 100%;
   transform: rotate(0);
+  margin-top: 20px;
 `
 
 const TitleContainer = css`
