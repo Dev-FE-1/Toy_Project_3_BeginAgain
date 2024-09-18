@@ -305,6 +305,7 @@ const RadioLabelStyle = css`
 
 const RadioInputStyle = css`
   margin-right: 10px;
+  cursor: pointer;
 `
 
 export default AddPlaylist
