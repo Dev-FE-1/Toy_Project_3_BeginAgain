@@ -25,37 +25,30 @@ const Navigation = () => {
           path="/"
           Icon={CgHome}
           label="Home"
-          isActive={location.pathname === '/'}
           onClick={() => handleNavigation('/')}
         />
         <NavigationItem
           path="/my-playlist"
           Icon={CgStack}
           label="Playlist"
-          isActive={location.pathname === '/my-playlist'}
           onClick={() => handleNavigation('/my-playlist')}
         />
-        <div css={addButtonStyle}>
-          <NavigationItem
-            path="/add-playlist"
-            Icon={CgMathPlus}
-            isActive={location.pathname === '/add-playlist'}
-            onClick={() => handleNavigation('/add-playlist')}
-            blockActiveColor={true}
-          />
-        </div>
+        <NavigationItem
+          path="/add-playlist"
+          Icon={CgMathPlus}
+          onClick={() => handleNavigation('/add-playlist')}
+          customStyle={addButtonStyle}
+        />
         <NavigationItem
           path="/bookmark"
           Icon={CgBookmark}
           label="Bookmark"
-          isActive={location.pathname === '/bookmark'}
           onClick={() => handleNavigation('/bookmark')}
         />
         <NavigationItem
           path="/profile"
           Icon={CgProfile}
           label="Profile"
-          isActive={location.pathname === '/profile'}
           onClick={() => handleNavigation('/profile')}
         />
       </ul>
@@ -82,10 +75,24 @@ const navbar = css`
 const addButtonStyle = css`
   background-color: ${theme.colors.paleBlue};
   border-radius: 50%;
-  padding: 25px;
+  width: 72px;
+  height: 72px;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   top: -14px;
-  font-size: ${theme.fontSize.xxl};
+  div {
+    svg {
+      font-size: 40px;
+      stroke-width: 0;
+    }
+  }
+  &.active {
+    div {
+      color: ${theme.colors.black};
+    }
+  }
 `
 
 export default Navigation
