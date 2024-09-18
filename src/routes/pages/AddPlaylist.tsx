@@ -210,6 +210,7 @@ const DivContainer = css`
   display: inline-block;
   width: 100%;
   transform: rotate(0);
+  margin-top: 20px;
 `
 
 const TitleContainer = css`
@@ -304,6 +305,7 @@ const RadioLabelStyle = css`
 
 const RadioInputStyle = css`
   margin-right: 10px;
+  cursor: pointer;
 `
 
 export default AddPlaylist
