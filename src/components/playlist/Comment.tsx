@@ -38,10 +38,12 @@ const Comment: React.FC<CommentProps> = ({ playlistId }) => {
 
       {comments &&
         comments.map(comment => (
-          <div key={comment.id}>
+          <div
+            key={comment.id}
+            css={commentContainerStyle}>
             <img
-              src={comment.user.photoURL}
-              alt={comment.user.displayName}
+              src={comment.user.photoURL || '/default-profile.png'}
+              alt={comment.user.displayName || 'User'}
               width="20"
             />
             <span>{comment.user.displayName}</span>
@@ -67,4 +69,10 @@ const sectionFourContainer = css`
   background-color: ${theme.colors.lightGrey};
   border-radius: 8px;
   padding: 20px;
+`
+
+const commentContainerStyle = css`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 `

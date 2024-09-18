@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
 import { CgChevronUp, CgChevronDown } from 'react-icons/cg'
@@ -10,8 +10,6 @@ import { auth } from '@/api/firebaseApp'
 const PlaylistDetail = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { id } = useParams()
-  const location = useLocation()
-  const { playlist } = location.state || {}
   const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
 

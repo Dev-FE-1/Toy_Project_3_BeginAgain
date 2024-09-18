@@ -1,8 +1,8 @@
 import PlaylistDetail from '@/components/common/PlaylistDetail'
 import Comment from '@/components/playlist/Comment'
 
-const SomePage = () => {
-  const playlistId = 'some-playlist-id'
+const PlaylistDetailPage = () => {
+  const playlistId = 'playlist-id'
 
   return (
     <div>
@@ -12,4 +12,4 @@ const SomePage = () => {
   )
 }
 
-export default SomePage
+export default PlaylistDetailPage
