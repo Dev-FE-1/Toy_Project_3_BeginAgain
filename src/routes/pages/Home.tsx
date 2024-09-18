@@ -1,5 +1,6 @@
 import Category from '@/components/common/Category'
 import Playlist from '@/components/playlist/Playlist'
+import { Playlist as PlaylistType } from '@/components/playlist/Playlist'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useEffect, useState } from 'react'
@@ -19,7 +20,7 @@ export default function Home() {
 
   const { data, isLoading } = useFetchPlaylists()
 
-  const handlePlaylistClick = playlist => {
+  const handlePlaylistClick = (playlist: PlaylistType) => {
     navigate(`/playlist/${playlist.id}`, { state: { playlist } })
   }
 
