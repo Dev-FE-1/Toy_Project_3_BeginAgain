@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 
 interface BookmarkStore {
   bookmarks: { [key: string]: string[] } // 사용자 별로 북마크 목록을 관리

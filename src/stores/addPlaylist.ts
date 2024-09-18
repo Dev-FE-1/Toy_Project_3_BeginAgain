@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import { getFirestore, collection, addDoc } from 'firebase/firestore'
 
 interface PlaylistState {
@@ -9,7 +9,12 @@ interface PlaylistState {
   isPublic: boolean
   isDone: boolean
   setIsDone: (value: boolean) => void
-  setPlaylistData: (urls: string[], title: string, description: string, isPublic: boolean) => void
+  setPlaylistData: (
+    urls: string[],
+    title: string,
+    description: string,
+    isPublic: boolean
+  ) => void
   savePlaylist: () => Promise<void>
 }
 
@@ -20,20 +25,19 @@ export const useAddPlaylistStore = create<PlaylistState>((set, get) => ({
   isPublic: true,
   isDone: false,
 
-  setIsDone: (value) => set({ isDone: value }),
+  setIsDone: value => set({ isDone: value }),
 
   setPlaylistData: (urls, title, description, isPublic) => {
     set({
       videoUrls: urls,
       videoTitle: title,
       videoDescription: description,
-      isPublic,
+      isPublic
     })
   },
 
   savePlaylist: async () => {
-    const { videoUrls, videoTitle, videoDescription, isPublic } = get();
-    const auth = getAuth()
+    const { videoUrls, videoTitle, videoDescription, isPublic } = get()
     const db = getFirestore()
     const user = auth.currentUser
 
@@ -49,7 +53,7 @@ export const useAddPlaylistStore = create<PlaylistState>((set, get) => ({
       description: videoDescription,
       isPublic,
       userId: user.uid,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
     })
-  },
+  }
 }))

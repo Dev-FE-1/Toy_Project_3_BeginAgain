@@ -1,6 +1,5 @@
 import { CgHeart, CgComment } from 'react-icons/cg'
 import { VscHeartFilled } from 'react-icons/vsc'
-import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
@@ -10,6 +9,7 @@ import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
+import { css } from '@emotion/react'
 
 interface Playlist {
   id: string
@@ -231,17 +231,17 @@ const commentCountStyle = css`
 `
 
 const bookmarkIconStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${theme.fontSize.xl};
   margin-left: auto;
   margin-right: 20px;
   color: ${theme.colors.charcoalGrey};
   cursor: pointer;
 `
 const fillbookmarkIconStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${theme.fontSize.xl};
   margin-left: auto;
   margin-right: 20px;
-  color: ${Colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   cursor: pointer;
   transition:
     color 0.9s ease,

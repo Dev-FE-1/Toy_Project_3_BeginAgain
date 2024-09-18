@@ -11,7 +11,7 @@ import { CgFormatJustify } from 'react-icons/cg'
 import { useNavigate } from 'react-router-dom'
 import Modal from '@/components/common/TheModal'
 import Toast from '@/components/common/Toast'
-import { FontSize, Colors } from '@/styles/Theme'
+import theme from '@/styles/Theme'
 
 function extractVideoId(url?: string) {
   if (!url) {
@@ -170,17 +170,17 @@ const titleStyle = css`
 `
 
 const bookmarkIconStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${theme.fontSize.xl};
   margin-right: 10px;
   cursor: pointer;
-  color: ${Colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   transition: color 0.3s ease;
 `
 
 const hamburgerIconStyle = css`
-  font-size: ${FontSize.xl};
+  font-size: ${theme.fontSize.xl};
   cursor: pointer;
-  color: ${Colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   transition: color 0.3s ease;
 `
 

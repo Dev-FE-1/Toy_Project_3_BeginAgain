@@ -4,6 +4,7 @@ import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Toast from '@/components/common/Toast'
 
 export default function Home() {
@@ -16,6 +17,10 @@ export default function Home() {
   }, [setTitle])
 
   const { data, isLoading } = useFetchPlaylists()
+
+  const handlePlaylistClick = playlist => {
+    navigate(`/playlist/${playlist.id}`, { state: { playlist } })
+  }
 
   useEffect(() => {
     if (location.state?.showToast) {
@@ -38,7 +43,9 @@ export default function Home() {
           return (
             <Playlist
               key={pl.id}
-              playlist={pl}></Playlist>
+              playlist={pl}
+              onClick={() => handlePlaylistClick(pl)} // 클릭 핸들러 추가
+            />
           )
         })}
       {showToast && (
