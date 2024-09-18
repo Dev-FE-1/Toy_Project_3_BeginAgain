@@ -1,4 +1,4 @@
-import { CgHeart, CgComment, CgBookmark } from 'react-icons/cg'
+import { CgHeart, CgComment } from 'react-icons/cg'
 import { VscHeartFilled } from 'react-icons/vsc'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
@@ -6,9 +6,10 @@ import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useFetchComments } from '@/hooks/useFetchComments'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
+import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 
 interface Playlist {
   id: string
@@ -30,7 +31,6 @@ export default function Playlist({
   const [isHeartFilled, setIsHeartFilled] = useState(false)
   const [commentCount, setCommentCount] = useState(0)
   const navigate = useNavigate()
-  const auth = getAuth()
   const user = auth.currentUser
 
   const { data: comments } = useFetchComments(playlist?.id || '')
@@ -41,10 +41,7 @@ export default function Playlist({
     }
   }, [comments])
 
-  // playlist가 정의된 경우에만 useToggleBookmark를 호출하도록 수정
-  const { toggleBookmark, isBookmarked } = playlist
-    ? useToggleBookmark(playlist.id)
-    : { toggleBookmark: () => {}, isBookmarked: false }
+  const { toggleBookmark, isBookmarked } = useToggleBookmark(playlist?.id)
 
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isToastVisible, setIsToastVisible] = useState(false)
@@ -56,7 +53,7 @@ export default function Playlist({
       if (!isBookmarked) {
         setToastMessage('북마크가 추가되었습니다.')
       } else {
-        setToastMessage('북마크가 제거되었습니다.')
+        setToastMessage('북마크가 해제되었습니다.')
       }
 
       setIsToastVisible(true)
@@ -124,15 +121,18 @@ export default function Playlist({
           </div>
 
           {user && user.uid === playlist?.userId ? (
-            <CgBookmark
-              css={[bookmarkIconStyle, disabledBookmarkStyle]}
-              color={' '}
+            <FaRegBookmark
+              css={[bookmarkIconStyle, disabledBookmarkStyle]} // 비워진 북마크 아이콘 사용
+            />
+          ) : isBookmarked ? (
+            <FaBookmark
+              onClick={handleBookmark}
+              css={fillbookmarkIconStyle}
             />
           ) : (
-            <CgBookmark
+            <FaRegBookmark
               onClick={handleBookmark}
               css={bookmarkIconStyle}
-              color={isBookmarked ? 'gold' : ''}
             />
           )}
         </div>
@@ -231,11 +231,21 @@ const commentCountStyle = css`
 `
 
 const bookmarkIconStyle = css`
-  font-size: 30px;
+  font-size: ${FontSize.xl};
   margin-left: auto;
   margin-right: 20px;
   color: ${theme.colors.charcoalGrey};
   cursor: pointer;
+`
+const fillbookmarkIconStyle = css`
+  font-size: ${FontSize.xl};
+  margin-left: auto;
+  margin-right: 20px;
+  color: ${Colors.charcoalGrey};
+  cursor: pointer;
+  transition:
+    color 0.9s ease,
+    transform 0.9s ease;
 `
 
 const disabledBookmarkStyle = css`

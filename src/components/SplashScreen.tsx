@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { onAuthStateChanged, getAuth } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import { css } from '@emotion/react'
 import whiteLogo from '@/assets/whiteLogo.png'
 import backgroundImage from '@/assets/background.png'
@@ -29,7 +30,6 @@ const logoStyle = css`
 
 export default function App() {
   const [isSplash, setIsSplash] = useState(true)
-  const auth = getAuth()
   const navigate = useNavigate()
 
   useEffect(() => {

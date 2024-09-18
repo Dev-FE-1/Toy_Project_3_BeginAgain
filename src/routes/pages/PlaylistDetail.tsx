@@ -8,7 +8,7 @@ import { useDeleteComment } from '@/hooks/useDeleteComment'
 import { CgChevronUp, CgChevronDown } from 'react-icons/cg'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 
 const PlaylistDetail = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
@@ -23,7 +23,6 @@ const PlaylistDetail = () => {
   const [comment, setComment] = useState('')
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
 
-  const auth = getAuth()
   const user = auth.currentUser
 
   const { mutate: createComment } = useCreateComment()

@@ -3,7 +3,7 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { getFirestore, collection, doc, deleteDoc } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 
 export interface Playlist {
   id: string
@@ -19,7 +19,6 @@ export const useDeletePlaylist = () => {
   return useMutation({
     mutationFn: async (playlist: Playlist) => {
       const db = getFirestore()
-      const auth = getAuth()
       const user = auth.currentUser
       const coll = collection(db, 'Playlists')
       const docRef = doc(coll, playlist.id)

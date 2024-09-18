@@ -1,13 +1,12 @@
 import { useState } from 'react'
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 import { useNavigate } from 'react-router-dom'
 import backgroundImage from '@/assets/background.png'
 import logo from '@/assets/logo.png'
 import { css } from '@emotion/react'
 import LongButton from '@/components/common/LongButton'
 import Input from '@/components/common/Input'
-import firebaseApp from '@/api/firebaseApp'
-import theme from '@/styles/theme'
 
 const containerStyle = css`
   height: 100vh;
@@ -48,14 +47,8 @@ const buttonContainerStyle = css`
   gap: 10px;
 `
 
-const signInButtonStyle = css`
-  background-color: ${theme.colors.black};
-  color: ${theme.colors.black};
-`
-
 export default function SignIn() {
   const provider = new GoogleAuthProvider()
-  const auth = getAuth(firebaseApp)
   const navigate = useNavigate()
 
   async function SignInWithGoogle() {
@@ -89,15 +82,8 @@ export default function SignIn() {
           />
         </div>
         <div css={buttonContainerStyle}>
-          <LongButton
-            onClick={SignInWithGoogle}
-            children={undefined}
-            text={'로그인'}></LongButton>
-          <LongButton
-            css={signInButtonStyle}
-            onClick={SignInWithGoogle}>
-            회원가입
-          </LongButton>
+          <LongButton onClick={SignInWithGoogle}>로그인</LongButton>
+          <LongButton onClick={SignInWithGoogle}>회원가입</LongButton>
         </div>
       </div>
     </div>
