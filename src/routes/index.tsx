@@ -9,6 +9,7 @@ import PlaylistDetail from '@/routes/pages/PlaylistDetail'
 import SavedPlaylistDetail from '@/routes/pages/SavedPlaylistsDetail'
 import RequiresAuth from '@/routes/protected/RequiresAuth'
 import SignIn from './pages/SignIn'
+import NotFound from './pages/NotFound'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
@@ -26,11 +27,12 @@ export const router = createBrowserRouter([
           { path: '/add-playlist', element: <AddPlaylist /> },
           { path: '/bookmark', element: <Bookmark /> },
           { path: '/my-playlist', element: <MyPlaylist /> },
-          { path: '/saved-playlists', element: <SavedPlaylistDetail /> },
+          { path: '/saved-playlists/:id', element: <SavedPlaylistDetail /> },
           { path: '/profile', element: <Profile /> }
         ]
       }
     ]
   },
-  { path: '/signIn', element: <SignIn /> }
+  { path: '/signIn', element: <SignIn /> },
+  { path: '*', element: <NotFound /> }
 ])
