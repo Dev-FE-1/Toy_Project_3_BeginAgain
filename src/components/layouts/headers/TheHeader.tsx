@@ -27,6 +27,8 @@ const iconStyle = css`
   font-size: 24px;
   color: ${theme.colors.black};
   margin-right: 12px;
+  position: absolute;
+  left: 20px;
 `
 const successBtn = (isDone: boolean) => css`
   position: absolute;
@@ -49,6 +51,11 @@ const editBtn = css`
   cursor: pointer;
 `
 
+const logoStyle = css`
+  width: 80px;
+  height: 25px;
+`
+
 export default function TheHeader() {
   const title = useHeaderStore(state => state.title)
   const navigate = useNavigate()
@@ -68,13 +75,21 @@ export default function TheHeader() {
 
   return (
     <header css={headerStyle}>
-      {title === 'PlaylistDetailPage' && (
+      {title === 'Playlist Detail' && (
         <CgChevronLeft
           css={iconStyle}
           onClick={() => navigate(-1)}
         />
       )}
-      <h1 css={titleStyle}>{title}</h1>
+      {title === 'Home' ? (
+        <img
+          css={logoStyle}
+          src="/src/assets/logo.png"
+          alt="logo"
+        />
+      ) : (
+        <h2 css={titleStyle}>{title}</h2>
+      )}
       {isAddPlaylist && (
         <button
           css={successBtn(isDone)}
