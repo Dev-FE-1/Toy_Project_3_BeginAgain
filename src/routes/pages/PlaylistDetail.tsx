@@ -1,13 +1,13 @@
 import PlaylistDetail from '@/components/common/PlaylistDetail'
-import Comment from '@/components/playlist/Comment'
+import Comments from '@/components/Comments/Comments'
 
 const PlaylistDetailPage = () => {
   const playlistId = 'playlist-id'
 
   return (
     <div>
-      <PlaylistDetail showComments={true} />
-      <Comment playlistId={playlistId} />
+      <PlaylistDetail />
+      <Comments playlistId={playlistId} />
     </div>
   )
 }
