@@ -73,9 +73,7 @@ export default function Profile() {
           </>
         )}
         <div css={logoutBtn}>
-          <LongButton
-            onClick={logOut}
-            text="Click Me">
+          <LongButton onClick={logOut}>
             로그아웃
           </LongButton>
         </div>

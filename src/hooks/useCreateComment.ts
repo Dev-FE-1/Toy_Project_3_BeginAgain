@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getFirestore, collection, addDoc } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
+import { auth } from '@/api/firebaseApp'
 
 export const useCreateComment = () => {
   const queryClient = useQueryClient()
@@ -8,7 +8,6 @@ export const useCreateComment = () => {
     mutationFn: async (payload: { comment: string; playlistId: string }) => {
       const { comment, playlistId } = payload
       const db = getFirestore()
-      const auth = getAuth()
       const user = auth.currentUser
       const coll = collection(db, 'Comments')
       console.log('Create Comment', user)

@@ -22,8 +22,10 @@ export const useUpdatePlaylist = () => {
       const user = auth.currentUser
       const coll = collection(db, 'Playlists')
       const docRef = doc(coll, playlist.id)
+
       if (user && playlist.userId === user.uid) {
         await updateDoc(docRef, {
+          urls: playlist.urls,
           title: '박영웅'
         })
       }

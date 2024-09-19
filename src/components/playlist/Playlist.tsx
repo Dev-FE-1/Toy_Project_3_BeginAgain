@@ -1,7 +1,6 @@
 import { CgHeart, CgComment } from 'react-icons/cg'
 import { VscHeartFilled } from 'react-icons/vsc'
-import { css } from '@emotion/react'
-import Theme from '@/styles/theme'
+import theme from '@/styles/theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
@@ -11,6 +10,7 @@ import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 import { useFetchBookmarks } from '@/hooks/useFetchBookmark'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
+import { css } from '@emotion/react'
 
 interface Playlist {
   id: string
@@ -179,7 +179,7 @@ const headerStyle = css`
 
 const headerTextStyle = css`
   margin-left: 10px;
-  color: ${Theme.colors.black};
+  color: ${theme.colors.black};
 `
 
 const videoIdStyle = css`
@@ -202,13 +202,13 @@ const profileImageStyle = css`
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  background-color: ${Theme.colors.lightGrey};
+  background-color: ${theme.colors.lightGrey};
 `
 
 const emptyHeartIconStyle = css`
   font-size: 24px;
   margin-right: 30px;
-  color: ${Theme.colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   cursor: pointer;
   transition:
     color 0.9s ease,
@@ -218,7 +218,7 @@ const emptyHeartIconStyle = css`
 const filledHeartIconStyle = css`
   font-size: 24px;
   margin-right: 30px;
-  color: ${Theme.colors.red};
+  color: ${theme.colors.red};
   cursor: pointer;
   transition:
     color 0.9s ease,
@@ -228,7 +228,7 @@ const filledHeartIconStyle = css`
 const commentContainerStyle = css`
   display: flex;
   align-items: center;
-  color: ${Theme.colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   cursor: pointer;
   margin-right: 30px;
 `
@@ -239,21 +239,21 @@ const commentIconStyle = css`
 `
 
 const commentCountStyle = css`
-  font-size: ${Theme.fontSize.xl};
+  font-size: ${theme.fontSize.xl};
 `
 
 const bookmarkIconStyle = css`
-  font-size: ${Theme.fontSize.xl};
+  font-size: ${theme.fontSize.xl};
   margin-left: auto;
   margin-right: 20px;
-  color: ${Theme.colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   cursor: pointer;
 `
 const fillbookmarkIconStyle = css`
-  font-size: ${Theme.fontSize.xl};
+  font-size: ${theme.fontSize.xl};
   margin-left: auto;
   margin-right: 20px;
-  color: ${Theme.colors.charcoalGrey};
+  color: ${theme.colors.charcoalGrey};
   cursor: pointer;
   transition:
     color 0.9s ease,
@@ -266,13 +266,13 @@ const disabledBookmarkStyle = css`
 `
 
 const titleStyle = css`
-  font-size: ${Theme.fontSize.lg};
-  color: ${Theme.colors.black};
+  font-size: ${theme.fontSize.lg};
+  color: ${theme.colors.black};
   margin: 0;
   margin-bottom: 10px;
 `
 
 const timeRecordStyle = css`
-  color: ${Theme.colors.darkGrey};
-  font-size: ${Theme.fontSize.sm};
+  color: ${theme.colors.darkGrey};
+  font-size: ${theme.fontSize.sm};
 `
