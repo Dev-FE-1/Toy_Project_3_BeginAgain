@@ -26,7 +26,7 @@ export const useUpdatePlaylist = () => {
       if (user && playlist.userId === user.uid) {
         await updateDoc(docRef, {
           urls: playlist.urls,
-          title: '박영웅'
+          title: playlist.title
         })
       }
     }

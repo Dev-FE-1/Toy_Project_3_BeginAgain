@@ -6,7 +6,7 @@ const PlaylistDetailPage = () => {
 
   return (
     <div>
-      <PlaylistDetail />
+      <PlaylistDetail showComments={true} />
       <Comment playlistId={playlistId} />
     </div>
   )

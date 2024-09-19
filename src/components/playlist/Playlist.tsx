@@ -18,7 +18,7 @@ export interface Playlist {
   description: string
   isPublic: boolean
   userId: string
-  createdAt: string
+  createdAt: Date | string
   onClick?: () => void
 }
 
