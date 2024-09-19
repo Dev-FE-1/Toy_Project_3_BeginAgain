@@ -12,6 +12,7 @@ import { CgLockUnlock } from 'react-icons/cg'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/ko'
+import CommentsModal from '@/components/Comments/CommentsModal'
 
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
@@ -26,8 +27,9 @@ export default function PlaylistDetail({
   playlist?: typeof Playlist
 }) {
   const setTitle = useHeaderStore(state => state.setTitle)
-  const { id } = useParams()
-  const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
+  const { id: playlistIdParam } = useParams<{ id?: string }>()
+  const playlistId = playlistIdParam || '' // 기본값으로 빈 문자열 제공
+  const { data: playlistData, isLoading } = useFetchPlaylist(playlistId)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const user = auth.currentUser
 
@@ -96,6 +98,13 @@ export default function PlaylistDetail({
               css={profileImageStyle}
             />
             <span>{user.displayName}</span>
+
+            <CommentsModal
+              playlistId={playlistId} // playlistId가 항상 string임을 보장
+              comments={[]} // 댓글 데이터는 빈 배열로 제공 (데이터가 있으면 실제 댓글 배열로 교체)
+              onClose={() => {}}
+              myProfile={{ photoURL: user.photoURL || '' }} // myProfile 제공
+            />
           </>
         ) : null}
       </div>
@@ -103,10 +112,6 @@ export default function PlaylistDetail({
       <div css={plAmountInfoStyle}>
         <CgPlayList />
         재생목록( )
-      </div>
-
-      <div>
-        // Playlist 컴포넌트를 사용하여 플레이리스트 데이터를 보여줍니다.
       </div>
     </div>
   )

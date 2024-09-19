@@ -33,17 +33,21 @@ const CommentModal: React.FC<CommentsModalProps> = ({
   const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value)
   }
+
   const handleCommentSubmit = () => {
-    if (comment.trim() === '') return
     if (!playlistId) {
       console.error('playlistId is undefined')
       return
     }
-    createComment({ comment, playlistId }) // 여기서 playlistId가 제대로 전달되어야 합니다.
-    setComment('') // 댓글 입력 후 초기화
+    createComment({ comment, playlistId })
+    setComment('')
   }
 
   const handleCommentDelete = (commentId: string) => {
+    if (!playlistId) {
+      console.error('playlistId is undefined')
+      return
+    }
     deleteComment({ commentId, playlistId })
   }
 
