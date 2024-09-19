@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
-import { CgChevronUp, CgChevronDown, CgPlayList } from 'react-icons/cg'
+import {
+  CgChevronUp,
+  CgChevronDown,
+  CgPlayList,
+  CgFormatJustify
+} from 'react-icons/cg'
+
 import Playlist from '@/components/playlist/Playlist'
 import Category from '@/components/common/Category'
 import { css } from '@emotion/react'
@@ -15,6 +21,14 @@ import 'dayjs/locale/ko'
 
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
+
+function extractVideoId(url?: string) {
+  if (!url) {
+    console.error('URL is undefined or empty')
+    return ''
+  }
+  return url.replace('https://www.youtube.com/watch?v=', '')
+}
 
 export default function PlaylistDetail({
   showComments,
@@ -29,6 +43,10 @@ export default function PlaylistDetail({
   const { id } = useParams()
   const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
+  const [filteredPlaylists, setFilteredPlaylists] = useState<
+    (typeof Playlist)[] | null
+  >(null)
+  const navigate = useNavigate()
   const user = auth.currentUser
 
   useEffect(() => {
@@ -63,14 +81,17 @@ export default function PlaylistDetail({
 
       <div css={sectionTwoContainer}>
         <h2 css={titleStyle}>{playlistData.title}</h2>
-        {showLockIcon && (
-          <div>
-            <CgLockUnlock />
-          </div>
-        )}
-        <span css={timeRecordStyle}>
-          {dayjs(playlistData.createdAt).fromNow()}
-        </span>
+        <div css={otherInfoStyle}>
+          {showLockIcon && (
+            <div css={lockStyle}>
+              <CgLockUnlock />
+              <span className="Lock">비공개/공개</span>
+            </div>
+          )}
+          <span css={timeRecordStyle}>
+            {dayjs(playlistData.createdAt).fromNow()}
+          </span>
+        </div>
 
         <div css={buttonContainerStyle}>
           <Category />
@@ -101,12 +122,8 @@ export default function PlaylistDetail({
       </div>
 
       <div css={plAmountInfoStyle}>
-        <CgPlayList />
+        <CgPlayList className="cgPlaylist" />
         재생목록( )
-      </div>
-
-      <div>
-        // Playlist 컴포넌트를 사용하여 플레이리스트 데이터를 보여줍니다.
       </div>
     </div>
   )
@@ -124,9 +141,9 @@ const sectionTwoContainer = css`
 const titleStyle = css`
   font-size: ${theme.fontSize.lg};
   color: ${theme.colors.black};
-  margin-top: 10px;
+  margin-top: 20px;
   margin-bottom: 10px;
-  padding: 20px;
+  padding: 0 20px;
 `
 
 const buttonStyle = css`
@@ -159,6 +176,9 @@ const plAmountInfoStyle = css`
   padding: 20px;
   display: flex;
   align-items: center;
+  &.cgPlaylist {
+    font-size: 30px;
+  }
 `
 
 const sectionThreeContainer = css`
@@ -177,6 +197,21 @@ const profileImageStyle = css`
 
 const timeRecordStyle = css`
   color: ${theme.colors.darkGrey};
-  font-size: ${theme.fontSize.sm};
+  font-size: ${theme.fontSize.md};
   text-align: right;
+  align-self: center;
+`
+
+const otherInfoStyle = css`
+  display: flex;
+  flex-direction: row;
+  margin-left: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  color: ${theme.colors.darkGrey};
+  align-self: center;
+`
+const lockStyle = css`
+  font-size: ${theme.fontSize.md};
+  display: flex;
 `

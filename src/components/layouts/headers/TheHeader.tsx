@@ -56,12 +56,13 @@ const logoStyle = css`
   height: 25px;
 `
 
-export default function TheHeader() {
+export default function TheHeader(id: string) {
   const title = useHeaderStore(state => state.title)
   const navigate = useNavigate()
   const location = useLocation()
   const { isDone, savePlaylist } = useAddPlaylistStore()
   const isAddPlaylist = location.pathname === '/add-playlist'
+  const isMyPlaylist = location.pathname.includes('/saved-playlists') && !!id
   const isProfile = location.pathname === '/profile'
 
   const handleComplete = async () => {
@@ -99,6 +100,7 @@ export default function TheHeader() {
         </button>
       )}
       {isProfile && <button css={editBtn}>수정</button>}
+      {isMyPlaylist && <button css={editBtn}>편집</button>}
     </header>
   )
 }
