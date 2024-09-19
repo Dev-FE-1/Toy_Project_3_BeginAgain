@@ -1,8 +1,5 @@
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
-import { colors } from '@/styles/theme'
-import { fontSize } from '@/styles/theme'
-import { fontWeight } from '@/styles/theme'
 
 const notFoundContainer = css`
   text-align: center;
