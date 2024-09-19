@@ -11,7 +11,7 @@ import { CgFormatJustify } from 'react-icons/cg'
 import { useNavigate } from 'react-router-dom'
 import Modal from '@/components/common/TheModal'
 import Toast from '@/components/common/Toast'
-import theme from '@/styles/Theme'
+import theme from '@/styles/theme'
 
 function extractVideoId(url?: string) {
   if (!url) {
