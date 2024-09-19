@@ -11,14 +11,15 @@ import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 import { css } from '@emotion/react'
 
-interface Playlist {
+export interface Playlist {
   id: string
   urls: string[]
   title: string
   description: string
   isPublic: boolean
   userId: string
-  createdAt: string
+  createdAt: Date | string
+  onClick?: () => void
 }
 
 export default function Playlist({

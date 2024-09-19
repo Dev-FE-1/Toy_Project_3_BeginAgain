@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
           { path: '/add-playlist', element: <AddPlaylist /> },
           { path: '/bookmark', element: <Bookmark /> },
           { path: '/my-playlist', element: <MyPlaylist /> },
-          { path: '/saved-playlists', element: <SavedPlaylistDetail /> },
+          { path: '/saved-playlists/:id', element: <SavedPlaylistDetail /> },
           { path: '/profile', element: <Profile /> }
         ]
       }

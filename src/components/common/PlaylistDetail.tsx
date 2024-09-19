@@ -2,17 +2,33 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
-import { CgChevronUp, CgChevronDown } from 'react-icons/cg'
+import { CgChevronUp, CgChevronDown, CgPlayList } from 'react-icons/cg'
+import Playlist from '@/components/playlist/Playlist'
+import Category from '@/components/common/Category'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import { auth } from '@/api/firebaseApp'
+import { CgLockUnlock } from 'react-icons/cg'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/ko'
 
-const PlaylistDetail = () => {
+dayjs.locale('ko')
+dayjs.extend(relativeTime)
+
+export default function PlaylistDetail({
+  showComments,
+  showLockIcon,
+  playlist
+}: {
+  showComments?: boolean
+  showLockIcon?: boolean
+  playlist?: typeof Playlist
+}) {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { id } = useParams()
   const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
-
   const user = auth.currentUser
 
   useEffect(() => {
@@ -47,7 +63,17 @@ const PlaylistDetail = () => {
 
       <div css={sectionTwoContainer}>
         <h2 css={titleStyle}>{playlistData.title}</h2>
+        {showLockIcon && (
+          <div>
+            <CgLockUnlock />
+          </div>
+        )}
+        <span css={timeRecordStyle}>
+          {dayjs(playlistData.createdAt).fromNow()}
+        </span>
+
         <div css={buttonContainerStyle}>
+          <Category />
           <button
             css={buttonStyle}
             onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}>
@@ -60,7 +86,7 @@ const PlaylistDetail = () => {
       </div>
 
       <div css={sectionThreeContainer}>
-        {user && (
+        {user && showComments ? (
           <>
             <img
               src={user.photoURL || ''}
@@ -71,13 +97,20 @@ const PlaylistDetail = () => {
             />
             <span>{user.displayName}</span>
           </>
-        )}
+        ) : null}
+      </div>
+
+      <div css={plAmountInfoStyle}>
+        <CgPlayList />
+        재생목록( )
+      </div>
+
+      <div>
+        // Playlist 컴포넌트를 사용하여 플레이리스트 데이터를 보여줍니다.
       </div>
     </div>
   )
 }
-
-export default PlaylistDetail
 
 const sectionOneContainer = css`
   iframe {
@@ -122,8 +155,14 @@ const descriptionStyle = css`
   padding: 20px;
 `
 
-const sectionThreeContainer = css`
+const plAmountInfoStyle = css`
   padding: 20px;
+  display: flex;
+  align-items: center;
+`
+
+const sectionThreeContainer = css`
+  margin-top: 15px;
   display: flex;
   align-items: center;
 `
@@ -134,4 +173,10 @@ const profileImageStyle = css`
   margin-right: 6px;
   border-radius: 50%;
   object-fit: cover;
+`
+
+const timeRecordStyle = css`
+  color: ${theme.colors.darkGrey};
+  font-size: ${theme.fontSize.sm};
+  text-align: right;
 `

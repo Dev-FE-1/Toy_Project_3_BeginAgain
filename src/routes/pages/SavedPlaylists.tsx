@@ -48,12 +48,16 @@ export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
     return url.replace('https://www.youtube.com/watch?v=', '')
   }
 
+  const handlePlaylistClick = (playlist: PlayList) => {
+    navigate(`/saved-playlists/${playlist.id}`, { state: { playlist } })
+  }
+
   return (
     <>
       <div css={playlistStyle}>
         <div css={videoIdBackgroundStyle}></div>
         <div
-          onClick={() => navigate(`/saved-playlists`)}
+          onClick={() => handlePlaylistClick(playlist)}
           css={videoIdImageStyle}>
           <img
             css={videoIdStyle}
