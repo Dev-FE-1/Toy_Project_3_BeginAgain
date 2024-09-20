@@ -1,29 +1,48 @@
+import { useEffect, useState } from 'react'
 import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
+import BookmarkList from '@/components/bookmarks/BookmarkList'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useFetchUserBookmark } from '@/hooks/useFetchUserBookmark'
 import { useHeaderStore } from '@/stores/header'
-import { useEffect } from 'react'
 import { css } from '@emotion/react'
-import BookmarkList from '@/components/bookmarks/BookmarkList'
 
 const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
-  const { data: playlists } = useFetchPlaylists()
-  const { data: userBookmarks } = useFetchUserBookmark()
+  const { data: playlists, isLoading: playlistsLoading } = useFetchPlaylists()
+  const { data: userBookmarks, isLoading: bookmarksLoading } =
+    useFetchUserBookmark()
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    '전체'
+  ])
 
   useEffect(() => {
     setTitle('Bookmarks')
   }, [setTitle])
 
-  const filteredPlaylists = playlists?.filter(pl =>
-    userBookmarks?.includes(pl.id)
-  )
+  // 카테고리와 북마크를 기준으로 플레이리스트 필터링
+  const filteredPlaylists = playlists?.filter(pl => {
+    const isBookmarked = userBookmarks?.includes(pl.id)
+    const matchesCategory =
+      selectedCategories.includes('전체') ||
+      (pl.categories &&
+        selectedCategories.some(cat => pl.categories.includes(cat)))
+    return isBookmarked && matchesCategory
+  })
+
+  // 로딩 상태 처리
+  if (playlistsLoading || bookmarksLoading) {
+    return <div>데이터를 가져오고 있는 중...</div>
+  }
 
   return (
     <main>
       <div css={categoryMarginStyle}>
-        <Category />
+        <Category
+          selectedCategories={selectedCategories}
+          onSelectCategory={setSelectedCategories}
+        />
       </div>
       {filteredPlaylists && filteredPlaylists.length > 0 ? (
         filteredPlaylists.map(pl => (
@@ -31,7 +50,6 @@ const Bookmark = () => {
             key={pl.id}
             playlist={pl}
           />
-          // <>qqq</>
         ))
       ) : (
         <div css={EmptyInfoStyle}>
@@ -56,6 +74,7 @@ const EmptyInfoStyle = css`
   align-items: center;
   width: 100%;
 `
+
 const categoryMarginStyle = css`
   margin-bottom: 20px;
 `
