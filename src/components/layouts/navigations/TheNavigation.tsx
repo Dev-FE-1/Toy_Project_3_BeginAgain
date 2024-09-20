@@ -93,6 +93,11 @@ const addButtonStyle = css`
       color: ${theme.colors.black};
     }
   }
+  &:hover {
+    div {
+      color: ${theme.colors.black};
+    }
+  }
 `
 
 export default Navigation
