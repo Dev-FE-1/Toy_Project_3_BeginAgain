@@ -24,7 +24,7 @@ const AddPlaylist = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(['전체'])
 
   useEffect(() => {
-    if (videoUrls.length > 1 && videoTitle) {
+    if (videoUrls.length > 1 && videoTitle && selectedCategories.length > 0) {
       setIsDone(true)
       setPlaylistData(videoUrls, videoTitle, videoDescription, isPublic, selectedCategories)
     } else {
