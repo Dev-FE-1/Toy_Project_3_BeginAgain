@@ -1,26 +1,57 @@
-import { css } from '@emotion/react'
-import theme from '@/styles/theme'
+import React from "react";
+import { css } from '@emotion/react';
+import theme from '@/styles/theme';
 
-const Category = () => {
-  const categories = ['전체', '상체', '하체', '스트레칭', '유산소', '전신']
+export const Category = ({
+  selectedCategories = [],
+  onSelectCategory
+}: {
+  selectedCategories: string[];
+  onSelectCategory: (categories: string[]) => void;
+}) => {
+  const categories = ['전체', '상체', '하체', '스트레칭', '유산소', '전신'];
+
+  const handleCategoryClick = (category: string) => {
+    let newSelectedCategories;
+
+    if (category === '전체') {
+      newSelectedCategories = selectedCategories.includes('전체')
+        ? selectedCategories.filter((c) => c !== '전체') 
+        : ['전체']; 
+    } else {
+      if (selectedCategories.includes(category)) {
+        newSelectedCategories = selectedCategories.filter((c) => c !== category);
+      } else {
+        newSelectedCategories = [...selectedCategories.filter((c) => c !== '전체'), category];
+      }
+    }
+
+    onSelectCategory(newSelectedCategories);
+  };
+
   return (
     <ul css={CategoryContainer}>
       {categories.map(category => (
         <li key={category}>
-          <CategoryButton>{category}</CategoryButton>
+          <CategoryButton
+            onClick={() => handleCategoryClick(category)}
+            styleType={selectedCategories.includes(category) ? "secondary" : "primary"}
+          >
+            {category}
+          </CategoryButton>
         </li>
       ))}
     </ul>
-  )
-}
+  );
+};
 
-const CategoryButton = ({
+export const CategoryButton = ({
   children,
   onClick,
   styleType = 'primary'
 }: {
-  children: React.ReactNode
-  onClick?: () => void
+  children: React.ReactNode;
+  onClick?: () => void;
   styleType?: 'primary' | 'secondary'
 }) => {
   return (
@@ -29,7 +60,7 @@ const CategoryButton = ({
       css={[baseButtonStyle, buttonStyle[styleType]]}>
       {children}
     </button>
-  )
+  );
 }
 
 const baseButtonStyle = css`
@@ -44,7 +75,7 @@ const baseButtonStyle = css`
   line-height: 100%;
   letter-spacing: -0.18px;
   transition: background-color 0.3s ease;
-`
+`;
 
 const buttonStyle = {
   primary: css`
@@ -63,16 +94,16 @@ const buttonStyle = {
       color: ${theme.colors.lightBlue};
     }
   `
-}
+};
 
 const CategoryContainer = css`
   list-style-type: none;
-
   padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-`
-export default Category
+`;
+
+export default Category;
