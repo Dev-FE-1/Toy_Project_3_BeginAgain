@@ -9,9 +9,8 @@ import { css } from '@emotion/react'
 
 const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
-  const { data: playlists, isLoading: playlistsLoading } = useFetchPlaylists()
-  const { data: userBookmarks, isLoading: bookmarksLoading } =
-    useFetchUserBookmark()
+  const { data: playlists } = useFetchPlaylists()
+  const { data: userBookmarks } = useFetchUserBookmark()
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     '전체'
@@ -21,20 +20,26 @@ const Bookmark = () => {
     setTitle('Bookmarks')
   }, [setTitle])
 
-  // 카테고리와 북마크를 기준으로 플레이리스트 필터링
-  const filteredPlaylists = playlists?.filter(pl => {
-    const isBookmarked = userBookmarks?.includes(pl.id)
-    const matchesCategory =
-      selectedCategories.includes('전체') ||
-      (pl.categories &&
-        selectedCategories.some(cat => pl.categories.includes(cat)))
-    return isBookmarked && matchesCategory
-  })
+  // 선택된 카테고리가 없을 경우 '전체'로 설정
+  useEffect(() => {
+    if (selectedCategories.length === 0) {
+      setSelectedCategories(['전체'])
+    }
+  }, [selectedCategories])
 
-  // 로딩 상태 처리
-  if (playlistsLoading || bookmarksLoading) {
-    return <div>데이터를 가져오고 있는 중...</div>
-  }
+  const filteredData =
+    selectedCategories.length > 0
+      ? playlists?.filter(
+          pl =>
+            Array.isArray(pl.categories) &&
+            selectedCategories.some(cat => pl.categories.includes(cat))
+        )
+      : playlists
+
+  // 북마크된 플레이리스트만 필터링
+  const filteredPlaylists = filteredData?.filter(pl =>
+    userBookmarks?.includes(pl.id)
+  )
 
   return (
     <main>
