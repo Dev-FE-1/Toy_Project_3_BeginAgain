@@ -22,12 +22,9 @@ import 'dayjs/locale/ko'
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
 
-function extractVideoId(url?: string) {
-  if (!url) {
-    console.error('URL is undefined or empty')
-    return ''
-  }
-  return url.replace('https://www.youtube.com/watch?v=', '')
+function extractThumbnailUrl(url: string) {
+  const videoId = url.replace('https://www.youtube.com/watch?v=', '')
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
 }
 
 export default function PlaylistDetail({
@@ -43,6 +40,7 @@ export default function PlaylistDetail({
   const { id } = useParams()
   const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
+  const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
   const [filteredPlaylists, setFilteredPlaylists] = useState<
     (typeof Playlist)[] | null
   >(null)
@@ -53,6 +51,12 @@ export default function PlaylistDetail({
     setTitle('Playlist Detail')
   }, [setTitle])
 
+  useEffect(() => {
+    if (playlistData && playlistData.urls.length > 0) {
+      setCurrentVideoUrl(playlistData.urls[0])
+    }
+  }, [playlistData])
+
   if (isLoading) {
     return <div>로딩 중...</div>
   }
@@ -61,16 +65,14 @@ export default function PlaylistDetail({
     return <div>플레이리스트 데이터를 가져오지 못했습니다.</div>
   }
 
-  const videoUrl = playlistData.urls[0]
-
   return (
     <div>
       <div css={sectionOneContainer}>
-        {videoUrl ? (
+        {currentVideoUrl ? (
           <iframe
             width="100%"
             height="240px"
-            src={videoUrl.replace('watch?v=', 'embed/')}
+            src={currentVideoUrl.replace('watch?v=', 'embed/')}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             title="YouTube video"></iframe>
@@ -123,8 +125,25 @@ export default function PlaylistDetail({
 
       <div css={plAmountInfoStyle}>
         <CgPlayList className="cgPlaylist" />
-        재생목록( )
+        재생목록({playlistData.urls.length})
       </div>
+      <div>
+        {playlistData.urls.map((url, index) => (
+          <div key={index}>
+            <img
+              src={extractThumbnailUrl(url)}
+              alt={`Video thumbnail ${index + 1}`}
+              width="240"
+              height="135"
+              onClick={() => setCurrentVideoUrl(url)}
+              style={{ cursor: 'pointer' }}
+            />
+            <span>{}</span>
+            <CgFormatJustify />
+          </div>
+        ))}
+      </div>
+      <div className="nav-margin"></div>
     </div>
   )
 }
