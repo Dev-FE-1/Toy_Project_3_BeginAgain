@@ -29,6 +29,7 @@ const iconStyle = css`
   margin-right: 12px;
   position: absolute;
   left: 20px;
+  cursor: pointer;
 `
 const successBtn = (isDone: boolean) => css`
   position: absolute;

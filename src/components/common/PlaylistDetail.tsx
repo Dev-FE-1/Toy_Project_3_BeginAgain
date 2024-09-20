@@ -143,7 +143,7 @@ const titleStyle = css`
   color: ${theme.colors.black};
   margin-top: 20px;
   margin-bottom: 10px;
-  padding: 0 20px;
+  padding: 0 22px;
 `
 
 const buttonStyle = css`
@@ -176,7 +176,7 @@ const plAmountInfoStyle = css`
   padding: 20px;
   display: flex;
   align-items: center;
-  &.cgPlaylist {
+  .cgPlaylist {
     font-size: 30px;
   }
 `
@@ -210,8 +210,10 @@ const otherInfoStyle = css`
   margin-bottom: 15px;
   color: ${theme.colors.darkGrey};
   align-self: center;
+  gap: 10px;
 `
 const lockStyle = css`
   font-size: ${theme.fontSize.md};
   display: flex;
+  gap: 5px;
 `
