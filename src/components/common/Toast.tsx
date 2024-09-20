@@ -17,13 +17,16 @@ const toastStyle = css`
   left: 50%;
   transform: translateX(-50%);
   z-index: 9;
-  transition: opacity 0.5s ease-in-out;
-  opacity: 1;
+  opacity: 0;
+  visibility: hidden;
 `
-
+const visibleStyle = css`
+  opacity: 1;
+  visibility: visible;
+`
 const hiddenStyle = css`
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  visibility: hidden;
 `
 
 interface ToastProps {
@@ -35,7 +38,7 @@ interface ToastProps {
 
 const Toast: React.FC<ToastProps> = ({
   message,
-  duration = 2000,
+  duration = 1000,
   isVisible,
   onHide
 }) => {
@@ -50,9 +53,9 @@ const Toast: React.FC<ToastProps> = ({
   }, [isVisible, duration, onHide])
 
   return (
-    <div css={isVisible ? toastStyle : hiddenStyle}>
+    <div css={[toastStyle, isVisible ? visibleStyle : hiddenStyle]}>
       <CgCheckO
-        size={theme.fontSize.md.replace('px', '')}
+        size={parseInt(theme.fontSize.md.replace('px', ''), 10)}
         color={theme.colors.white}
       />
       <span>{message}</span>

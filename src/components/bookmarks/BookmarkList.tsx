@@ -4,7 +4,7 @@ import { css } from '@emotion/react'
 import { useNavigate } from 'react-router-dom'
 import theme from '@/styles/theme'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import BookmarkModal from '@/components/bookmarks/BookmarkModal'
 import Toast from '@/components/common/Toast'
 
@@ -13,9 +13,9 @@ interface PlayList {
   urls: string[]
   title: string
   description: string
-  isPublic: boolean
   userId: string
   createdAt: string
+  // isVisible: boolean
 }
 
 function extractVideoId(url: string) {
@@ -26,26 +26,20 @@ const BookmarkList = ({ playlist }: { playlist: PlayList }) => {
   const { mutate: toggleBookmark } = useToggleBookmark(playlist.id)
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isToastVisible, setIsToastVisible] = useState(false) // 토스트 상태(안나와서 수정중 ,,,)
+  const [isToastVisible, setIsToastVisible] = useState(false)
 
-  // const handleBookmark = () => {
-  //   setIsModalOpen(true) // 모달 열기
-  // }
+  useEffect(() => {
+    console.log('isToastVisible:', isToastVisible)
+  }, [isToastVisible])
 
   const handleDelete = () => {
-    setIsModalOpen(false)
-    setIsToastVisible(true)
     toggleBookmark(true)
-
-    // // 2초 후에 토스트 숨기기
-    // setTimeout(() => {
-    //   setIsToastVisible(false)
-    // }, 2000)
+    setIsModalOpen(false)
+    setIsToastVisible(true) // 토스트를 바로 표시
   }
 
   const handleCloseModal = () => {
     setIsModalOpen(false)
-    setIsToastVisible(false)
   }
 
   return (
