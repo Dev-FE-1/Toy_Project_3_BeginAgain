@@ -16,6 +16,7 @@ export interface Playlist {
   title: string
   description: string
   isPublic: boolean
+  categories: string[]
   userId: string
   createdAt: string
 }

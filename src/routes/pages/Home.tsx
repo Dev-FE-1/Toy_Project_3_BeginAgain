@@ -1,6 +1,5 @@
-import Category from '@/components/common/Category'
-import Playlist from '@/components/playlist/Playlist'
-import { Playlist as PlaylistType } from '@/components/playlist/Playlist'
+import { Category } from '@/components/common/Category'
+import Playlist, { Playlist as PlaylistType } from '@/components/playlist/Playlist'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useEffect, useState } from 'react'
@@ -13,6 +12,7 @@ export default function Home() {
   const location = useLocation()
   const [showToast, setShowToast] = useState(false)
   const navigate = useNavigate()
+  const [selectedCategory, setSelectedCategory] = useState<string>('전체')
 
   useEffect(() => {
     setTitle('Home')
@@ -36,12 +36,20 @@ export default function Home() {
     }
   }, [location.state])
 
+  const filteredData = selectedCategory
+  ? data?.filter(pl => Array.isArray(pl.categories) && pl.categories.includes(selectedCategory))
+  : data;
+
   return (
     <>
-      <Category />
+      <Category
+        selectedCategories={selectedCategory ? [selectedCategory] : []} 
+        onSelectCategory={categories => setSelectedCategory(categories[0])} 
+      />
+
       {isLoading && <div>데이터를 가져오고 있는 중...</div>}
-      {data &&
-        data.map(pl => {
+      {filteredData &&
+        filteredData.map(pl => {
           return (
             <Playlist
               key={pl.id}
