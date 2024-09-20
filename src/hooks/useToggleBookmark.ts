@@ -9,6 +9,7 @@ import {
   getDocs
 } from 'firebase/firestore'
 import { auth } from '@/api/firebaseApp'
+
 export const useToggleBookmark = (playlistId: string) => {
   const queryClient = useQueryClient()
   const user = auth.currentUser
