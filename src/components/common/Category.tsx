@@ -1,42 +1,32 @@
-import React from "react"
-import { css } from '@emotion/react'
-import theme from '@/styles/theme'
-
-export type Category = {
-  id: number;
-  name: string;
-  children: Category[] | []
-};
+import React from "react";
+import { css } from '@emotion/react';
+import theme from '@/styles/theme';
 
 export const Category = ({
   selectedCategories = [],
   onSelectCategory
 }: {
   selectedCategories: string[];
-  onSelectCategory: (categories: string[]) => void
+  onSelectCategory: (categories: string[]) => void;
 }) => {
-  const categories = ['전체', '상체', '하체', '스트레칭', '유산소', '전신']
+  const categories = ['전체', '상체', '하체', '스트레칭', '유산소', '전신'];
 
   const handleCategoryClick = (category: string) => {
     let newSelectedCategories;
 
     if (category === '전체') {
       newSelectedCategories = selectedCategories.includes('전체')
-        ? selectedCategories.filter((c) => c !== '전체')
-        : ['전체']
+        ? selectedCategories.filter((c) => c !== '전체') 
+        : ['전체']; 
     } else {
       if (selectedCategories.includes(category)) {
-        newSelectedCategories = selectedCategories.filter((c) => c !== category)
+        newSelectedCategories = selectedCategories.filter((c) => c !== category);
       } else {
-        newSelectedCategories = [...selectedCategories, category]
-      }
-
-      if (!newSelectedCategories.includes('전체')) {
-        newSelectedCategories = ['전체', ...newSelectedCategories]
+        newSelectedCategories = [...selectedCategories.filter((c) => c !== '전체'), category];
       }
     }
 
-    onSelectCategory(newSelectedCategories)
+    onSelectCategory(newSelectedCategories);
   };
 
   return (
@@ -70,7 +60,7 @@ export const CategoryButton = ({
       css={[baseButtonStyle, buttonStyle[styleType]]}>
       {children}
     </button>
-  )
+  );
 }
 
 const baseButtonStyle = css`
@@ -116,4 +106,4 @@ const CategoryContainer = css`
   gap: 10px;
 `;
 
-export default Category
+export default Category;
