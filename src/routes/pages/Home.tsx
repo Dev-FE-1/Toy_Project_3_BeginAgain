@@ -36,6 +36,12 @@ export default function Home() {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    if (selectedCategories.length === 0) {
+      setSelectedCategories(['전체']);
+    }
+  }, [selectedCategories]);
+  
   const filteredData = selectedCategories.length > 0
     ? data?.filter(pl => Array.isArray(pl.categories) && selectedCategories.some(cat => pl.categories.includes(cat)))
     : data;
