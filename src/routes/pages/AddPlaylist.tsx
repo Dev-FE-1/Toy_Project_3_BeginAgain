@@ -21,12 +21,20 @@ const AddPlaylist = () => {
   const [isPublic, setIsPublic] = useState(true)
   const [titleInputCount, setTitleInputCount] = useState(0)
   const [descriptionInputCount, setDescriptionInputCount] = useState(0)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['전체'])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    '전체'
+  ])
 
   useEffect(() => {
     if (videoUrls.length > 1 && videoTitle && selectedCategories.length > 0) {
       setIsDone(true)
-      setPlaylistData(videoUrls, videoTitle, videoDescription, isPublic, selectedCategories)
+      setPlaylistData(
+        videoUrls,
+        videoTitle,
+        videoDescription,
+        isPublic,
+        selectedCategories
+      )
     } else {
       setIsDone(false)
     }
@@ -43,9 +51,11 @@ const AddPlaylist = () => {
   const addVideoUrl = () => {
     const pattern = /^https:\/\/www\.youtube\.com\/watch\?v=.*/
     if (!currentVideoUrl.match(pattern)) {
-    alert("https://www.youtube.com/watch?v= 를 반드시 포함시킨 링크만을 사용해주세요!")
-    return
-  }
+      alert(
+        'https://www.youtube.com/watch?v= 를 반드시 포함시킨 링크만을 사용해주세요!'
+      )
+      return
+    }
     if (currentVideoUrl && !videoUrls.includes(currentVideoUrl)) {
       setVideoUrls([...videoUrls, currentVideoUrl])
       setCurrentVideoUrl('')
@@ -66,6 +76,14 @@ const AddPlaylist = () => {
   ) => {
     setVideoDescription(e.target.value)
     setDescriptionInputCount(e.target.value.length)
+  }
+
+  const handleCategorySelect = (categories: string[]) => {
+    // "전체"가 항상 포함되도록 설정
+    if (!categories.includes('전체')) {
+      categories = ['전체', ...categories] // '전체' 추가
+    }
+    setSelectedCategories(categories)
   }
 
   return (
@@ -149,9 +167,9 @@ const AddPlaylist = () => {
           <div css={requiredTitleStyle}>카테고리 설정</div>
         </div>
         <div css={CategoryStyle}>
-        <Category
+          <Category
             selectedCategories={selectedCategories}
-            onSelectCategory={setSelectedCategories}
+            onSelectCategory={handleCategorySelect}
           />
         </div>
       </div>
