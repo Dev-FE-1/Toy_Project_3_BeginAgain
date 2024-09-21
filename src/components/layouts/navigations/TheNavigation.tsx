@@ -86,6 +86,7 @@ const addButtonStyle = css`
     svg {
       font-size: 40px;
       stroke-width: 0;
+      color: ${theme.colors.black};
     }
   }
   &.active {
