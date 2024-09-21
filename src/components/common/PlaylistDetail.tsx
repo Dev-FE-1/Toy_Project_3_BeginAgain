@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
 import {
@@ -22,6 +22,27 @@ import 'dayjs/locale/ko'
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
 
+const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
+const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/videos'
+
+function extractVideoIdFromUrl(url: string): string {
+  const urlObj = new URL(url)
+  return urlObj.searchParams.get('v') || ''
+}
+
+async function fetchVideoTitle(videoId: string): Promise<string> {
+  const response = await fetch(
+    `${YOUTUBE_API_URL}?id=${videoId}&part=snippet&key=${YOUTUBE_API_KEY}`
+  )
+  const data = await response.json()
+
+  if (data.items && data.items.length > 0) {
+    return data.items[0].snippet.title
+  }
+
+  return 'Unknown Title'
+}
+
 function extractThumbnailUrl(url: string) {
   const videoId = url.replace('https://www.youtube.com/watch?v=', '')
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
@@ -29,8 +50,7 @@ function extractThumbnailUrl(url: string) {
 
 export default function PlaylistDetail({
   showComments,
-  showLockIcon,
-  playlist
+  showLockIcon
 }: {
   showComments?: boolean
   showLockIcon?: boolean
@@ -41,10 +61,7 @@ export default function PlaylistDetail({
   const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
-  const [filteredPlaylists, setFilteredPlaylists] = useState<
-    (typeof Playlist)[] | null
-  >(null)
-  const navigate = useNavigate()
+  const [videoTitles, setVideoTitles] = useState<string[]>([])
   const user = auth.currentUser
 
   useEffect(() => {
@@ -54,6 +71,18 @@ export default function PlaylistDetail({
   useEffect(() => {
     if (playlistData && playlistData.urls.length > 0) {
       setCurrentVideoUrl(playlistData.urls[0])
+
+      const fetchTitles = async () => {
+        const videoIds = playlistData.urls.map(url =>
+          extractVideoIdFromUrl(url)
+        )
+        const titles = await Promise.all(
+          videoIds.map(id => fetchVideoTitle(id))
+        )
+        setVideoTitles(titles) // 제목 배열 상태로 설정
+      }
+
+      fetchTitles()
     }
   }, [playlistData])
 
@@ -138,7 +167,7 @@ export default function PlaylistDetail({
               onClick={() => setCurrentVideoUrl(url)}
               style={{ cursor: 'pointer' }}
             />
-            <span>{}</span>
+            <span>{videoTitles[index] || '제목 로딩 중...'}</span>
             <CgFormatJustify />
           </div>
         ))}
