@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
 import {
@@ -22,18 +22,35 @@ import 'dayjs/locale/ko'
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
 
-function extractVideoId(url?: string) {
-  if (!url) {
-    console.error('URL is undefined or empty')
-    return ''
+const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
+const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/videos'
+
+function extractVideoIdFromUrl(url: string): string {
+  const urlObj = new URL(url)
+  return urlObj.searchParams.get('v') || ''
+}
+
+async function fetchVideoTitle(videoId: string): Promise<string> {
+  const response = await fetch(
+    `${YOUTUBE_API_URL}?id=${videoId}&part=snippet&key=${YOUTUBE_API_KEY}`
+  )
+  const data = await response.json()
+
+  if (data.items && data.items.length > 0) {
+    return data.items[0].snippet.title
   }
-  return url.replace('https://www.youtube.com/watch?v=', '')
+
+  return 'Unknown Title'
+}
+
+function extractThumbnailUrl(url: string) {
+  const videoId = url.replace('https://www.youtube.com/watch?v=', '')
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
 }
 
 export default function PlaylistDetail({
   showComments,
-  showLockIcon,
-  playlist
+  showLockIcon
 }: {
   showComments?: boolean
   showLockIcon?: boolean
@@ -43,15 +60,31 @@ export default function PlaylistDetail({
   const { id } = useParams()
   const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
-  const [filteredPlaylists, setFilteredPlaylists] = useState<
-    (typeof Playlist)[] | null
-  >(null)
-  const navigate = useNavigate()
+  const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
+  const [videoTitles, setVideoTitles] = useState<string[]>([])
   const user = auth.currentUser
 
   useEffect(() => {
     setTitle('Playlist Detail')
   }, [setTitle])
+
+  useEffect(() => {
+    if (playlistData && playlistData.urls.length > 0) {
+      setCurrentVideoUrl(playlistData.urls[0])
+
+      const fetchTitles = async () => {
+        const videoIds = playlistData.urls.map(url =>
+          extractVideoIdFromUrl(url)
+        )
+        const titles = await Promise.all(
+          videoIds.map(id => fetchVideoTitle(id))
+        )
+        setVideoTitles(titles) // 제목 배열 상태로 설정
+      }
+
+      fetchTitles()
+    }
+  }, [playlistData])
 
   if (isLoading) {
     return <div>로딩 중...</div>
@@ -61,16 +94,14 @@ export default function PlaylistDetail({
     return <div>플레이리스트 데이터를 가져오지 못했습니다.</div>
   }
 
-  const videoUrl = playlistData.urls[0]
-
   return (
     <div>
       <div css={sectionOneContainer}>
-        {videoUrl ? (
+        {currentVideoUrl ? (
           <iframe
             width="100%"
             height="240px"
-            src={videoUrl.replace('watch?v=', 'embed/')}
+            src={currentVideoUrl.replace('watch?v=', 'embed/')}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             title="YouTube video"></iframe>
@@ -123,8 +154,29 @@ export default function PlaylistDetail({
 
       <div css={plAmountInfoStyle}>
         <CgPlayList className="cgPlaylist" />
-        재생목록( )
+        재생목록 ({playlistData.urls.length})
       </div>
+      <div css={videoContainerStyle}>
+        {playlistData.urls.map((url, index) => (
+          <div
+            key={index}
+            css={videoInfoLayoutStyle}>
+            <img
+              src={extractThumbnailUrl(url)}
+              alt={`Video thumbnail ${index + 1}`}
+              width="80"
+              height="60"
+              onClick={() => setCurrentVideoUrl(url)}
+              style={{ cursor: 'pointer', borderRadius: '8px' }}
+            />
+            <span css={videoTitleStyle}>
+              {videoTitles[index] || '제목 로딩 중...'}
+            </span>
+            <CgFormatJustify css={dragIconStyle} />
+          </div>
+        ))}
+      </div>
+      <div className="nav-margin"></div>
     </div>
   )
 }
@@ -216,4 +268,31 @@ const lockStyle = css`
   font-size: ${theme.fontSize.md};
   display: flex;
   gap: 5px;
+`
+
+const videoContainerStyle = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px;
+  margin-top: 10px;
+  gap: 20px;
+`
+
+const videoInfoLayoutStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+`
+const videoTitleStyle = css`
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+`
+
+const dragIconStyle = css`
+  flex-shrink: 0;
 `
