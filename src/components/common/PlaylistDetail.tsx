@@ -154,21 +154,25 @@ export default function PlaylistDetail({
 
       <div css={plAmountInfoStyle}>
         <CgPlayList className="cgPlaylist" />
-        재생목록({playlistData.urls.length})
+        재생목록 ({playlistData.urls.length})
       </div>
-      <div>
+      <div css={videoContainerStyle}>
         {playlistData.urls.map((url, index) => (
-          <div key={index}>
+          <div
+            key={index}
+            css={videoInfoLayoutStyle}>
             <img
               src={extractThumbnailUrl(url)}
               alt={`Video thumbnail ${index + 1}`}
-              width="240"
-              height="135"
+              width="80"
+              height="60"
               onClick={() => setCurrentVideoUrl(url)}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', borderRadius: '8px' }}
             />
-            <span>{videoTitles[index] || '제목 로딩 중...'}</span>
-            <CgFormatJustify />
+            <span css={videoTitleStyle}>
+              {videoTitles[index] || '제목 로딩 중...'}
+            </span>
+            <CgFormatJustify css={dragIconStyle} />
           </div>
         ))}
       </div>
@@ -264,4 +268,31 @@ const lockStyle = css`
   font-size: ${theme.fontSize.md};
   display: flex;
   gap: 5px;
+`
+
+const videoContainerStyle = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px;
+  margin-top: 10px;
+  gap: 20px;
+`
+
+const videoInfoLayoutStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+`
+const videoTitleStyle = css`
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+`
+
+const dragIconStyle = css`
+  flex-shrink: 0;
 `
