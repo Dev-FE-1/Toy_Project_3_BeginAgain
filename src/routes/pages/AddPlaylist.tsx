@@ -21,32 +21,14 @@ const AddPlaylist = () => {
   const [isPublic, setIsPublic] = useState(true)
   const [titleInputCount, setTitleInputCount] = useState(0)
   const [descriptionInputCount, setDescriptionInputCount] = useState(0)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([
-    '전체'
-  ])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(['전체'])
 
   useEffect(() => {
-    if (videoUrls.length > 1 && videoTitle && selectedCategories.length > 0) {
-      setIsDone(true)
-      setPlaylistData(
-        videoUrls,
-        videoTitle,
-        videoDescription,
-        isPublic,
-        selectedCategories
-      )
-    } else {
-      setIsDone(false)
-    }
-  }, [
-    videoUrls,
-    videoTitle,
-    videoDescription,
-    isPublic,
-    selectedCategories,
-    setIsDone,
-    setPlaylistData
-  ])
+    const hasRequiredData = videoUrls.length > 1 && videoTitle.trim() !== '' && selectedCategories.length > 0
+    setIsDone(hasRequiredData)
+
+    setPlaylistData(videoUrls, videoTitle, videoDescription, isPublic, selectedCategories)
+  }, [videoUrls, videoTitle, videoDescription, isPublic, selectedCategories, setIsDone, setPlaylistData])
 
   const addVideoUrl = () => {
     const pattern = /^https:\/\/www\.youtube\.com\/watch\?v=.*/
@@ -79,9 +61,8 @@ const AddPlaylist = () => {
   }
 
   const handleCategorySelect = (categories: string[]) => {
-    // "전체"가 항상 포함되도록 설정
     if (!categories.includes('전체')) {
-      categories = ['전체', ...categories] // '전체' 추가
+      categories = ['전체', ...categories] 
     }
     setSelectedCategories(categories)
   }
@@ -225,10 +206,10 @@ const commonInputStyle = css`
   font-weight: ${theme.fontWeight.medium};
   color: ${theme.colors.black};
   height: 30px;
-  width: 100%;
-  letter-spacing: -0.2px;
-  padding-left: 30px;
-  padding-right: 40px;
+  width: 24.5em;
+  margin-left: 18px;
+  padding-left: 3px;
+  letter-spacing: -1px;
   box-sizing: border-box;
   margin-bottom: 35px;
 `
@@ -266,7 +247,7 @@ const SpanContainer = css`
   display: inline-block;
   z-index: 1;
   position: fixed;
-  right: 0.5rem;
+  right: 1.5rem;
   transform: translateY(50%);
   background-color: transparent;
   color: ${theme.colors.grey};
@@ -276,7 +257,7 @@ const SpanContainer = css`
 const AddButton = css`
   ${commonButtonStyle}
   top: 15px;
-  right: 5px;
+  right: 15px;
   transform: translateY(50%);
 `
 
@@ -285,7 +266,7 @@ const DeleteButtonContainer = css`
   margin-left: 1.5rem;
   overflow-y: scroll;
   max-width: 24rem;
-  max-height: 3rem;
+  max-height: 6rem;
   margin-bottom: 35px;
   cursor: pointer;
 
@@ -310,16 +291,14 @@ const DeleteButton = css`
   position: absolute;
   right: 0;
   margin-bottom: 7px;
-  transform: translateY(23%);
 `
 
 const UrlStyle = css`
   display: flex;
   margin-bottom: 5px;
-  align-items: center;
-  justify-content: space-between;
-  font-size: ${theme.fontSize.xs};
+  font-size: ${theme.fontSize.sm};
   color: ${theme.colors.darkGrey};
+  max-width: 22rem;
 `
 
 const CategoryStyle = css`

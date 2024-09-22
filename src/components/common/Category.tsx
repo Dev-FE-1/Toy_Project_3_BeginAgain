@@ -81,18 +81,10 @@ const buttonStyle = {
   primary: css`
     background-color: ${theme.colors.white};
     color: ${theme.colors.lightBlue};
-    &:hover {
-      background-color: ${theme.colors.lightBlue};
-      color: ${theme.colors.white};
-    }
   `,
   secondary: css`
     background-color: ${theme.colors.lightBlue};
     color: ${theme.colors.white};
-    &:hover {
-      background-color: ${theme.colors.white};
-      color: ${theme.colors.lightBlue};
-    }
   `
 };
 
