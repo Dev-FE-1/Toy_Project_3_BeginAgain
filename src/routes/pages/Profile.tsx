@@ -12,20 +12,20 @@ const pageStyle = css`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
 `
 const profileStyle = css`
   width: 130px;
-  margin-top: 50px;
+  margin-top: 40px;
   border-radius: 50%;
 `
 const textStyle = css`
   margin-top: 3rem;
   border-bottom: 2px solid #ebebeb;
   font-size: ${theme.fontSize.md};
-  height: 55px;
-  width: 100%;
-  padding-left: 20px;
+  height: 50px;
+  width: 24.5em;
+  padding-left: 3px;
 `
 const titleText = css`
   color: ${theme.colors.black};
