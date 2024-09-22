@@ -8,7 +8,7 @@ import {
 } from 'firebase/firestore'
 import type { User } from 'firebase/auth'
 
-interface Comment {
+export interface Comment {
   id: string
   user: User
   content: string
@@ -22,10 +22,12 @@ export const useFetchComments = (playlistid: string) => {
     queryFn: async () => {
       const db = getFirestore()
       const coll = collection(db, 'Comments')
+      console.log('playlistid::', playlistid)
       const querySnapshot = await getDocs(
-        query(coll, where('playlistid', '==', playlistid))
+        query(coll, where('playlistId', '==', playlistid))
       )
       return querySnapshot.docs.map(doc => {
+        console.log(doc)
         return {
           id: doc.id,
           ...doc.data()
@@ -33,6 +35,7 @@ export const useFetchComments = (playlistid: string) => {
       }) as Comment[]
     },
     select(data) {
+      console.log('select::', data)
       return data.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     }
   })

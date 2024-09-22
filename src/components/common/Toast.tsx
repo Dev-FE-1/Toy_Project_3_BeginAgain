@@ -15,15 +15,19 @@ const toastStyle = css`
   position: fixed;
   bottom: 100px;
   left: 50%;
-  transform: translateX(-50%);
   z-index: 9;
+  transform: translateX(-50%);
   transition: opacity 0.5s ease-in-out;
-  opacity: 1;
+  opacity: 0;
+  visibility: hidden;
 `
-
+const visibleStyle = css`
+  opacity: 1;
+  visibility: visible;
+`
 const hiddenStyle = css`
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  visibility: hidden;
 `
 
 interface ToastProps {
@@ -50,7 +54,7 @@ const Toast: React.FC<ToastProps> = ({
   }, [isVisible, duration, onHide])
 
   return (
-    <div css={isVisible ? toastStyle : hiddenStyle}>
+    <div css={[toastStyle, isVisible ? visibleStyle : hiddenStyle]}>
       <CgCheckO
         size={theme.fontSize.md.replace('px', '')}
         color={theme.colors.white}
