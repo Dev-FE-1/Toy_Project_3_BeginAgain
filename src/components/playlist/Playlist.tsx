@@ -134,21 +134,19 @@ export default function Playlist({
             <span css={commentCountStyle}>{commentCount}</span>
           </div>
 
-          {user && user.uid === playlist?.userId ? (
-            <FaRegBookmark
-              css={[bookmarkIconStyle, disabledBookmarkStyle]} // 비워진 북마크 아이콘 사용
-            />
-          ) : isBookmarked ? (
-            <FaBookmark
-              onClick={handleBookmark}
-              css={fillbookmarkIconStyle}
-            />
-          ) : (
-            <FaRegBookmark
-              onClick={handleBookmark}
-              css={bookmarkIconStyle}
-            />
-          )}
+          {user && user.uid !== playlist?.userId ? (
+            isBookmarked ? (
+              <FaBookmark
+                onClick={handleBookmark}
+                css={fillbookmarkIconStyle}
+              />
+            ) : (
+              <FaRegBookmark
+                onClick={handleBookmark}
+                css={bookmarkIconStyle}
+              />
+            )
+          ) : null}
         </div>
 
         <div css={titleStyle}>
@@ -260,11 +258,6 @@ const fillbookmarkIconStyle = css`
   transition:
     color 0.9s ease,
     transform 0.9s ease;
-`
-
-const disabledBookmarkStyle = css`
-  pointer-events: none;
-  opacity: 0.5;
 `
 
 const titleStyle = css`

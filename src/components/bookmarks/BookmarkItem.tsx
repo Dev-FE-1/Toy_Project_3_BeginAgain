@@ -21,7 +21,7 @@ function extractVideoId(url: string) {
   return url.replace('https://www.youtube.com/watch?v=', '')
 }
 
-const BookmarkList = ({ playlist }: { playlist: PlayList }) => {
+const BookmarkItem = ({ playlist }: { playlist: PlayList }) => {
   const { mutate: toggleBookmark } = useToggleBookmark(playlist.id)
 
   const navigate = useNavigate()
@@ -55,11 +55,14 @@ const BookmarkList = ({ playlist }: { playlist: PlayList }) => {
           src={`https://img.youtube.com/vi/${extractVideoId(playlist.urls[0])}/hqdefault.jpg`}
           alt={playlist.title}
           css={videoIdStyle}
-          onClick={() => navigate(`/playlist-details/${playlist.id}`)}
+          onClick={() => navigate(`/bookmarked-playlist/${playlist.id}`)}
         />
         <div css={playlistInfoStyle}>
           <p css={titleStyle}>{playlist.title}</p>
-          <CgFormatJustify css={hamburgerIconStyle} />
+          <CgFormatJustify
+            css={hamburgerIconStyle}
+            className="drag-handle"
+          />
         </div>
       </div>
 
@@ -134,4 +137,4 @@ const hamburgerIconStyle = css`
   transition: color 0.3s ease;
 `
 
-export default BookmarkList
+export default BookmarkItem

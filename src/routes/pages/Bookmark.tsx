@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
-import BookmarkList from '@/components/bookmarks/BookmarkList'
+import BookmarkItem from '@/components/bookmarks/BookmarkItem'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useFetchUserBookmark } from '@/hooks/useFetchUserBookmark'
 import { useHeaderStore } from '@/stores/header'
@@ -51,7 +51,7 @@ const Bookmark = () => {
       </div>
       {filteredPlaylists && filteredPlaylists.length > 0 ? (
         filteredPlaylists.map(pl => (
-          <BookmarkList
+          <BookmarkItem
             key={pl.id}
             playlist={pl}
           />
