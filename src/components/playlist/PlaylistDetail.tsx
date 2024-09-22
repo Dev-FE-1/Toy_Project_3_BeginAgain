@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
@@ -18,6 +18,7 @@ import { CgLockUnlock } from 'react-icons/cg'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/ko'
+import Sortable from 'sortablejs'
 
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
@@ -63,6 +64,7 @@ export default function PlaylistDetail({
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
   const [videoTitles, setVideoTitles] = useState<string[]>([])
   const user = auth.currentUser
+  const ItemRef = useRef<HTMLDivElement | null>(null) // 드래그앤드롭을 위한 거
 
   useEffect(() => {
     setTitle('Playlist Detail')
@@ -84,6 +86,25 @@ export default function PlaylistDetail({
 
       fetchTitles()
     }
+  }, [playlistData])
+
+  useEffect(() => {
+    console.log('Item', ItemRef.current)
+    if (!ItemRef.current) return
+    new Sortable(ItemRef.current, {
+      handle: '.drag-handle',
+      animation: 0,
+      forceFallback: true,
+      onEnd: event => {
+        console.log(event.oldIndex, event.newIndex)
+        if (event.oldIndex === undefined || event.newIndex === undefined) return
+        console.log('>>>순서 잘 바뀌니 ', playlistData)
+        // reorderTodos({
+        //   oldIndex: event.oldIndex,
+        //   newIndex: event.newIndex
+        // })
+      }
+    })
   }, [playlistData])
 
   if (isLoading) {
@@ -156,7 +177,9 @@ export default function PlaylistDetail({
         <CgPlayList className="cgPlaylist" />
         재생목록 ({playlistData.urls.length})
       </div>
-      <div css={videoContainerStyle}>
+      <div
+        css={videoContainerStyle}
+        ref={ItemRef}>
         {playlistData.urls.map((url, index) => (
           <div
             key={index}
@@ -172,7 +195,10 @@ export default function PlaylistDetail({
             <span css={videoTitleStyle}>
               {videoTitles[index] || '제목 로딩 중...'}
             </span>
-            <CgFormatJustify css={dragIconStyle} />
+            <CgFormatJustify
+              css={dragIconStyle}
+              className="drag-handle"
+            />
           </div>
         ))}
       </div>
