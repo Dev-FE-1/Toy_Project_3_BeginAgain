@@ -8,11 +8,12 @@ import Profile from '@/routes/pages/Profile'
 import PlaylistDetail from '@/routes/pages/PlaylistDetail'
 import SavedPlaylistDetail from '@/routes/pages/SavedPlaylistsDetail'
 import RequiresAuth from '@/routes/protected/RequiresAuth'
-import EditPlaylist from '@/components/EditPlaylistModal'
+import EditPlaylistInfo from '@/routes/pages/EditPlaylistInfo'
 import SignIn from './pages/SignIn'
 import NotFound from './pages/NotFound'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import DeleteVideos from './pages/DeleteVideos'
 
 dayjs.extend(relativeTime)
 
@@ -29,7 +30,8 @@ export const router = createBrowserRouter([
           { path: '/bookmark', element: <Bookmark /> },
           { path: '/my-playlist', element: <MyPlaylist /> },
           { path: '/saved-playlists/:id', element: <SavedPlaylistDetail /> },
-          { path: '/edit-playlist/:id', element: <EditPlaylist /> },
+          { path: '/edit-playlist', element: <EditPlaylistInfo /> },
+          { path: '/delete-videos', element: <DeleteVideos /> },
           { path: '/profile', element: <Profile /> }
         ]
       }

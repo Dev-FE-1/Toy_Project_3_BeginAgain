@@ -1,5 +1,6 @@
 import { css } from '@emotion/react'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { CgClose } from 'react-icons/cg'
 import theme from '@/styles/theme'
 import LongButton from '@/components/common/LongButton'
@@ -26,6 +27,15 @@ const EditPlaylist = ({ closeEdit }: { closeEdit: () => void }) => {
     }
   }
 
+  const navigate = useNavigate()
+
+  const handleEditInfo = () => {
+    navigate('/edit-playlist')
+  }
+  const handleDelete = () => {
+    navigate('/delete-videos')
+  }
+
   return (
     <motion.div
       className="editPage"
@@ -49,8 +59,8 @@ const EditPlaylist = ({ closeEdit }: { closeEdit: () => void }) => {
             <CgClose />
           </button>
           <div css={longButtonStyle}>
-            <LongButton onClick={() => {}}>정보 수정</LongButton>
-            <LongButton onClick={() => {}}>동영상 삭제</LongButton>
+            <LongButton onClick={handleEditInfo}>정보 수정</LongButton>
+            <LongButton onClick={handleDelete}>동영상 삭제</LongButton>
           </div>
         </div>
       </>
