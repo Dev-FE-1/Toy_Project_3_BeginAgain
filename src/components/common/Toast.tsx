@@ -15,6 +15,7 @@ const toastStyle = css`
   position: fixed;
   bottom: 100px;
   left: 50%;
+  z-index: 9;
   transform: translateX(-50%);
   z-index: 9;
   transition:

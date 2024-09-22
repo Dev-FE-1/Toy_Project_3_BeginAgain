@@ -1,4 +1,4 @@
-import PlaylistDetail from '@/components/common/PlaylistDetail'
+import PlaylistDetail from '@/components/playlist/PlaylistDetail'
 
 export default function SavedPlaylistsDetail() {
   return (
