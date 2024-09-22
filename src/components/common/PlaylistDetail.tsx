@@ -137,6 +137,13 @@ export default function PlaylistDetail({
         {isDescriptionVisible && (
           <p css={descriptionStyle}>{playlistData.description}</p>
         )}
+        {/* 임시로 이 자리에 저장 */}
+        <CommentsModal
+          playlistId={playlistId} // playlistId가 항상 string임을 보장
+          comments={[]} // 댓글 데이터는 빈 배열로 제공 (데이터가 있으면 실제 댓글 배열로 교체)
+          onClose={() => {}}
+          myProfile={{ photoURL: user.photoURL || '' }} // myProfile 제공
+        />
       </div>
 
       <div css={sectionThreeContainer}>
@@ -150,13 +157,6 @@ export default function PlaylistDetail({
               css={profileImageStyle}
             />
             <span>{user.displayName}</span>
-
-            <CommentsModal
-              playlistId={playlistId} // playlistId가 항상 string임을 보장
-              comments={[]} // 댓글 데이터는 빈 배열로 제공 (데이터가 있으면 실제 댓글 배열로 교체)
-              onClose={() => {}}
-              myProfile={{ photoURL: user.photoURL || '' }} // myProfile 제공
-            />
           </>
         ) : null}
       </div>

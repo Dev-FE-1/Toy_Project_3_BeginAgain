@@ -1,18 +1,12 @@
 import { useState } from 'react'
 import { useCreateComment } from '@/hooks/useCreateComment'
 import { useDeleteComment } from '@/hooks/useDeleteComment'
+import type { Comment } from '@/hooks/useFetchComments'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 
 interface CommentsModalProps {
-  comments: Array<{
-    id: string
-    user: {
-      photoURL: string
-      displayName: string
-    }
-    content: string
-  }>
+  comments: Comment[]
   onClose: () => void
   myProfile: {
     photoURL: string
@@ -33,21 +27,18 @@ const CommentModal: React.FC<CommentsModalProps> = ({
   const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value)
   }
-
   const handleCommentSubmit = () => {
+    console.log('comment!!', comment)
+    if (comment.trim() === '') return
     if (!playlistId) {
       console.error('playlistId is undefined')
       return
     }
-    createComment({ comment, playlistId })
-    setComment('')
+    createComment({ comment, playlistId }) // 여기서 playlistId가 제대로 전달되어야 합니다.
+    setComment('') // 댓글 입력 후 초기화
   }
 
   const handleCommentDelete = (commentId: string) => {
-    if (!playlistId) {
-      console.error('playlistId is undefined')
-      return
-    }
     deleteComment({ commentId, playlistId })
   }
 
@@ -132,9 +123,12 @@ const modalContainerStyle = css`
   padding: 20px;
   border-radius: 8px;
   width: 430px;
+  /* height: auto; */
   max-width: 600px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
 `
 
 const dividerStyle = css`

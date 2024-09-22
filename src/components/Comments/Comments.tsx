@@ -20,7 +20,7 @@ const Comment: React.FC<CommentsProps> = ({ playlistId }) => {
   }
 
   if (isError) {
-    return <div>댓글 로딩 오류: {isError.message}</div>
+    return <div>댓글 로딩 오류: {isError}</div>
   }
 
   const commentCount = comments ? comments.length : 0
@@ -47,9 +47,10 @@ const Comment: React.FC<CommentsProps> = ({ playlistId }) => {
       )}
       {isModalOpen && (
         <CommentsModal
-          comments={comments}
+          comments={comments || []}
           onClose={closeModal}
           myProfile={{ photoURL: '/my-profile.png' }}
+          playlistId={playlistId}
         />
       )}
     </div>
