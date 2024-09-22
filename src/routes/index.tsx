@@ -7,6 +7,7 @@ import MyPlaylist from '@/routes/pages/MyPlaylist'
 import Profile from '@/routes/pages/Profile'
 import PlaylistDetail from '@/routes/pages/PlaylistDetail'
 import SavedPlaylistDetail from '@/routes/pages/SavedPlaylistsDetail'
+import BookmarkedPlaylist from '@/routes/pages/BookmarkedPlaylist'
 import RequiresAuth from '@/routes/protected/RequiresAuth'
 import EditPlaylist from '@/routes/pages/EditPlaylist'
 import SignIn from './pages/SignIn'
@@ -27,6 +28,7 @@ export const router = createBrowserRouter([
           { path: '/playlist-details/:id', element: <PlaylistDetail /> },
           { path: '/add-playlist', element: <AddPlaylist /> },
           { path: '/bookmark', element: <Bookmark /> },
+          { path: '/bookmarked-playlist/:id', element: <BookmarkedPlaylist /> },
           { path: '/my-playlist', element: <MyPlaylist /> },
           { path: '/saved-playlists/:id', element: <SavedPlaylistDetail /> },
           { path: '/edit-playlist/:id', element: <EditPlaylist /> },

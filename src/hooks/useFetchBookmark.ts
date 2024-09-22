@@ -13,6 +13,7 @@ interface Bookmarks {
   user: string
   createdAt: string
   playlistId: string
+  categories: string[]
 }
 
 export const useFetchBookmarks = (playlistId: string) => {

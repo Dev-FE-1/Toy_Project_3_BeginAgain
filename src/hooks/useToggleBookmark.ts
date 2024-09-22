@@ -45,6 +45,8 @@ export const useToggleBookmark = (playlistId: string) => {
     onSuccess: () => {
       // queryClient.invalidateQueries(['bookmarks', playlistId])
       queryClient.invalidateQueries({ queryKey: ['bookmarks', playlistId] })
+      // queryClient.invalidateQueries({ queryKey: ['userBookmarks', playlistId] })
+      queryClient.invalidateQueries({ queryKey: ['userBookmarks'] })
     }
   })
 
