@@ -1,4 +1,4 @@
-import PlaylistDetail from '@/components/common/PlaylistDetail'
+import PlaylistDetail from '@/components/playlist/PlaylistDetail'
 import Comments from '@/components/Comments/Comments'
 
 const PlaylistDetailPage = () => {
