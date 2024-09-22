@@ -38,6 +38,7 @@ const longButtonStyle = css`
   font-size: ${theme.fontSize.md};
   color: ${theme.colors.white};
   cursor: pointer;
+  font-weight: ${theme.fontWeight.semiBold};
 `
 
 export default LongButton

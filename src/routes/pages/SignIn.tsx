@@ -92,7 +92,7 @@ export default function SignIn() {
             alt="Google Logo"
             style={{ width: '20px', height: '20px' }}
           />
-          구글 로그인
+          Continue with Google
         </LongButton>
       </div>
 
