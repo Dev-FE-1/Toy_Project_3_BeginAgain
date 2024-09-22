@@ -106,15 +106,7 @@ export default function TheHeader(id: string, playlist: Playlist) {
         </button>
       )}
       {isProfile && <button css={editBtn}>수정</button>}
-      {isMyPlaylist && (
-        <button
-          css={editBtn}
-          onClick={() => {
-            handleEdit(playlist)
-          }}>
-          편집
-        </button>
-      )}
+      {isMyPlaylist && <button css={editBtn}>편집</button>}
     </header>
   )
 }

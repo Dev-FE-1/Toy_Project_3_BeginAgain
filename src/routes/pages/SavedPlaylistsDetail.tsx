@@ -6,6 +6,7 @@ export default function SavedPlaylistsDetail() {
       <PlaylistDetail
         showLockIcon={true}
         showComments={false}
+        showEditButton={true}
       />
     </div>
   )
