@@ -11,7 +11,7 @@ import {
 
 import Playlist from '@/components/playlist/Playlist'
 import Category from '@/components/common/Category'
-import EditPlaylist from '@/routes/pages/EditPlaylist'
+import EditPlaylist from '@/components/EditPlaylistModal'
 import { AnimatePresence } from 'framer-motion'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
