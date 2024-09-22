@@ -17,6 +17,9 @@ const toastStyle = css`
   left: 50%;
   transform: translateX(-50%);
   z-index: 9;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
   opacity: 0;
   visibility: hidden;
 `
@@ -44,6 +47,7 @@ const Toast: React.FC<ToastProps> = ({
 }) => {
   useEffect(() => {
     if (isVisible) {
+      console.log('Toast is visible')
       const timer = setTimeout(() => {
         onHide()
       }, duration)

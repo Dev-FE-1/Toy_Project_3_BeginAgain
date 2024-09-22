@@ -15,7 +15,6 @@ interface PlayList {
   description: string
   userId: string
   createdAt: string
-  // isVisible: boolean
 }
 
 function extractVideoId(url: string) {
@@ -24,6 +23,7 @@ function extractVideoId(url: string) {
 
 const BookmarkList = ({ playlist }: { playlist: PlayList }) => {
   const { mutate: toggleBookmark } = useToggleBookmark(playlist.id)
+
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isToastVisible, setIsToastVisible] = useState(false)
@@ -35,7 +35,7 @@ const BookmarkList = ({ playlist }: { playlist: PlayList }) => {
   const handleDelete = () => {
     toggleBookmark(true)
     setIsModalOpen(false)
-    setIsToastVisible(true) // 토스트를 바로 표시
+    setIsToastVisible(true) // 토스트를 표시
   }
 
   const handleCloseModal = () => {
