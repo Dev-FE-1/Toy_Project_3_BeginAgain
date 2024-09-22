@@ -9,8 +9,8 @@ interface LongButtonProps {
 }
 
 const LongButton = ({
-  children,
   onClick,
+  children,
   type = 'submit'
 }: LongButtonProps) => {
   return (

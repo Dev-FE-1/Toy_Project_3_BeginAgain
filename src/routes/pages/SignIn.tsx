@@ -1,52 +1,71 @@
-import { useState } from 'react'
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { auth } from '@/api/firebaseApp'
 import { useNavigate } from 'react-router-dom'
-import backgroundImage from '@/assets/background.png'
+import splashImage from '@/assets/splash.jpg'
+import googleLogo from '@/assets/googleLogo.png'
 import logo from '@/assets/logo.png'
 import { css } from '@emotion/react'
 import LongButton from '@/components/common/LongButton'
-import Input from '@/components/common/Input'
+import theme from '@/styles/theme'
 
 const containerStyle = css`
   height: 100vh;
   width: 100%;
   display: flex;
+  background-color: ${theme.colors.white};
   justify-content: center;
   align-items: center;
-  background-image: url(${backgroundImage});
-  background-size: cover;
-  background-position: center;
   position: relative;
   overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url(${splashImage});
+    width: 500px;
+    height: 1000px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1;
+  }
 `
 
 const contentStyle = css`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  z-index: 1;
-  padding: 20px;
+  height: 70%;
+`
+const buttonStyle = css`
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
 `
 
 const logoStyle = css`
-  height: 60px;
-  width: 200px;
-  margin-bottom: 120px;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  height: 55px;
+  width: 180px;
+  transform: translate(-50%, -50%);
 `
 
-const formStyle = css`
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  margin-bottom: 130px;
+const signInText = css`
+  color: ${theme.colors.grey};
+  position: absolute;
+  top: 78%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: ${theme.fontSize.sm};
 `
-const buttonContainerStyle = css`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`
-
 export default function SignIn() {
   const provider = new GoogleAuthProvider()
   const navigate = useNavigate()
@@ -56,9 +75,6 @@ export default function SignIn() {
     navigate('/')
   }
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
   return (
     <div css={containerStyle}>
       <div css={contentStyle}>
@@ -67,24 +83,21 @@ export default function SignIn() {
           src={logo}
           alt="Logo"
         />
-        <div css={formStyle}>
-          <Input
-            type="email"
-            placeholder="이메일"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+      </div>
+
+      <div css={buttonStyle}>
+        <LongButton onClick={SignInWithGoogle}>
+          <img
+            src={googleLogo}
+            alt="Google Logo"
+            style={{ width: '20px', height: '20px' }}
           />
-          <Input
-            type="password"
-            placeholder="비밀번호"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-        </div>
-        <div css={buttonContainerStyle}>
-          <LongButton onClick={SignInWithGoogle}>로그인</LongButton>
-          <LongButton onClick={SignInWithGoogle}>회원가입</LongButton>
-        </div>
+          구글 로그인
+        </LongButton>
+      </div>
+
+      <div>
+        <p css={signInText}>ⓒ MAZI. All Rights Reserved.</p>
       </div>
     </div>
   )
