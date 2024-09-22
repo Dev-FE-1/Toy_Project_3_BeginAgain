@@ -4,6 +4,7 @@ import { CgChevronLeft } from 'react-icons/cg'
 import { useHeaderStore } from '@/stores/header'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAddPlaylistStore } from '@/stores/addPlaylist'
+import { Playlist } from '@/hooks/useFetchPlaylists'
 
 const headerStyle = css`
   display: flex;
@@ -27,6 +28,9 @@ const iconStyle = css`
   font-size: 24px;
   color: ${theme.colors.black};
   margin-right: 12px;
+  position: absolute;
+  left: 20px;
+  cursor: pointer;
 `
 const successBtn = (isDone: boolean) => css`
   position: absolute;
@@ -49,12 +53,18 @@ const editBtn = css`
   cursor: pointer;
 `
 
-export default function TheHeader() {
+const logoStyle = css`
+  width: 80px;
+  height: 25px;
+`
+
+export default function TheHeader(id: string, playlist: Playlist) {
   const title = useHeaderStore(state => state.title)
   const navigate = useNavigate()
   const location = useLocation()
   const { isDone, savePlaylist } = useAddPlaylistStore()
   const isAddPlaylist = location.pathname === '/add-playlist'
+  const isMyPlaylist = location.pathname.includes('/saved-playlists') && !!id
   const isProfile = location.pathname === '/profile'
 
   const handleComplete = async () => {
@@ -66,15 +76,27 @@ export default function TheHeader() {
     }
   }
 
+  const handleEdit = (playlist: Playlist) => {
+    navigate(`/edit-playlist/${playlist.id}`, { state: { playlist } })
+  }
+
   return (
     <header css={headerStyle}>
-      {title === 'PlaylistDetailPage' && (
+      {title === 'Playlist Detail' && (
         <CgChevronLeft
           css={iconStyle}
           onClick={() => navigate(-1)}
         />
       )}
-      <h1 css={titleStyle}>{title}</h1>
+      {title === 'Home' ? (
+        <img
+          css={logoStyle}
+          src="/src/assets/logo.png"
+          alt="logo"
+        />
+      ) : (
+        <h2 css={titleStyle}>{title}</h2>
+      )}
       {isAddPlaylist && (
         <button
           css={successBtn(isDone)}
@@ -84,6 +106,15 @@ export default function TheHeader() {
         </button>
       )}
       {isProfile && <button css={editBtn}>수정</button>}
+      {isMyPlaylist && (
+        <button
+          css={editBtn}
+          onClick={() => {
+            handleEdit(playlist)
+          }}>
+          편집
+        </button>
+      )}
     </header>
   )
 }

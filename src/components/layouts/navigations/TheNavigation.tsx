@@ -86,9 +86,15 @@ const addButtonStyle = css`
     svg {
       font-size: 40px;
       stroke-width: 0;
+      color: ${theme.colors.black};
     }
   }
   &.active {
+    div {
+      color: ${theme.colors.black};
+    }
+  }
+  &:hover {
     div {
       color: ${theme.colors.black};
     }

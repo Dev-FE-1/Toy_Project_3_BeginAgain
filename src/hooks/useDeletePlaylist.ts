@@ -1,7 +1,7 @@
 // GET - useQuery
 // POST, PUT, PATCH, DELETE - useMutation
 
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getFirestore, collection, doc, deleteDoc } from 'firebase/firestore'
 import { auth } from '@/api/firebaseApp'
 
@@ -16,6 +16,7 @@ export interface Playlist {
 }
 
 export const useDeletePlaylist = () => {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (playlist: Playlist) => {
       const db = getFirestore()
@@ -25,6 +26,9 @@ export const useDeletePlaylist = () => {
       if (user && playlist.userId === user.uid) {
         await deleteDoc(docRef)
       }
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ['playlists'] })
     }
   })
 }

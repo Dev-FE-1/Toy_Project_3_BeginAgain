@@ -2,7 +2,13 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
-import { CgChevronUp, CgChevronDown, CgPlayList } from 'react-icons/cg'
+import {
+  CgChevronUp,
+  CgChevronDown,
+  CgPlayList,
+  CgFormatJustify
+} from 'react-icons/cg'
+
 import Playlist from '@/components/playlist/Playlist'
 import Category from '@/components/common/Category'
 import { css } from '@emotion/react'
@@ -17,10 +23,35 @@ import CommentsModal from '@/components/Comments/CommentsModal'
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
 
+const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
+const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/videos'
+
+function extractVideoIdFromUrl(url: string): string {
+  const urlObj = new URL(url)
+  return urlObj.searchParams.get('v') || ''
+}
+
+async function fetchVideoTitle(videoId: string): Promise<string> {
+  const response = await fetch(
+    `${YOUTUBE_API_URL}?id=${videoId}&part=snippet&key=${YOUTUBE_API_KEY}`
+  )
+  const data = await response.json()
+
+  if (data.items && data.items.length > 0) {
+    return data.items[0].snippet.title
+  }
+
+  return 'Unknown Title'
+}
+
+function extractThumbnailUrl(url: string) {
+  const videoId = url.replace('https://www.youtube.com/watch?v=', '')
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+}
+
 export default function PlaylistDetail({
   showComments,
-  showLockIcon,
-  playlist
+  showLockIcon
 }: {
   showComments?: boolean
   showLockIcon?: boolean
@@ -31,11 +62,31 @@ export default function PlaylistDetail({
   const playlistId = playlistIdParam || '' // 기본값으로 빈 문자열 제공
   const { data: playlistData, isLoading } = useFetchPlaylist(playlistId)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
+  const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
+  const [videoTitles, setVideoTitles] = useState<string[]>([])
   const user = auth.currentUser
 
   useEffect(() => {
     setTitle('Playlist Detail')
   }, [setTitle])
+
+  useEffect(() => {
+    if (playlistData && playlistData.urls.length > 0) {
+      setCurrentVideoUrl(playlistData.urls[0])
+
+      const fetchTitles = async () => {
+        const videoIds = playlistData.urls.map(url =>
+          extractVideoIdFromUrl(url)
+        )
+        const titles = await Promise.all(
+          videoIds.map(id => fetchVideoTitle(id))
+        )
+        setVideoTitles(titles) // 제목 배열 상태로 설정
+      }
+
+      fetchTitles()
+    }
+  }, [playlistData])
 
   if (isLoading) {
     return <div>로딩 중...</div>
@@ -45,16 +96,14 @@ export default function PlaylistDetail({
     return <div>플레이리스트 데이터를 가져오지 못했습니다.</div>
   }
 
-  const videoUrl = playlistData.urls[0]
-
   return (
     <div>
       <div css={sectionOneContainer}>
-        {videoUrl ? (
+        {currentVideoUrl ? (
           <iframe
             width="100%"
             height="240px"
-            src={videoUrl.replace('watch?v=', 'embed/')}
+            src={currentVideoUrl.replace('watch?v=', 'embed/')}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             title="YouTube video"></iframe>
@@ -65,14 +114,17 @@ export default function PlaylistDetail({
 
       <div css={sectionTwoContainer}>
         <h2 css={titleStyle}>{playlistData.title}</h2>
-        {showLockIcon && (
-          <div>
-            <CgLockUnlock />
-          </div>
-        )}
-        <span css={timeRecordStyle}>
-          {dayjs(playlistData.createdAt).fromNow()}
-        </span>
+        <div css={otherInfoStyle}>
+          {showLockIcon && (
+            <div css={lockStyle}>
+              <CgLockUnlock />
+              <span className="Lock">비공개/공개</span>
+            </div>
+          )}
+          <span css={timeRecordStyle}>
+            {dayjs(playlistData.createdAt).fromNow()}
+          </span>
+        </div>
 
         <div css={buttonContainerStyle}>
           <Category />
@@ -110,9 +162,30 @@ export default function PlaylistDetail({
       </div>
 
       <div css={plAmountInfoStyle}>
-        <CgPlayList />
-        재생목록( )
+        <CgPlayList className="cgPlaylist" />
+        재생목록 ({playlistData.urls.length})
       </div>
+      <div css={videoContainerStyle}>
+        {playlistData.urls.map((url, index) => (
+          <div
+            key={index}
+            css={videoInfoLayoutStyle}>
+            <img
+              src={extractThumbnailUrl(url)}
+              alt={`Video thumbnail ${index + 1}`}
+              width="80"
+              height="60"
+              onClick={() => setCurrentVideoUrl(url)}
+              style={{ cursor: 'pointer', borderRadius: '8px' }}
+            />
+            <span css={videoTitleStyle}>
+              {videoTitles[index] || '제목 로딩 중...'}
+            </span>
+            <CgFormatJustify css={dragIconStyle} />
+          </div>
+        ))}
+      </div>
+      <div className="nav-margin"></div>
     </div>
   )
 }
@@ -129,9 +202,9 @@ const sectionTwoContainer = css`
 const titleStyle = css`
   font-size: ${theme.fontSize.lg};
   color: ${theme.colors.black};
-  margin-top: 10px;
+  margin-top: 20px;
   margin-bottom: 10px;
-  padding: 20px;
+  padding: 0 22px;
 `
 
 const buttonStyle = css`
@@ -164,6 +237,9 @@ const plAmountInfoStyle = css`
   padding: 20px;
   display: flex;
   align-items: center;
+  .cgPlaylist {
+    font-size: 30px;
+  }
 `
 
 const sectionThreeContainer = css`
@@ -182,6 +258,50 @@ const profileImageStyle = css`
 
 const timeRecordStyle = css`
   color: ${theme.colors.darkGrey};
-  font-size: ${theme.fontSize.sm};
+  font-size: ${theme.fontSize.md};
   text-align: right;
+  align-self: center;
+`
+
+const otherInfoStyle = css`
+  display: flex;
+  flex-direction: row;
+  margin-left: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  color: ${theme.colors.darkGrey};
+  align-self: center;
+  gap: 10px;
+`
+const lockStyle = css`
+  font-size: ${theme.fontSize.md};
+  display: flex;
+  gap: 5px;
+`
+
+const videoContainerStyle = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px;
+  margin-top: 10px;
+  gap: 20px;
+`
+
+const videoInfoLayoutStyle = css`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+`
+const videoTitleStyle = css`
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+`
+
+const dragIconStyle = css`
+  flex-shrink: 0;
 `

@@ -8,6 +8,7 @@ import { useFetchComments } from '@/hooks/useFetchComments'
 import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
+import { useFetchBookmarks } from '@/hooks/useFetchBookmark'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 import { css } from '@emotion/react'
 
@@ -17,6 +18,7 @@ export interface Playlist {
   title: string
   description: string
   isPublic: boolean
+  categories: string[]
   userId: string
   createdAt: Date | string
   onClick?: () => void
@@ -42,15 +44,26 @@ export default function Playlist({
     }
   }, [comments])
 
-  const { toggleBookmark, isBookmarked } = useToggleBookmark(playlist?.id)
+  // const { mutate: createComment } = useCreateComment()
+  // const { mutate: toggleBookmark, isBookmarked } = useToggleBookmark(playlist?.id || '')
+  const { mutate: toggleBookmark } = useToggleBookmark(playlist?.id || '')
+  const { data: BookmarkedData } = useFetchBookmarks(playlist?.id || '')
+  const [isBookmarked, setIsBookmarked] = useState(false)
 
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isToastVisible, setIsToastVisible] = useState(false)
 
-  const handleBookmark = () => {
-    if (playlist) {
-      toggleBookmark()
+  useEffect(() => {
+    if (BookmarkedData) {
+      setIsBookmarked(BookmarkedData.length > 0)
+    } else {
+      setIsBookmarked(false)
+    }
+  }, [BookmarkedData])
 
+  const handleBookmark = () => {
+    if (playlist && BookmarkedData !== undefined) {
+      toggleBookmark(isBookmarked)
       if (!isBookmarked) {
         setToastMessage('북마크가 추가되었습니다.')
       } else {

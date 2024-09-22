@@ -41,6 +41,11 @@ const navLinkStyle = css`
       color: ${theme.colors.paleBlue};
     }
   }
+  &:hover {
+    div {
+      color: ${theme.colors.paleBlue};
+    }
+  }
 `
 
 const iconStyle = css`
