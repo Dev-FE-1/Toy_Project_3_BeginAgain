@@ -138,7 +138,10 @@ export default function PlaylistDetail({
         </div>
 
         <div css={buttonContainerStyle}>
-          <Category />
+          <Category
+            selectedCategories={[]}
+            onSelectCategory={() => {}}
+          />
           <button
             css={buttonStyle}
             onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}>

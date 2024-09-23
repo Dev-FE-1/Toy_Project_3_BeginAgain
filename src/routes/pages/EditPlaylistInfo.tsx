@@ -76,7 +76,10 @@ export default function EditPlaylistInfo() {
           <div>카테고리 설정</div>
         </div>
         <div css={CategoryStyle}>
-          <Category selectedCategories={selectedCategories} />
+          <Category
+            selectedCategories={selectedCategories}
+            onSelectCategory={() => {}}
+          />
         </div>
 
         <div css={TitleContainer}>공개 설정</div>
