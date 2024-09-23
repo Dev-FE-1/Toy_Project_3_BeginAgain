@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react'
+import { getFirestore, doc, getDoc } from 'firebase/firestore'
+import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
-import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
 import {
   CgChevronUp,
   CgChevronDown,
   CgPlayList,
-  CgFormatJustify
+  CgFormatJustify,
+  CgLockUnlock
 } from 'react-icons/cg'
-
+import { FaPencilAlt } from 'react-icons/fa'
 import Playlist from '@/components/playlist/Playlist'
 import Category from '@/components/common/Category'
 import EditPlaylist from '@/components/EditPlaylistModal'
@@ -17,10 +18,10 @@ import { AnimatePresence } from 'framer-motion'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import { auth } from '@/api/firebaseApp'
-import { CgLockUnlock } from 'react-icons/cg'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/ko'
+import Sortable from 'sortablejs'
 
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
@@ -47,7 +48,7 @@ async function fetchVideoTitle(videoId: string): Promise<string> {
 }
 
 function extractThumbnailUrl(url: string) {
-  const videoId = url.replace('https://www.youtube.com/watch?v=', '')
+  const videoId = extractVideoIdFromUrl(url)
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
 }
 
@@ -63,7 +64,8 @@ export default function PlaylistDetail({
 }) {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { id } = useParams()
-  const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
+  const [playlistData, setPlaylistData] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
   const [videoTitles, setVideoTitles] = useState<string[]>([])
@@ -71,10 +73,41 @@ export default function PlaylistDetail({
   const openEdit = () => setIsEditOpen(true)
   const closeEdit = () => setIsEditOpen(false)
   const user = auth.currentUser
+  const ItemRef = useRef<HTMLDivElement | null>(null)
+  const db = getFirestore()
+  const isOwner = user?.uid === playlistData?.userId
 
   useEffect(() => {
     setTitle('Playlist Detail')
   }, [setTitle])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const playlistDocRef = doc(db, 'Playlists', id!)
+        const publicPlaylistDocRef = doc(db, 'PublicPlaylists', id!)
+        
+        const [playlistSnap, publicPlaylistSnap] = await Promise.all([
+          getDoc(playlistDocRef),
+          getDoc(publicPlaylistDocRef)
+        ])
+
+        if (playlistSnap.exists()) {
+          setPlaylistData({ id: playlistSnap.id, ...playlistSnap.data() })
+        } else if (publicPlaylistSnap.exists()) {
+          setPlaylistData({ id: publicPlaylistSnap.id, ...publicPlaylistSnap.data() })
+        } else {
+          console.log("No matching documents found in either collection.")
+        }
+      } catch (error) {
+        console.error("Error fetching playlist data:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [id, db])
 
   useEffect(() => {
     if (playlistData && playlistData.urls.length > 0) {
@@ -87,23 +120,51 @@ export default function PlaylistDetail({
         const titles = await Promise.all(
           videoIds.map(id => fetchVideoTitle(id))
         )
-        setVideoTitles(titles) // 제목 배열 상태로 설정
+        setVideoTitles(titles)
       }
 
       fetchTitles()
     }
   }, [playlistData])
 
+  useEffect(() => {
+    if (!ItemRef.current || !playlistData || !playlistData.urls || !isOwner)
+      return
+
+    new Sortable(ItemRef.current, {
+      handle: '.drag-handle',
+      animation: 150,
+      forceFallback: false,
+      onEnd: async event => {
+        if (event.oldIndex === undefined || event.newIndex === undefined) return
+
+        const newUrls = Array.from(playlistData.urls)
+        const [movedItem] = newUrls.splice(event.oldIndex, 1)
+        newUrls.splice(event.newIndex, 0, movedItem)
+
+        if (id) {
+          const playlistRef = doc(db, 'Playlists', id)
+          await updateDoc(playlistRef, {
+            urls: newUrls
+          })
+        }
+
+        setCurrentVideoUrl(newUrls[0])
+      }
+    })
+  }, [playlistData, id, db, isOwner])
+
   if (isLoading) {
     return <div>로딩 중...</div>
   }
 
-  if (!playlistData) {
+  if (!playlistData || !playlistData.urls) {
     return <div>플레이리스트 데이터를 가져오지 못했습니다.</div>
   }
 
   return (
     <div>
+      <div className="nav-margin-top"></div>
       <div css={sectionOneContainer}>
         {currentVideoUrl ? (
           <iframe
@@ -122,7 +183,12 @@ export default function PlaylistDetail({
       <div css={sectionTwoContainer}>
         <div css={titleSectionStyle}>
           <h2 css={titleStyle}>{playlistData.title}</h2>
-          {showEditButton && <button onClick={openEdit}>편집</button>}
+          {showEditButton && (
+            <FaPencilAlt
+              onClick={openEdit}
+              css={editButtonStyle}
+            />
+          )}
         </div>
         <AnimatePresence>
           {isEditOpen && <EditPlaylist closeEdit={closeEdit} />}
@@ -177,8 +243,10 @@ export default function PlaylistDetail({
         재생목록 ({playlistData.urls.length})
       </div>
 
-      <div css={videoContainerStyle}>
-        {playlistData.urls.map((url, index) => (
+      <div
+        css={videoContainerStyle}
+        ref={ItemRef}>
+        {playlistData?.urls.map((url, index) => (
           <div
             key={index}
             css={videoInfoLayoutStyle}>
@@ -193,11 +261,17 @@ export default function PlaylistDetail({
             <span css={videoTitleStyle}>
               {videoTitles[index] || '제목 로딩 중...'}
             </span>
-            <CgFormatJustify css={dragIconStyle} />
+            {isOwner && (
+              <CgFormatJustify
+                css={dragIconStyle}
+                className="drag-handle"
+                style={{ cursor: 'ns-resize', borderRadius: '8px' }}
+              />
+            )}
           </div>
         ))}
       </div>
-      <div className="nav-margin"></div>
+      <div className="nav-margin-bottom"></div>
     </div>
   )
 }
@@ -291,6 +365,7 @@ const otherInfoStyle = css`
   align-self: center;
   gap: 10px;
 `
+
 const lockStyle = css`
   font-size: ${theme.fontSize.md};
   display: flex;
@@ -315,6 +390,7 @@ const videoInfoLayoutStyle = css`
   gap: 20px;
   width: 100%;
 `
+
 const videoTitleStyle = css`
   flex-grow: 1;
   white-space: nowrap;
@@ -325,4 +401,9 @@ const videoTitleStyle = css`
 
 const dragIconStyle = css`
   flex-shrink: 0;
+`
+
+const editButtonStyle = css`
+  font-size: ${theme.fontSize.lg};
+  cursor: pointer;
 `
