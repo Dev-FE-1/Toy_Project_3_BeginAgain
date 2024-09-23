@@ -42,7 +42,7 @@ interface ToastProps {
 
 const Toast: React.FC<ToastProps> = ({
   message,
-  duration = 1000,
+  duration = 1500,
   isVisible,
   onHide
 }) => {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
 import BookmarkItem from '@/components/bookmarks/BookmarkItem'
@@ -6,11 +6,13 @@ import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useFetchUserBookmark } from '@/hooks/useFetchUserBookmark'
 import { useHeaderStore } from '@/stores/header'
 import { css } from '@emotion/react'
+import Sortable from 'sortablejs'
 
 const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { data: playlists } = useFetchPlaylists()
-  const { data: userBookmarks } = useFetchUserBookmark()
+  const { data: Bookmarks } = useFetchUserBookmark()
+  const ItemRef = useRef<HTMLDivElement | null>(null)
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     '전체'
@@ -38,8 +40,26 @@ const Bookmark = () => {
 
   // 북마크된 플레이리스트만 필터링
   const filteredPlaylists = filteredData?.filter(pl =>
-    userBookmarks?.includes(pl.id)
+    Bookmarks?.includes(pl.id)
   )
+
+  useEffect(() => {
+    if (!ItemRef.current) return
+    new Sortable(ItemRef.current, {
+      handle: '.drag-handle',
+      animation: 0,
+      forceFallback: false,
+      onEnd: event => {
+        console.log(event.oldIndex, event.newIndex)
+        if (event.oldIndex === undefined || event.newIndex === undefined) return
+        console.log('>>> filteredPlaylists', filteredPlaylists)
+        // reorderTodos({
+        //   oldIndex: event.oldIndex,
+        //   newIndex: event.newIndex
+        // })
+      }
+    })
+  }, [filteredPlaylists])
 
   return (
     <main>
@@ -50,12 +70,14 @@ const Bookmark = () => {
         />
       </div>
       {filteredPlaylists && filteredPlaylists.length > 0 ? (
-        filteredPlaylists.map(pl => (
-          <BookmarkItem
-            key={pl.id}
-            playlist={pl}
-          />
-        ))
+        <div ref={ItemRef}>
+          {filteredPlaylists.map(pl => (
+            <BookmarkItem
+              key={pl.id}
+              playlist={pl}
+            />
+          ))}
+        </div>
       ) : (
         <div css={EmptyInfoStyle}>
           <EmptyInfo
