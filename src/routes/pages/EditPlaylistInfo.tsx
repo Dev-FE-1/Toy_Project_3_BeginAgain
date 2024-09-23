@@ -8,10 +8,9 @@ export default function EditPlaylistInfo() {
   const setTitle = useHeaderStore(state => state.setTitle)
 
   useEffect(() => {
-    setTitle('Edit Playlist')
+    setTitle('플레이리스트 편집')
   }, [setTitle])
 
-  const [videoUrls, setVideoUrls] = useState<string[]>([])
   const [videoTitle, setVideoTitle] = useState('')
   const [videoDescription, setVideoDescription] = useState('')
   const [isPublic, setIsPublic] = useState(true)
@@ -31,6 +30,13 @@ export default function EditPlaylistInfo() {
   ) => {
     setVideoDescription(e.target.value)
     setDescriptionInputCount(e.target.value.length)
+  }
+
+  const handleCategorySelect = (categories: string[]) => {
+    if (!categories.includes('전체')) {
+      categories = ['전체', ...categories]
+    }
+    setSelectedCategories(categories)
   }
 
   return (
@@ -79,7 +85,7 @@ export default function EditPlaylistInfo() {
         <div css={CategoryStyle}>
           <Category
             selectedCategories={selectedCategories}
-            onSelectCategory={() => {}}
+            onSelectCategory={handleCategorySelect}
           />
         </div>
 
