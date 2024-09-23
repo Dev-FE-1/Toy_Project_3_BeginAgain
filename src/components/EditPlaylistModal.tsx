@@ -48,15 +48,15 @@ const EditPlaylist = ({ closeEdit }: { closeEdit: () => void }) => {
         bottom: 0,
         left: 0,
         width: '100%',
-        height: '160px',
+        height: '200px',
         zIndex: 3
       }}>
       <>
-        <div css={EditPageContainerStyle}>
+        <div css={EditModalContainerStyle}>
           <button
             css={cancelButtonStyle}
             onClick={closeEdit}>
-            <CgClose />
+            <CgClose fontSize={theme.fontSize.lg} />
           </button>
           <div css={longButtonStyle}>
             <LongButton onClick={handleEditInfo}>정보 수정</LongButton>
@@ -70,9 +70,9 @@ const EditPlaylist = ({ closeEdit }: { closeEdit: () => void }) => {
 
 export default EditPlaylist
 
-const EditPageContainerStyle = css`
+const EditModalContainerStyle = css`
   height: 100%;
-  width: auto;
+  width: 430px;
   background-color: ${theme.colors.white};
   display: flex;
   flex-direction: column;
@@ -80,6 +80,7 @@ const EditPageContainerStyle = css`
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   align-items: center;
+  justify-content: center;
 `
 
 const cancelButtonStyle = css`
@@ -90,11 +91,12 @@ const cancelButtonStyle = css`
   left: 20px;
   border: none;
   background-color: transparent;
+  cursor: pointer;
 `
 
 const longButtonStyle = css`
   display: flex;
-  gap: 13px;
+  gap: 15px;
   flex-direction: column;
   margin-top: 20px;
 `
