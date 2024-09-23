@@ -21,14 +21,33 @@ const AddPlaylist = () => {
   const [isPublic, setIsPublic] = useState(true)
   const [titleInputCount, setTitleInputCount] = useState(0)
   const [descriptionInputCount, setDescriptionInputCount] = useState(0)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['전체'])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    '전체'
+  ])
 
   useEffect(() => {
-    const hasRequiredData = videoUrls.length > 1 && videoTitle.trim() !== '' && selectedCategories.length > 0
+    const hasRequiredData =
+      videoUrls.length > 1 &&
+      videoTitle.trim() !== '' &&
+      selectedCategories.length > 0
     setIsDone(hasRequiredData)
 
-    setPlaylistData(videoUrls, videoTitle, videoDescription, isPublic, selectedCategories)
-  }, [videoUrls, videoTitle, videoDescription, isPublic, selectedCategories, setIsDone, setPlaylistData])
+    setPlaylistData(
+      videoUrls,
+      videoTitle,
+      videoDescription,
+      isPublic,
+      selectedCategories
+    )
+  }, [
+    videoUrls,
+    videoTitle,
+    videoDescription,
+    isPublic,
+    selectedCategories,
+    setIsDone,
+    setPlaylistData
+  ])
 
   const addVideoUrl = () => {
     const pattern = /^https:\/\/www\.youtube\.com\/watch\?v=.*/
@@ -62,7 +81,7 @@ const AddPlaylist = () => {
 
   const handleCategorySelect = (categories: string[]) => {
     if (!categories.includes('전체')) {
-      categories = ['전체', ...categories] 
+      categories = ['전체', ...categories]
     }
     setSelectedCategories(categories)
   }
@@ -119,7 +138,7 @@ const AddPlaylist = () => {
           css={TitleInputContainer}
           maxLength={15}
         />
-        <p css={SpanContainer}>
+        <p css={firstSpanContainer}>
           <span>{titleInputCount}</span>
           <span>/15</span>
         </p>
@@ -127,15 +146,16 @@ const AddPlaylist = () => {
 
       <div css={DivContainer}>
         <div css={TitleContainer}>설명</div>
-        <input
-          type="text"
+        <textarea
           placeholder="설명을 입력해주세요."
           value={videoDescription}
           onChange={e => {
             setVideoDescription(e.target.value)
             onDescriptionInputHandler(e)
           }}
-          css={InputContainer}
+          rows={3}
+          maxLength={30}
+          css={textAreaContainer}
         />
         <p css={SpanContainer}>
           <span>{descriptionInputCount}</span>
@@ -239,8 +259,30 @@ const TitleInputContainer = css`
   ${commonInputStyle}
 `
 
-const InputContainer = css`
-  ${commonInputStyle}
+const textAreaContainer = css`
+  width: 390px;
+  height: 100px;
+  border: 1px solid ${theme.colors.grey};
+  border-radius: 5px;
+  margin-left: 20px;
+  margin-right: 20px;
+  resize: none;
+  font-size: ${theme.fontSize.md};
+  font: inherit;
+  padding-top: 10px;
+  margin-bottom: 30px;
+  outline: none;
+`
+
+const firstSpanContainer = css`
+  display: inline-block;
+  z-index: 1;
+  position: fixed;
+  right: 1.5rem;
+  transform: translateY(50%);
+  background-color: transparent;
+  color: ${theme.colors.grey};
+  font-size: ${theme.fontSize.sm};
 `
 
 const SpanContainer = css`
@@ -248,6 +290,7 @@ const SpanContainer = css`
   z-index: 1;
   position: fixed;
   right: 1.5rem;
+  top: 95px;
   transform: translateY(50%);
   background-color: transparent;
   color: ${theme.colors.grey};
