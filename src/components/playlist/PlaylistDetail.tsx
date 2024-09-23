@@ -781,6 +781,8 @@ import {
 } from 'react-icons/cg'
 import Playlist from '@/components/playlist/Playlist'
 import Category from '@/components/common/Category'
+import EditPlaylist from '@/components/EditPlaylistModal'
+import { AnimatePresence } from 'framer-motion'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import { auth } from '@/api/firebaseApp'
@@ -820,10 +822,12 @@ function extractThumbnailUrl(url: string) {
 
 export default function PlaylistDetail({
   showComments,
-  showLockIcon
+  showLockIcon,
+  showEditButton
 }: {
   showComments?: boolean
   showLockIcon?: boolean
+  showEditButton?: boolean
   playlist?: typeof Playlist
 }) {
   const setTitle = useHeaderStore(state => state.setTitle)
@@ -832,6 +836,9 @@ export default function PlaylistDetail({
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
   const [videoTitles, setVideoTitles] = useState<string[]>([])
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const openEdit = () => setIsEditOpen(true)
+  const closeEdit = () => setIsEditOpen(false)
   const user = auth.currentUser
   const ItemRef = useRef<HTMLDivElement | null>(null) // 드래그앤드롭을 위한 거
   const db = getFirestore() // 드래그 추가
@@ -916,14 +923,21 @@ export default function PlaylistDetail({
             src={currentVideoUrl.replace('watch?v=', 'embed/')}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            title="YouTube video"></iframe>
+            title="YouTube video"
+            key={currentVideoUrl}></iframe>
         ) : (
           <p>비디오가 없습니다.</p>
         )}
       </div>
 
       <div css={sectionTwoContainer}>
-        <h2 css={titleStyle}>{playlistData.title}</h2>
+        <div css={titleSectionStyle}>
+          <h2 css={titleStyle}>{playlistData.title}</h2>
+          {showEditButton && <button onClick={openEdit}>편집</button>}
+        </div>
+        <AnimatePresence>
+          {isEditOpen && <EditPlaylist closeEdit={closeEdit} />}
+        </AnimatePresence>
         <div css={otherInfoStyle}>
           {showLockIcon && (
             <div css={lockStyle}>
@@ -937,7 +951,10 @@ export default function PlaylistDetail({
         </div>
 
         <div css={buttonContainerStyle}>
-          <Category />
+          <Category
+            selectedCategories={[]}
+            onSelectCategory={() => {}}
+          />
           <button
             css={buttonStyle}
             onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}>
@@ -1011,12 +1028,18 @@ const sectionTwoContainer = css`
   border-bottom: 1px solid ${theme.colors.lightGrey};
 `
 
+const titleSectionStyle = css`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 22px;
+`
+
 const titleStyle = css`
   font-size: ${theme.fontSize.lg};
   color: ${theme.colors.black};
   margin-top: 20px;
   margin-bottom: 10px;
-  padding: 0 22px;
 `
 
 const buttonStyle = css`
