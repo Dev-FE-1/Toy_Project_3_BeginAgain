@@ -111,7 +111,9 @@ export default function PlaylistDetail({
             src={currentVideoUrl.replace('watch?v=', 'embed/')}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            title="YouTube video"></iframe>
+            title="YouTube video">
+            key={currentVideoUrl}
+          </iframe>
         ) : (
           <p>비디오가 없습니다.</p>
         )}
