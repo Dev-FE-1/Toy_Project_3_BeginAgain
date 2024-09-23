@@ -14,6 +14,7 @@ export interface Comment {
   content: string
   createdAt: string
   playlistid: string
+  userId: string
 }
 
 export const useFetchComments = (playlistid: string) => {

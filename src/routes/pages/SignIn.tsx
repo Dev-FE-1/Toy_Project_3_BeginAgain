@@ -1,5 +1,4 @@
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
-import { auth } from '@/api/firebaseApp'
+import { signInWithGoogleAndCreateUser } from '@/api/firebaseAuth'
 import { useNavigate } from 'react-router-dom'
 import splashImage from '@/assets/splash.jpg'
 import googleLogo from '@/assets/googleLogo.png'
@@ -67,12 +66,16 @@ const signInText = css`
   font-size: ${theme.fontSize.sm};
 `
 export default function SignIn() {
-  const provider = new GoogleAuthProvider()
   const navigate = useNavigate()
 
-  async function SignInWithGoogle() {
-    await signInWithPopup(auth, provider)
-    navigate('/')
+  async function handleSignIn() {
+    try {
+      await signInWithGoogleAndCreateUser()
+      navigate('/')
+    } catch (error) {
+      console.error('로그인 실패:', error)
+      // 에러 처리 로직 추가
+    }
   }
 
   return (
@@ -86,7 +89,7 @@ export default function SignIn() {
       </div>
 
       <div css={buttonStyle}>
-        <LongButton onClick={SignInWithGoogle}>
+        <LongButton onClick={handleSignIn}>
           <img
             src={googleLogo}
             alt="Google Logo"
