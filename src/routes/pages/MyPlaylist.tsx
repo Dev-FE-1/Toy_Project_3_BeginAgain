@@ -22,6 +22,7 @@ const MyPlaylist = () => {
   return (
     <>
       <main>
+        <div className="nav-margin-top"></div>
         <div css={categoryMarginStyle}>
           <Category />
         </div>
@@ -40,7 +41,7 @@ const MyPlaylist = () => {
             />
           </div>
         )}
-        <div className="nav-margin"></div>
+        <div className="nav-margin-bottom"></div>
       </main>
     </>
   )

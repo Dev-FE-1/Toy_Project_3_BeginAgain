@@ -37,7 +37,7 @@ export const width = {
 }
 
 export const height = {
-  max: '930px'
+  max: '960px'
 }
 
 export type ColorsType = typeof colors

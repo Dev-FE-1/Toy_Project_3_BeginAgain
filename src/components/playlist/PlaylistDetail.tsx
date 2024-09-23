@@ -9,9 +9,11 @@ import {
   CgFormatJustify,
   CgLockUnlock
 } from 'react-icons/cg'
+import { FaPencilAlt } from 'react-icons/fa'
 import Playlist from '@/components/playlist/Playlist'
 import Category from '@/components/common/Category'
 import EditPlaylist from '@/components/EditPlaylistModal'
+import Comment from '@/components/Comments/Comments'
 import { AnimatePresence } from 'framer-motion'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
@@ -132,7 +134,6 @@ export default function PlaylistDetail({
     if (!ItemRef.current || !playlistData || !playlistData.urls || !isOwner)
       return
 
-    // `Sortable` 인스턴스를 `sortable` 변수에 할당
     const sortable = new Sortable(ItemRef.current, {
       handle: '.drag-handle',
       animation: 150,
@@ -171,6 +172,7 @@ export default function PlaylistDetail({
 
   return (
     <div>
+      <div className="nav-margin-top"></div>
       <div css={sectionOneContainer}>
         {currentVideoUrl ? (
           <iframe
@@ -189,7 +191,12 @@ export default function PlaylistDetail({
       <div css={sectionTwoContainer}>
         <div css={titleSectionStyle}>
           <h2 css={titleStyle}>{playlistData.title}</h2>
-          {showEditButton && <button onClick={openEdit}>편집</button>}
+          {showEditButton && (
+            <FaPencilAlt
+              onClick={openEdit}
+              css={editButtonStyle}
+            />
+          )}
         </div>
         <AnimatePresence>
           {isEditOpen && <EditPlaylist closeEdit={closeEdit} />}
@@ -237,10 +244,13 @@ export default function PlaylistDetail({
         ) : null}
       </div>
 
+      {showComments && <Comment playlistId={playlistData.id} />}
+
       <div css={plAmountInfoStyle}>
         <CgPlayList className="cgPlaylist" />
         재생목록 ({playlistData.urls.length})
       </div>
+
       <div
         css={videoContainerStyle}
         ref={ItemRef}>
@@ -269,7 +279,7 @@ export default function PlaylistDetail({
           </div>
         ))}
       </div>
-      <div className="nav-margin"></div>
+      <div className="nav-margin-bottom"></div>
     </div>
   )
 }
@@ -371,6 +381,9 @@ const lockStyle = css`
 `
 
 const videoContainerStyle = css`
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -396,4 +409,9 @@ const videoTitleStyle = css`
 
 const dragIconStyle = css`
   flex-shrink: 0;
+`
+
+const editButtonStyle = css`
+  font-size: ${theme.fontSize.lg};
+  cursor: pointer;
 `

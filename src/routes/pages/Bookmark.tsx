@@ -63,6 +63,7 @@ const Bookmark = () => {
 
   return (
     <main>
+      <div className="nav-margin-top"></div>
       <div css={categoryMarginStyle}>
         <Category
           selectedCategories={selectedCategories}
@@ -86,7 +87,7 @@ const Bookmark = () => {
           />
         </div>
       )}
-      <div className="nav-margin"></div>
+      <div className="nav-margin-bottom"></div>
     </main>
   )
 }
