@@ -14,10 +14,9 @@ const MyPlaylist = () => {
     setTitle('My Playlist')
   }, [setTitle])
 
-  const { data } = useFetchPlaylists()
+  const { data } = useFetchPlaylists(true)
   const user = auth.currentUser
 
-  // 현재 사용자와 일치하는 플레이리스트 필터링
   const filteredPlaylists = data?.filter(pl => pl.userId === user?.uid)
 
   return (

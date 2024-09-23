@@ -22,7 +22,7 @@ export default function Home() {
     setTitle('Home')
   }, [setTitle])
 
-  const { data, isLoading } = useFetchPlaylists()
+  const { data, isLoading } = useFetchPlaylists(false);
 
   const handlePlaylistClick = (playlist: PlaylistType) => {
     navigate(`/playlist/${playlist.id}`, { state: { playlist } })
@@ -84,18 +84,3 @@ export default function Home() {
     </>
   )
 }
-
-// // 좋아요!
-// await addDoc(coll, {
-//   playlistId: '', // 참조(ref)
-//   userId: user?.uid, // 참조
-//   createdAt: new Date().toISOString()
-// })
-
-// //댓글
-// await addDoc(coll, {
-//   playlistId: '', // 참조(ref)
-//   userId: user?.uid, // 참조
-//   comment: '너무 좋은 플레이리스트에요. 감사합니다!'
-//   createdAt: new Date().toISOString()
-// })
