@@ -8,6 +8,7 @@ import { useFetchComments } from '@/hooks/useFetchComments'
 import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
+import { useFetchUserData } from '@/hooks/useFetchUser'
 import { useFetchBookmarks } from '@/hooks/useFetchBookmark'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 import { css } from '@emotion/react'
@@ -28,12 +29,13 @@ export default function Playlist({
 }: {
   playlist: Playlist | undefined
 }) {
-  console.log('Playlist prop:', playlist)
+  const navigate = useNavigate()
+
   const [isHeartFilled, setIsHeartFilled] = useState(false)
   const [commentCount, setCommentCount] = useState(0)
-  const navigate = useNavigate()
   const user = auth.currentUser
   const { data: comments } = useFetchComments(playlist?.id || '')
+  const userData = useFetchUserData(playlist?.userId)
 
   useEffect(() => {
     if (comments) {
@@ -46,6 +48,7 @@ export default function Playlist({
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isToastVisible, setIsToastVisible] = useState(false)
+
   useEffect(() => {
     if (BookmarkedData) {
       setIsBookmarked(BookmarkedData.length > 0)
@@ -84,11 +87,14 @@ export default function Playlist({
       <div css={headerStyle}>
         <img
           css={profileImageStyle}
-          src={profileImageUrl}
-          alt="Profile"
+          src={userData?.photoURL || 'https://example.com/default-profile.png'}
+          alt={userData?.displayName || 'User'}
         />
-        <span css={headerTextStyle}>{playlist?.id}</span>
+        <span css={headerTextStyle}>
+          {userData?.displayName || 'Anonymous User'}
+        </span>
       </div>
+
       <div
         css={videoIdStyle}
         onClick={() => navigate(`/playlist-details/${playlist?.id}`)}>

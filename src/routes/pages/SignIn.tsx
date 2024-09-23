@@ -1,6 +1,6 @@
 import { signInWithGoogleAndCreateUser } from '@/api/firebaseAuth'
 import { useNavigate } from 'react-router-dom'
-import splashImage from '@/assets/splash.jpg'
+import signInImage from '@/assets/signIn.jpg'
 import googleLogo from '@/assets/googleLogo.png'
 import logo from '@/assets/logo.png'
 import { css } from '@emotion/react'
@@ -23,7 +23,7 @@ const containerStyle = css`
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-image: url(${splashImage});
+    background-image: url(${signInImage});
     width: 500px;
     height: 1000px;
     background-size: contain;
@@ -95,7 +95,7 @@ export default function SignIn() {
             alt="Google Logo"
             style={{ width: '20px', height: '20px' }}
           />
-          Continue with Google
+          Google 로그인
         </LongButton>
       </div>
 

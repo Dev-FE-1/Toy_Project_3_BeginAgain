@@ -35,7 +35,7 @@ export const signInWithGoogleAndCreateUser = async () => {
 
     return user
   } catch (error) {
-    console.error('Google 로그인 실패', error)
+    console.error('구글 연동 로그인 실패', error)
     throw error
   }
 }
