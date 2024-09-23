@@ -1,12 +1,11 @@
 import PlaylistDetail from '@/components/playlist/PlaylistDetail'
 
-export default function SavedPlaylistsDetail() {
+export default function BookmarkedPlaylist() {
   return (
     <div>
       <PlaylistDetail
-        showLockIcon={true}
+        showLockIcon={false}
         showComments={false}
-        showEditButton={true}
       />
     </div>
   )

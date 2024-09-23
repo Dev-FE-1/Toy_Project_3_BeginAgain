@@ -1,37 +1,60 @@
+import { useEffect, useState } from 'react'
 import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
+import BookmarkItem from '@/components/bookmarks/BookmarkItem'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useFetchUserBookmark } from '@/hooks/useFetchUserBookmark'
 import { useHeaderStore } from '@/stores/header'
-import { useEffect } from 'react'
 import { css } from '@emotion/react'
-import BookmarkList from '@/components/bookmarks/BookmarkList'
 
 const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { data: playlists } = useFetchPlaylists()
   const { data: userBookmarks } = useFetchUserBookmark()
 
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    '전체'
+  ])
+
   useEffect(() => {
     setTitle('Bookmarks')
   }, [setTitle])
 
-  const filteredPlaylists = playlists?.filter(pl =>
+  // 선택된 카테고리가 없을 경우 '전체'로 설정
+  useEffect(() => {
+    if (selectedCategories.length === 0) {
+      setSelectedCategories(['전체'])
+    }
+  }, [selectedCategories])
+
+  const filteredData =
+    selectedCategories.length > 0
+      ? playlists?.filter(
+          pl =>
+            Array.isArray(pl.categories) &&
+            selectedCategories.some(cat => pl.categories.includes(cat))
+        )
+      : playlists
+
+  // 북마크된 플레이리스트만 필터링
+  const filteredPlaylists = filteredData?.filter(pl =>
     userBookmarks?.includes(pl.id)
   )
 
   return (
     <main>
       <div css={categoryMarginStyle}>
-        <Category />
+        <Category
+          selectedCategories={selectedCategories}
+          onSelectCategory={setSelectedCategories}
+        />
       </div>
       {filteredPlaylists && filteredPlaylists.length > 0 ? (
         filteredPlaylists.map(pl => (
-          <BookmarkList
+          <BookmarkItem
             key={pl.id}
             playlist={pl}
           />
-          // <>qqq</>
         ))
       ) : (
         <div css={EmptyInfoStyle}>
@@ -56,6 +79,7 @@ const EmptyInfoStyle = css`
   align-items: center;
   width: 100%;
 `
+
 const categoryMarginStyle = css`
   margin-bottom: 20px;
 `

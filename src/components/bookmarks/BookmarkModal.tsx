@@ -25,7 +25,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onDelete }) => {
             font-weight: ${theme.fontWeight.thin};
             padding-top: 10px;
           `}>
-          북마크는 다시 추가할 수 있습니다
+          해제하면 북마크 리스트에서 사라지지만,
+          <div />
+          추후 다시 리스트에 담을 수 있습니다.
         </p>
 
         <div css={buttonContainerStyle}>
@@ -38,7 +40,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onDelete }) => {
           <button
             onClick={onDelete}
             css={deleteButtonStyle}>
-            확인
+            해제
           </button>
         </div>
       </div>
@@ -63,7 +65,7 @@ const modalStyle = css`
   padding: 30px;
   border-radius: 5px;
   width: 356px;
-  height: 160px;
+  height: 180px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
   color: ${theme.colors.black};

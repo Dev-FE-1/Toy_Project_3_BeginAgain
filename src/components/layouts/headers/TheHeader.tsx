@@ -62,7 +62,7 @@ export default function TheHeader(id: string, playlist: Playlist) {
   const title = useHeaderStore(state => state.title)
   const navigate = useNavigate()
   const location = useLocation()
-  const { isDone, savePlaylist } = useAddPlaylistStore()
+  const { isDone, savePlaylist, isPublic } = useAddPlaylistStore()
   const isAddPlaylist = location.pathname === '/add-playlist'
   const isMyPlaylist = location.pathname.includes('/saved-playlists') && !!id
   const isProfile = location.pathname === '/profile'
@@ -70,7 +70,11 @@ export default function TheHeader(id: string, playlist: Playlist) {
   const handleComplete = async () => {
     try {
       await savePlaylist()
-      navigate('/', { state: { showToast: true } })
+      if (isPublic) {
+        navigate('/', { state: { showToast: true } })
+      } else {
+        navigate('/')
+      }
     } catch (error) {
       console.error('저장 실패:', error)
     }
