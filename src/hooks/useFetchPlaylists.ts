@@ -9,6 +9,7 @@ import {
   query,
   where
 } from 'firebase/firestore'
+import { auth } from '@/api/firebaseApp'
 
 export interface Playlist {
   id: string
@@ -21,22 +22,44 @@ export interface Playlist {
   createdAt: string
 }
 
-export const useFetchPlaylists = () => {
+export const useFetchPlaylists = (myPlaylists: boolean = false) => {
   return useQuery<Playlist[]>({
-    queryKey: ['playlists'],
+    queryKey: ['playlists', myPlaylists ? auth.currentUser?.uid : 'public'],
     queryFn: async () => {
       const db = getFirestore()
-      const coll = collection(db, 'Playlists')
-      const querySnapshot = await getDocs(
-        query(coll, where('isPublic', '==', true))
-      )
-      return querySnapshot.docs.map(doc => {
-        console.log(doc.data())
-        return {
-          id: doc.id,
-          ...doc.data()
-        }
-      }) as Playlist[]
+      let querySnapshot
+
+      if (myPlaylists) {
+        const user = auth.currentUser;
+        if (!user) throw new Error('사용자가 인증되지 않았습니다.')
+
+        const userPlaylistsQuery = query(
+          collection(db, 'Playlists'),
+          where('userId', '==', user.uid)
+        )
+        const publicPlaylistsQuery = query(
+          collection(db, 'PublicPlaylists'),
+          where('userId', '==', user.uid)
+        )
+
+        const [userPlaylistsSnapshot, publicPlaylistsSnapshot] = await Promise.all([
+          getDocs(userPlaylistsQuery),
+          getDocs(publicPlaylistsQuery)
+        ])
+
+        querySnapshot = [...userPlaylistsSnapshot.docs, ...publicPlaylistsSnapshot.docs]
+      } else {
+        const playlistsQuery = query(
+          collection(db, 'Playlists'),
+          where('isPublic', '==', true)
+        )
+        querySnapshot = (await getDocs(playlistsQuery)).docs;
+      }
+
+      return querySnapshot.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Playlist[];
     }
   })
-}
+} 
