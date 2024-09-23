@@ -8,7 +8,7 @@ import {
   CgPlayList,
   CgFormatJustify
 } from 'react-icons/cg'
-
+import { FaPencilAlt } from 'react-icons/fa'
 import Playlist from '@/components/playlist/Playlist'
 import Category from '@/components/common/Category'
 import EditPlaylist from '@/components/EditPlaylistModal'
@@ -104,7 +104,7 @@ export default function PlaylistDetail({
 
   return (
     <div>
-      <div className="nav-margin"></div>
+      <div className="nav-margin-top"></div>
       <div css={sectionOneContainer}>
         {currentVideoUrl ? (
           <iframe
@@ -123,7 +123,12 @@ export default function PlaylistDetail({
       <div css={sectionTwoContainer}>
         <div css={titleSectionStyle}>
           <h2 css={titleStyle}>{playlistData.title}</h2>
-          {showEditButton && <button onClick={openEdit}>편집</button>}
+          {showEditButton && (
+            <FaPencilAlt
+              onClick={openEdit}
+              css={editButtonStyle}
+            />
+          )}
         </div>
         <AnimatePresence>
           {isEditOpen && <EditPlaylist closeEdit={closeEdit} />}
@@ -198,7 +203,7 @@ export default function PlaylistDetail({
           </div>
         ))}
       </div>
-      <div className="nav-margin"></div>
+      <div className="nav-margin-bottom"></div>
     </div>
   )
 }
@@ -326,4 +331,9 @@ const videoTitleStyle = css`
 
 const dragIconStyle = css`
   flex-shrink: 0;
+`
+
+const editButtonStyle = css`
+  font-size: ${theme.fontSize.lg};
+  cursor: pointer;
 `

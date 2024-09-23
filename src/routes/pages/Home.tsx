@@ -57,7 +57,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="nav-margin"></div>
+      <div className="nav-margin-top"></div>
       <Category
         selectedCategories={selectedCategories}
         onSelectCategory={setSelectedCategories}
@@ -80,7 +80,7 @@ export default function Home() {
         />
       )}
 
-      <div className="nav-margin"></div>
+      <div className="nav-margin-bottom"></div>
     </>
   )
 }

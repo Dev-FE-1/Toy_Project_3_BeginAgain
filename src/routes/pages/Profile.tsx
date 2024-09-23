@@ -55,7 +55,7 @@ export default function Profile() {
   return (
     <>
       <div css={pageStyle}>
-        <div className="nav-margin"></div>
+        <div className="nav-margin-top"></div>
         {user && (
           <>
             <img

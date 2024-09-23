@@ -35,6 +35,7 @@ export default function EditPlaylistInfo() {
 
   return (
     <>
+      <div className="nav-margin-top"></div>
       <div css={DivContainer}>
         <div css={TitleContainer}>
           <span>플레이리스트 제목</span>
@@ -104,6 +105,7 @@ export default function EditPlaylistInfo() {
           비공개
         </label>
       </div>
+      <div className="nav-margin-bottom"></div>
     </>
   )
 }

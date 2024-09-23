@@ -48,8 +48,8 @@ const EditPlaylist = ({ closeEdit }: { closeEdit: () => void }) => {
         bottom: 0,
         left: 0,
         width: '100%',
-        height: '260px',
-        zIndex: 1
+        height: '160px',
+        zIndex: 3
       }}>
       <>
         <div css={EditPageContainerStyle}>
