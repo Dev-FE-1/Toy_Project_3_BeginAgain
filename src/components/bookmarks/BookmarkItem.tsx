@@ -101,7 +101,7 @@ const bookmarkIconStyle = css`
   margin-right: 8px;
   cursor: pointer;
   color: ${theme.colors.charcoalGrey};
-  transition: color 0.3s ease;
+  transition: color 0.9s ease;
 `
 
 const videoIdStyle = css`
@@ -134,7 +134,7 @@ const hamburgerIconStyle = css`
   font-size: ${theme.fontSize.xxl};
   cursor: pointer;
   color: ${theme.colors.charcoalGrey};
-  transition: color 0.3s ease;
+  transition: color 0.9s ease;
 `
 
 export default BookmarkItem

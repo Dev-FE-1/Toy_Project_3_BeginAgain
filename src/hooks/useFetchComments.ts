@@ -4,9 +4,7 @@ import {
   collection,
   getDocs,
   query,
-  where,
-  doc,
-  getDoc
+  where
 } from 'firebase/firestore'
 import type { User } from 'firebase/auth'
 

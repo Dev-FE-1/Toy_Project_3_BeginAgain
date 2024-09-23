@@ -5,8 +5,7 @@ import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useFetchComments } from '@/hooks/useFetchComments'
-import { auth, db } from '@/api/firebaseApp'
-import { doc, getDoc } from 'firebase/firestore'
+import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 import { useFetchBookmarks } from '@/hooks/useFetchBookmark'
@@ -23,39 +22,25 @@ export interface Playlist {
   createdAt: Date | string
   onClick?: () => void
 }
+
 export default function Playlist({
   playlist
 }: {
   playlist: Playlist | undefined
 }) {
   console.log('Playlist prop:', playlist)
-  const [user, setUser] = useState<any>(null)
-  const { data: comments } = useFetchComments(playlist?.id || '')
-
   const [isHeartFilled, setIsHeartFilled] = useState(false)
   const [commentCount, setCommentCount] = useState(0)
   const navigate = useNavigate()
+  const user = auth.currentUser
+  const { data: comments } = useFetchComments(playlist?.id || '')
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (playlist?.userId) {
-        const userDoc = await getDoc(doc(db, 'Users', playlist.userId))
-        if (userDoc.exists()) {
-          setUser(userDoc.data())
-        }
-      }
-    }
-    fetchUser()
-  }, [playlist?.userId])
-
-  // Comments
   useEffect(() => {
     if (comments) {
       setCommentCount(comments.length)
     }
   }, [comments])
-  // const { mutate: createComment } = useCreateComment()
-  // const { mutate: toggleBookmark, isBookmarked } = useToggleBookmark(playlist?.id || '')
+
   const { mutate: toggleBookmark } = useToggleBookmark(playlist?.id || '')
   const { data: BookmarkedData } = useFetchBookmarks(playlist?.id || '')
   const [isBookmarked, setIsBookmarked] = useState(false)
@@ -85,10 +70,8 @@ export default function Playlist({
   function handleHeartClick() {
     setIsHeartFilled(!isHeartFilled)
   }
-
   const profileImageUrl =
     user?.photoURL || 'https://example.com/default-profile.png'
-
   function extractVideoId(url?: string) {
     if (!url) {
       console.error('URL is undefined or empty')

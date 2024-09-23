@@ -3,13 +3,13 @@ import { doc, setDoc, getDoc, collection } from 'firebase/firestore'
 
 import { auth, db } from '@/api/firebaseApp'
 
-export const signInWithGoogle = async () => {
+export const signInWithGoogleAndCreateUser = async () => {
   const provider = new GoogleAuthProvider()
 
   try {
     const { user } = await signInWithPopup(auth, provider)
 
-    const userDoc = doc(db, 'users', user.uid)
+    const userDoc = doc(db, 'Users', user.uid)
     const docSnapshot = await getDoc(userDoc)
 
     if (!docSnapshot.exists()) {
