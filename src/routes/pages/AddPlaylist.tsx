@@ -5,15 +5,12 @@ import theme from '@/styles/theme'
 import { IoIosAddCircleOutline, IoIosRemove } from 'react-icons/io'
 import { useHeaderStore } from '@/stores/header'
 import { useAddPlaylistStore } from '@/stores/addPlaylist'
-
 const AddPlaylist = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { setIsDone, setPlaylistData } = useAddPlaylistStore()
-
   useEffect(() => {
-    setTitle('컨텐츠 추가')
+    setTitle('Add Playlist')
   }, [setTitle])
-
   const [videoUrls, setVideoUrls] = useState<string[]>([])
   const [currentVideoUrl, setCurrentVideoUrl] = useState('')
   const [videoTitle, setVideoTitle] = useState('')
@@ -24,14 +21,12 @@ const AddPlaylist = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     '전체'
   ])
-
   useEffect(() => {
     const hasRequiredData =
       videoUrls.length > 1 &&
       videoTitle.trim() !== '' &&
       selectedCategories.length > 0
     setIsDone(hasRequiredData)
-
     setPlaylistData(
       videoUrls,
       videoTitle,
@@ -48,7 +43,6 @@ const AddPlaylist = () => {
     setIsDone,
     setPlaylistData
   ])
-
   const addVideoUrl = () => {
     const pattern = /^https:\/\/www\.youtube\.com\/watch\?v=.*/
     if (!currentVideoUrl.match(pattern)) {
@@ -62,33 +56,27 @@ const AddPlaylist = () => {
       setCurrentVideoUrl('')
     }
   }
-
   const removeVideoUrl = (index: number) => {
     setVideoUrls(videoUrls.filter((_, i) => i !== index))
   }
-
   const onTitleInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVideoTitle(e.target.value)
     setTitleInputCount(e.target.value.length)
   }
-
   const onDescriptionInputHandler = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setVideoDescription(e.target.value)
     setDescriptionInputCount(e.target.value.length)
   }
-
   const handleCategorySelect = (categories: string[]) => {
     if (!categories.includes('전체')) {
       categories = ['전체', ...categories]
     }
     setSelectedCategories(categories)
   }
-
   return (
     <>
-      <div className="nav-margin-top"></div>
       <div css={DivContainer}>
         <div css={TitleContainer}>
           <span css={requiredTitleStyle}>동영상 링크</span>
@@ -123,7 +111,6 @@ const AddPlaylist = () => {
           ))}
         </ul>
       </div>
-
       <div css={DivContainer}>
         <div css={TitleContainer}>
           <span css={requiredTitleStyle}>플레이리스트 제목</span>
@@ -144,13 +131,12 @@ const AddPlaylist = () => {
           <span>/15</span>
         </p>
       </div>
-
       <div css={DivContainer}>
         <div css={TitleContainer}>설명</div>
         <textarea
           placeholder="설명을 입력해주세요."
           value={videoDescription}
-          onChange={e => {
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             setVideoDescription(e.target.value)
             onDescriptionInputHandler(e)
           }}
@@ -163,7 +149,6 @@ const AddPlaylist = () => {
           <span>/30</span>
         </p>
       </div>
-
       <div css={DivContainer}>
         <div css={TitleContainer}>
           <div css={requiredTitleStyle}>카테고리 설정</div>
@@ -175,7 +160,6 @@ const AddPlaylist = () => {
           />
         </div>
       </div>
-
       <div css={DivContainer}>
         <div css={TitleContainer}>공개 설정</div>
         <label css={RadioLabelStyle}>
@@ -202,7 +186,6 @@ const AddPlaylist = () => {
     </>
   )
 }
-
 const requiredTitleStyle = css`
   &::after {
     content: '*';
@@ -210,7 +193,6 @@ const requiredTitleStyle = css`
     margin-left: 4px;
   }
 `
-
 const commonButtonStyle = css`
   z-index: 1;
   position: fixed;
@@ -218,7 +200,6 @@ const commonButtonStyle = css`
   background-color: transparent;
   cursor: pointer;
 `
-
 const commonInputStyle = css`
   border: none;
   border-bottom: 2px solid #ebebeb;
@@ -234,7 +215,6 @@ const commonInputStyle = css`
   box-sizing: border-box;
   margin-bottom: 35px;
 `
-
 const DivContainer = css`
   position: relative;
   display: inline-block;
@@ -242,7 +222,6 @@ const DivContainer = css`
   transform: rotate(0);
   margin-top: 20px;
 `
-
 const TitleContainer = css`
   font-size: ${theme.fontSize.md};
   display: flex;
@@ -250,16 +229,13 @@ const TitleContainer = css`
   margin-bottom: 10px;
   margin-left: 20px;
 `
-
 const LinkInputContainer = css`
   ${commonInputStyle}
   margin-bottom: 10px;
 `
-
 const TitleInputContainer = css`
   ${commonInputStyle}
 `
-
 const textAreaContainer = css`
   width: 390px;
   height: 100px;
@@ -274,7 +250,6 @@ const textAreaContainer = css`
   margin-bottom: 30px;
   outline: none;
 `
-
 const firstSpanContainer = css`
   display: inline-block;
   z-index: 1;
@@ -285,7 +260,6 @@ const firstSpanContainer = css`
   color: ${theme.colors.grey};
   font-size: ${theme.fontSize.sm};
 `
-
 const SpanContainer = css`
   display: inline-block;
   z-index: 1;
@@ -297,14 +271,12 @@ const SpanContainer = css`
   color: ${theme.colors.grey};
   font-size: ${theme.fontSize.sm};
 `
-
 const AddButton = css`
   ${commonButtonStyle}
-  top: 116px;
+  top: 15px;
   right: 15px;
   transform: translateY(50%);
 `
-
 const DeleteButtonContainer = css`
   position: relative;
   margin-left: 1.5rem;
@@ -313,7 +285,6 @@ const DeleteButtonContainer = css`
   max-height: 6rem;
   margin-bottom: 35px;
   cursor: pointer;
-
   ::-webkit-scrollbar {
     width: 7px;
   }
@@ -329,14 +300,12 @@ const DeleteButtonContainer = css`
     background-color: ${theme.colors.skyBlue};
   }
 `
-
 const DeleteButton = css`
   ${commonButtonStyle}
   position: absolute;
   right: 0;
   margin-bottom: 7px;
 `
-
 const UrlStyle = css`
   display: flex;
   margin-bottom: 5px;
@@ -344,19 +313,15 @@ const UrlStyle = css`
   color: ${theme.colors.darkGrey};
   max-width: 22rem;
 `
-
 const CategoryStyle = css`
   margin-bottom: 35px;
 `
-
 const RadioLabelStyle = css`
   margin-left: 20px;
   display: inline-block;
 `
-
 const RadioInputStyle = css`
   margin-right: 10px;
   cursor: pointer;
 `
-
 export default AddPlaylist
