@@ -12,6 +12,7 @@ import {
 import Playlist from '@/components/playlist/Playlist'
 import Category from '@/components/common/Category'
 import EditPlaylist from '@/components/EditPlaylistModal'
+import Comment from '@/components/Comments/Comments'
 import { AnimatePresence } from 'framer-motion'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
@@ -169,10 +170,13 @@ export default function PlaylistDetail({
         ) : null}
       </div>
 
+      {showComments && <Comment playlistId={playlistData.id} />}
+
       <div css={plAmountInfoStyle}>
         <CgPlayList className="cgPlaylist" />
         재생목록 ({playlistData.urls.length})
       </div>
+
       <div css={videoContainerStyle}>
         {playlistData.urls.map((url, index) => (
           <div
@@ -294,6 +298,9 @@ const lockStyle = css`
 `
 
 const videoContainerStyle = css`
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
