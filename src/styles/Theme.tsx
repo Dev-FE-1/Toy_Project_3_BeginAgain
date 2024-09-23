@@ -36,23 +36,30 @@ export const width = {
   max: '430px'
 }
 
+export const height = {
+  max: '930px'
+}
+
 export type ColorsType = typeof colors
 export type FontSizeType = typeof fontSize
 export type FontWeightType = typeof fontWeight
 export type WidthType = typeof width
+export type HeightType = typeof height
 
 interface Theme {
   colors: ColorsType
   fontSize: FontSizeType
   fontWeight: FontWeightType
   width: WidthType
+  height: HeightType
 }
 
 const theme: Theme = {
   colors,
   fontSize,
   fontWeight,
-  width
+  width,
+  height
 }
 
 export default theme
