@@ -4,7 +4,10 @@ import theme from '@/styles/theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/api/firebaseApp'
 import { useFetchComments } from '@/hooks/useFetchComments'
+import { useFetchUser } from '@/hooks/useFetchUser'
 import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
@@ -24,32 +27,61 @@ export interface Playlist {
   onClick?: () => void
 }
 
+export interface userId {
+  id: string
+  displayName: string
+  photoURL: string
+}
+
 export default function Playlist({
   playlist
 }: {
   playlist: Playlist | undefined
 }) {
-  console.log('Playlist prop:', playlist)
-
   const [isHeartFilled, setIsHeartFilled] = useState(false)
   const [commentCount, setCommentCount] = useState(0)
+  const [userIdProfile, setUserProfileImage] = useState<string | null>(null)
   const navigate = useNavigate()
   const user = auth.currentUser
-
+  const userData = useFetchUser(playlist?.userId)
+  const isUserLoading = !userData && playlist?.userId
   const { data: comments } = useFetchComments(playlist?.id || '')
 
+  // 코멘트
   useEffect(() => {
     if (comments) {
       setCommentCount(comments.length)
     }
   }, [comments])
 
-  // const { mutate: createComment } = useCreateComment()
-  // const { mutate: toggleBookmark, isBookmarked } = useToggleBookmark(playlist?.id || '')
+  // 유저 아이디 불러오기
+  useEffect(() => {
+    const fetchUserProfileImage = async () => {
+      if (playlist) {
+        const userDoc = await getDoc(doc(db, 'users', playlist.userId))
+        if (userDoc.exists()) {
+          setUserProfileImage(userDoc.data()?.photoURL || null)
+        } else {
+          console.error('User not found')
+        }
+      }
+    }
+
+    fetchUserProfileImage()
+  }, [playlist])
+
+  function extractVideoId(url?: string) {
+    if (!url) {
+      console.error('URL is undefined or empty')
+      return ''
+    }
+    return url.replace('https://www.youtube.com/watch?v=', '')
+  }
+
+  // 토스트, 북마크
   const { mutate: toggleBookmark } = useToggleBookmark(playlist?.id || '')
   const { data: BookmarkedData } = useFetchBookmarks(playlist?.id || '')
   const [isBookmarked, setIsBookmarked] = useState(false)
-
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isToastVisible, setIsToastVisible] = useState(false)
 
@@ -82,23 +114,12 @@ export default function Playlist({
     setIsHeartFilled(!isHeartFilled)
   }
 
-  const profileImageUrl =
-    user?.photoURL || 'https://example.com/default-profile.png'
-
-  function extractVideoId(url?: string) {
-    if (!url) {
-      console.error('URL is undefined or empty')
-      return '' // 기본 값 반환
-    }
-    return url.replace('https://www.youtube.com/watch?v=', '')
-  }
-
   return (
     <div css={playlistStyle}>
       <div css={headerStyle}>
         <img
           css={profileImageStyle}
-          src={profileImageUrl}
+          src={userData?.photoURL || 'https://example.com/default-profile.png'}
           alt="Profile"
         />
         <span css={headerTextStyle}>{playlist?.id}</span>

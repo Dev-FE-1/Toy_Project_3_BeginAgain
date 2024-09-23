@@ -70,7 +70,7 @@ export default function SignIn() {
   const provider = new GoogleAuthProvider()
   const navigate = useNavigate()
 
-  async function SignInWithGoogle() {
+  async function signInWithGoogle() {
     await signInWithPopup(auth, provider)
     navigate('/')
   }
@@ -86,7 +86,7 @@ export default function SignIn() {
       </div>
 
       <div css={buttonStyle}>
-        <LongButton onClick={SignInWithGoogle}>
+        <LongButton onClick={signInWithGoogle}>
           <img
             src={googleLogo}
             alt="Google Logo"
