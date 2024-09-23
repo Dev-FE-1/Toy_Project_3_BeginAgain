@@ -42,7 +42,7 @@ export default function Profile() {
   const setTitle = useHeaderStore(state => state.setTitle)
 
   useEffect(() => {
-    setTitle('Profile')
+    setTitle('프로필')
   }, [setTitle])
 
   const user = auth.currentUser

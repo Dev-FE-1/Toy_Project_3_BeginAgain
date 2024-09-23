@@ -30,7 +30,7 @@ export const useFetchPlaylists = (myPlaylists: boolean = false) => {
       let querySnapshot
 
       if (myPlaylists) {
-        const user = auth.currentUser;
+        const user = auth.currentUser
         if (!user) throw new Error('사용자가 인증되지 않았습니다.')
 
         const userPlaylistsQuery = query(
@@ -42,24 +42,28 @@ export const useFetchPlaylists = (myPlaylists: boolean = false) => {
           where('userId', '==', user.uid)
         )
 
-        const [userPlaylistsSnapshot, publicPlaylistsSnapshot] = await Promise.all([
-          getDocs(userPlaylistsQuery),
-          getDocs(publicPlaylistsQuery)
-        ])
+        const [userPlaylistsSnapshot, publicPlaylistsSnapshot] =
+          await Promise.all([
+            getDocs(userPlaylistsQuery),
+            getDocs(publicPlaylistsQuery)
+          ])
 
-        querySnapshot = [...userPlaylistsSnapshot.docs, ...publicPlaylistsSnapshot.docs]
+        querySnapshot = [
+          ...userPlaylistsSnapshot.docs,
+          ...publicPlaylistsSnapshot.docs
+        ]
       } else {
         const playlistsQuery = query(
           collection(db, 'Playlists'),
           where('isPublic', '==', true)
         )
-        querySnapshot = (await getDocs(playlistsQuery)).docs;
+        querySnapshot = (await getDocs(playlistsQuery)).docs
       }
 
       return querySnapshot.map(doc => ({
         id: doc.id,
         ...doc.data()
-      })) as Playlist[];
+      })) as Playlist[]
     }
   })
-} 
+}

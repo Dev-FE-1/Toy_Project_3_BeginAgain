@@ -62,7 +62,7 @@ const navbar = css`
   align-items: center;
   height: 72px;
   position: fixed;
-  width: ${theme.width.max};
+  width: 429px;
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);

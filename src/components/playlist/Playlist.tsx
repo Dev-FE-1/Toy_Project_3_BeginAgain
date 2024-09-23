@@ -11,7 +11,6 @@ import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 import { useFetchBookmarks } from '@/hooks/useFetchBookmark'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 import { css } from '@emotion/react'
-
 export interface Playlist {
   id: string
   urls: string[]
@@ -30,12 +29,10 @@ export default function Playlist({
   playlist: Playlist | undefined
 }) {
   console.log('Playlist prop:', playlist)
-
   const [isHeartFilled, setIsHeartFilled] = useState(false)
   const [commentCount, setCommentCount] = useState(0)
   const navigate = useNavigate()
   const user = auth.currentUser
-
   const { data: comments } = useFetchComments(playlist?.id || '')
 
   useEffect(() => {
@@ -44,15 +41,11 @@ export default function Playlist({
     }
   }, [comments])
 
-  // const { mutate: createComment } = useCreateComment()
-  // const { mutate: toggleBookmark, isBookmarked } = useToggleBookmark(playlist?.id || '')
   const { mutate: toggleBookmark } = useToggleBookmark(playlist?.id || '')
   const { data: BookmarkedData } = useFetchBookmarks(playlist?.id || '')
   const [isBookmarked, setIsBookmarked] = useState(false)
-
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isToastVisible, setIsToastVisible] = useState(false)
-
   useEffect(() => {
     if (BookmarkedData) {
       setIsBookmarked(BookmarkedData.length > 0)
@@ -60,7 +53,6 @@ export default function Playlist({
       setIsBookmarked(false)
     }
   }, [BookmarkedData])
-
   const handleBookmark = () => {
     if (playlist && BookmarkedData !== undefined) {
       toggleBookmark(isBookmarked)
@@ -69,22 +61,17 @@ export default function Playlist({
       } else {
         setToastMessage('북마크가 해제되었습니다.')
       }
-
       setIsToastVisible(true)
     }
   }
-
   const hideToast = () => {
     setIsToastVisible(false)
   }
-
   function handleHeartClick() {
     setIsHeartFilled(!isHeartFilled)
   }
-
   const profileImageUrl =
     user?.photoURL || 'https://example.com/default-profile.png'
-
   function extractVideoId(url?: string) {
     if (!url) {
       console.error('URL is undefined or empty')
@@ -92,7 +79,6 @@ export default function Playlist({
     }
     return url.replace('https://www.youtube.com/watch?v=', '')
   }
-
   return (
     <div css={playlistStyle}>
       <div css={headerStyle}>
@@ -103,7 +89,6 @@ export default function Playlist({
         />
         <span css={headerTextStyle}>{playlist?.id}</span>
       </div>
-
       <div
         css={videoIdStyle}
         onClick={() => navigate(`/playlist-details/${playlist?.id}`)}>
@@ -113,7 +98,6 @@ export default function Playlist({
           alt=""
         />
       </div>
-
       <div css={footerStyle}>
         <div css={iconsStyle}>
           {isHeartFilled ? (
@@ -133,7 +117,6 @@ export default function Playlist({
             <CgComment css={commentIconStyle} />
             <span css={commentCountStyle}>{commentCount}</span>
           </div>
-
           {user && user.uid !== playlist?.userId ? (
             isBookmarked ? (
               <FaBookmark
@@ -148,7 +131,6 @@ export default function Playlist({
             )
           ) : null}
         </div>
-
         <div css={titleStyle}>
           <p>{playlist?.title}</p>
         </div>
@@ -164,39 +146,32 @@ export default function Playlist({
     </div>
   )
 }
-
 const playlistStyle = css`
   margin-top: 30px;
   cursor: pointer;
 `
-
 const headerStyle = css`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
   margin-left: 20px;
 `
-
 const headerTextStyle = css`
   margin-left: 10px;
   color: ${theme.colors.black};
 `
-
 const videoIdStyle = css`
   margin-bottom: 10px;
 `
-
 const footerStyle = css`
   margin-left: 20px;
   display: flex;
   flex-direction: column;
 `
-
 const iconsStyle = css`
   display: flex;
   margin-bottom: 10px;
 `
-
 const profileImageStyle = css`
   width: 40px;
   height: 40px;
@@ -204,7 +179,6 @@ const profileImageStyle = css`
   object-fit: cover;
   background-color: ${theme.colors.lightGrey};
 `
-
 const emptyHeartIconStyle = css`
   font-size: 24px;
   margin-right: 30px;
@@ -214,7 +188,6 @@ const emptyHeartIconStyle = css`
     color 0.9s ease,
     transform 0.9s ease;
 `
-
 const filledHeartIconStyle = css`
   font-size: 24px;
   margin-right: 30px;
@@ -224,7 +197,6 @@ const filledHeartIconStyle = css`
     color 0.9s ease,
     transform 0.9s ease;
 `
-
 const commentContainerStyle = css`
   display: flex;
   align-items: center;
@@ -232,16 +204,13 @@ const commentContainerStyle = css`
   cursor: pointer;
   margin-right: 30px;
 `
-
 const commentIconStyle = css`
   font-size: 24px;
   margin-right: 7px;
 `
-
 const commentCountStyle = css`
   font-size: ${theme.fontSize.xl};
 `
-
 const bookmarkIconStyle = css`
   font-size: ${theme.fontSize.xl};
   margin-left: auto;
@@ -259,14 +228,12 @@ const fillbookmarkIconStyle = css`
     color 0.9s ease,
     transform 0.9s ease;
 `
-
 const titleStyle = css`
   font-size: ${theme.fontSize.lg};
   color: ${theme.colors.black};
   margin: 0;
   margin-bottom: 10px;
 `
-
 const timeRecordStyle = css`
   color: ${theme.colors.darkGrey};
   font-size: ${theme.fontSize.sm};

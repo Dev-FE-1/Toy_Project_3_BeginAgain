@@ -11,7 +11,7 @@ const MyPlaylist = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
 
   useEffect(() => {
-    setTitle('My Playlist')
+    setTitle('플레이리스트')
   }, [setTitle])
 
   const { data } = useFetchPlaylists(true)

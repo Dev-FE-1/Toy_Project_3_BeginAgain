@@ -42,6 +42,16 @@ const successBtn = (isDone: boolean) => css`
   border: none;
   cursor: ${isDone ? 'pointer' : 'default'};
 `
+const okayButtonStyle = css`
+  position: absolute;
+  display: sticky;
+  right: 10px;
+  background-color: transparent;
+  color: ${theme.colors.lightBlue};
+  font-size: ${theme.fontSize.md};
+  border: none;
+  cursor: pointer;
+`
 const editBtn = css`
   position: absolute;
   display: sticky;
@@ -64,7 +74,8 @@ export default function TheHeader(id: string, playlist: Playlist) {
   const location = useLocation()
   const { isDone, savePlaylist, isPublic } = useAddPlaylistStore()
   const isAddPlaylist = location.pathname === '/add-playlist'
-  const isMyPlaylist = location.pathname.includes('/saved-playlists') && !!id
+  const isEditPlaylist = location.pathname === '/edit-playlist'
+  const isDeleteVideos = location.pathname === '/delete-videos'
   const isProfile = location.pathname === '/profile'
 
   const handleComplete = async () => {
@@ -86,7 +97,7 @@ export default function TheHeader(id: string, playlist: Playlist) {
 
   return (
     <header css={headerStyle}>
-      {title === 'Playlist Detail' && (
+      {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집') && (
         <CgChevronLeft
           css={iconStyle}
           onClick={() => navigate(-1)}
@@ -109,8 +120,21 @@ export default function TheHeader(id: string, playlist: Playlist) {
           완료
         </button>
       )}
+      {isEditPlaylist && (
+        <button
+          css={okayButtonStyle}
+          onClick={() => {}}>
+          수정
+        </button>
+      )}
+      {isDeleteVideos && (
+        <button
+          css={okayButtonStyle}
+          onClick={() => {}}>
+          삭제
+        </button>
+      )}
       {isProfile && <button css={editBtn}>수정</button>}
-      {isMyPlaylist && <button css={editBtn}>편집</button>}
     </header>
   )
 }

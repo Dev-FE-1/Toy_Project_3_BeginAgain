@@ -22,7 +22,7 @@ export default function Home() {
     setTitle('Home')
   }, [setTitle])
 
-  const { data, isLoading } = useFetchPlaylists(false);
+  const { data, isLoading } = useFetchPlaylists(false)
 
   const handlePlaylistClick = (playlist: PlaylistType) => {
     navigate(`/playlist/${playlist.id}`, { state: { playlist } })
@@ -69,7 +69,7 @@ export default function Home() {
           <Playlist
             key={pl.id}
             playlist={pl}
-            onClick={() => handlePlaylistClick(pl)} // 클릭 핸들러 추가
+            onClick={() => handlePlaylistClick(pl)}
           />
         ))}
       {showToast && (

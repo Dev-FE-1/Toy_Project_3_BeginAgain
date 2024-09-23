@@ -17,7 +17,7 @@ const Bookmark = () => {
   ])
 
   useEffect(() => {
-    setTitle('Bookmarks')
+    setTitle('북마크')
   }, [setTitle])
 
   // 선택된 카테고리가 없을 경우 '전체'로 설정

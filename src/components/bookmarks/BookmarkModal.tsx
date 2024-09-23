@@ -86,6 +86,7 @@ const closeButtonStyle = css`
   font-weight: ${theme.fontWeight.semiBold};
   cursor: pointer;
   border-radius: 3px;
+  transition: color 0.9s ease;
 `
 
 const deleteButtonStyle = css`
@@ -99,6 +100,7 @@ const deleteButtonStyle = css`
   font-weight: ${theme.fontWeight.semiBold};
   cursor: pointer;
   border-radius: 3px;
+  transition: color 0.9s ease;
 `
 
 export default Modal
