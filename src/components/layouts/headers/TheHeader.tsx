@@ -11,7 +11,7 @@ const headerStyle = css`
   justify-content: center;
   align-items: center;
   height: 72px;
-  position: sticky;
+  position: fixed;
   width: ${theme.width.max};
   top: 0;
   left: 50%;
@@ -78,10 +78,6 @@ export default function TheHeader(id: string, playlist: Playlist) {
     } catch (error) {
       console.error('저장 실패:', error)
     }
-  }
-
-  const handleEdit = (playlist: Playlist) => {
-    navigate(`/edit-playlist/${playlist.id}`, { state: { playlist } })
   }
 
   return (

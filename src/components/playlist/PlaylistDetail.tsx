@@ -104,6 +104,7 @@ export default function PlaylistDetail({
 
   return (
     <div>
+      <div className="nav-margin"></div>
       <div css={sectionOneContainer}>
         {currentVideoUrl ? (
           <iframe

@@ -1,56 +1,66 @@
-import { Category } from '@/components/common/Category';
-import Playlist, { Playlist as PlaylistType } from '@/components/playlist/Playlist';
-import { useHeaderStore } from '@/stores/header';
-import { useFetchPlaylists } from '@/hooks/useFetchPlaylists';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import Toast from '@/components/common/Toast';
+import { Category } from '@/components/common/Category'
+import Playlist, {
+  Playlist as PlaylistType
+} from '@/components/playlist/Playlist'
+import { useHeaderStore } from '@/stores/header'
+import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import Toast from '@/components/common/Toast'
 
 export default function Home() {
-  const setTitle = useHeaderStore(state => state.setTitle);
-  const location = useLocation();
-  const [showToast, setShowToast] = useState(false);
-  const navigate = useNavigate();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['전체']);
+  const setTitle = useHeaderStore(state => state.setTitle)
+  const location = useLocation()
+  const [showToast, setShowToast] = useState(false)
+  const navigate = useNavigate()
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    '전체'
+  ])
 
   useEffect(() => {
-    setTitle('Home');
-  }, [setTitle]);
+    setTitle('Home')
+  }, [setTitle])
 
-  const { data, isLoading } = useFetchPlaylists();
+  const { data, isLoading } = useFetchPlaylists()
 
   const handlePlaylistClick = (playlist: PlaylistType) => {
-    navigate(`/playlist/${playlist.id}`, { state: { playlist } });
-  };
+    navigate(`/playlist/${playlist.id}`, { state: { playlist } })
+  }
 
   useEffect(() => {
     if (location.state?.showToast) {
-      setShowToast(true);
+      setShowToast(true)
 
       setTimeout(() => {
-        setShowToast(false);
-        const newState = { ...location.state, showToast: false };
-        window.history.replaceState(newState, document.title);
-      }, 3000);
+        setShowToast(false)
+        const newState = { ...location.state, showToast: false }
+        window.history.replaceState(newState, document.title)
+      }, 3000)
     }
-  }, [location.state]);
+  }, [location.state])
 
   useEffect(() => {
     if (selectedCategories.length === 0) {
-      setSelectedCategories(['전체']);
+      setSelectedCategories(['전체'])
     }
-  }, [selectedCategories]);
-  
-  const filteredData = selectedCategories.length > 0
-    ? data?.filter(pl => Array.isArray(pl.categories) && selectedCategories.some(cat => pl.categories.includes(cat)))
-    : data;
+  }, [selectedCategories])
+
+  const filteredData =
+    selectedCategories.length > 0
+      ? data?.filter(
+          pl =>
+            Array.isArray(pl.categories) &&
+            selectedCategories.some(cat => pl.categories.includes(cat))
+        )
+      : data
 
   return (
     <>
+      <div className="nav-margin"></div>
       <Category
-        selectedCategories={selectedCategories} 
-        onSelectCategory={setSelectedCategories} 
+        selectedCategories={selectedCategories}
+        onSelectCategory={setSelectedCategories}
       />
 
       {isLoading && <div>데이터를 가져오고 있는 중...</div>}
@@ -72,7 +82,7 @@ export default function Home() {
 
       <div className="nav-margin"></div>
     </>
-  );
+  )
 }
 
 // // 좋아요!

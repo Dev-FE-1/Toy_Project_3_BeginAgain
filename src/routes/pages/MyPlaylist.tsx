@@ -23,6 +23,7 @@ const MyPlaylist = () => {
   return (
     <>
       <main>
+        <div className="nav-margin"></div>
         <div css={categoryMarginStyle}>
           <Category />
         </div>

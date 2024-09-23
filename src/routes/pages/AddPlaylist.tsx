@@ -89,6 +89,7 @@ const AddPlaylist = () => {
   return (
     <>
       <div css={DivContainer}>
+        <div className="nav-margin"></div>
         <div css={TitleContainer}>
           <span css={requiredTitleStyle}>동영상 링크</span>
         </div>
@@ -299,7 +300,7 @@ const SpanContainer = css`
 
 const AddButton = css`
   ${commonButtonStyle}
-  top: 15px;
+  top: 116px;
   right: 15px;
   transform: translateY(50%);
 `

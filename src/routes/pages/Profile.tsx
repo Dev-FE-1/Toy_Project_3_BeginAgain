@@ -55,6 +55,7 @@ export default function Profile() {
   return (
     <>
       <div css={pageStyle}>
+        <div className="nav-margin"></div>
         {user && (
           <>
             <img
@@ -73,9 +74,7 @@ export default function Profile() {
           </>
         )}
         <div css={logoutBtn}>
-          <LongButton onClick={logOut}>
-            로그아웃
-          </LongButton>
+          <LongButton onClick={logOut}>로그아웃</LongButton>
         </div>
       </div>
     </>
