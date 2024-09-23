@@ -182,8 +182,11 @@ const GlobalStyles = () => (
         width: 100%;
         overflow-y: auto;
       }
-      .nav-margin {
+      .nav-margin-bottom {
         height: 100px;
+      }
+      .nav-margin-top {
+        height: 75px;
       }
     `}
   />
