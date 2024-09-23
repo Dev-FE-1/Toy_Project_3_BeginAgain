@@ -18,5 +18,9 @@ const containerStyle = css`
   background-color: ${theme.colors.white};
   height: 100%;
   max-height: ${theme.height.max};
+  overflow-y: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `
 export default Container
