@@ -767,11 +767,10 @@
 // ------------------------------------------------------------------------------------------------------------------------
 // 내것만 드래그앤드롭 가능
 
-import { getFirestore, doc, updateDoc } from 'firebase/firestore'
+import { getFirestore, doc, getDoc } from 'firebase/firestore'
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
-import { useFetchPlaylist } from '@/hooks/useFetchPlaylist'
 import {
   CgChevronUp,
   CgChevronDown,
@@ -832,7 +831,8 @@ export default function PlaylistDetail({
 }) {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { id } = useParams()
-  const { data: playlistData, isLoading } = useFetchPlaylist(id as string)
+  const [playlistData, setPlaylistData] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
   const [videoTitles, setVideoTitles] = useState<string[]>([])
@@ -840,13 +840,41 @@ export default function PlaylistDetail({
   const openEdit = () => setIsEditOpen(true)
   const closeEdit = () => setIsEditOpen(false)
   const user = auth.currentUser
-  const ItemRef = useRef<HTMLDivElement | null>(null) // 드래그앤드롭을 위한 거
-  const db = getFirestore() // 드래그 추가
+  const ItemRef = useRef<HTMLDivElement | null>(null)
+  const db = getFirestore()
   const isOwner = user?.uid === playlistData?.userId
 
   useEffect(() => {
     setTitle('Playlist Detail')
   }, [setTitle])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const playlistDocRef = doc(db, 'Playlists', id!)
+        const publicPlaylistDocRef = doc(db, 'PublicPlaylists', id!)
+        
+        const [playlistSnap, publicPlaylistSnap] = await Promise.all([
+          getDoc(playlistDocRef),
+          getDoc(publicPlaylistDocRef)
+        ])
+
+        if (playlistSnap.exists()) {
+          setPlaylistData({ id: playlistSnap.id, ...playlistSnap.data() })
+        } else if (publicPlaylistSnap.exists()) {
+          setPlaylistData({ id: publicPlaylistSnap.id, ...publicPlaylistSnap.data() })
+        } else {
+          console.log("No matching documents found in either collection.")
+        }
+      } catch (error) {
+        console.error("Error fetching playlist data:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [id, db])
 
   useEffect(() => {
     if (playlistData && playlistData.urls.length > 0) {
@@ -859,7 +887,7 @@ export default function PlaylistDetail({
         const titles = await Promise.all(
           videoIds.map(id => fetchVideoTitle(id))
         )
-        setVideoTitles(titles) // 제목 배열 상태로 설정
+        setVideoTitles(titles)
       }
 
       fetchTitles()
@@ -868,8 +896,7 @@ export default function PlaylistDetail({
 
   useEffect(() => {
     if (!ItemRef.current || !playlistData || !playlistData.urls || !isOwner)
-      return // 소유자가 아닐 경우 초기화하지 않음
-    console.log('Sortable 초기화 완료:', playlistData.urls)
+      return
 
     new Sortable(ItemRef.current, {
       handle: '.drag-handle',
@@ -877,30 +904,19 @@ export default function PlaylistDetail({
       forceFallback: false,
       onEnd: async event => {
         if (event.oldIndex === undefined || event.newIndex === undefined) return
-        console.log(
-          '드래그앤드롭 이벤트 발생:',
-          event.oldIndex,
-          '->',
-          event.newIndex
-        )
 
         const newUrls = Array.from(playlistData.urls)
         const [movedItem] = newUrls.splice(event.oldIndex, 1)
         newUrls.splice(event.newIndex, 0, movedItem)
-        console.log('변경된 URL 배열:', newUrls)
 
-        // Firestore에 업데이트
         if (id) {
           const playlistRef = doc(db, 'Playlists', id)
           await updateDoc(playlistRef, {
             urls: newUrls
           })
-          console.log('Firestore에 업데이트 완료')
         }
 
-        // 상태를 업데이트하여 UI에 즉시 반영
         setCurrentVideoUrl(newUrls[0])
-        console.log('현재 재생 중인 비디오 URL 업데이트:', newUrls[0])
       }
     })
   }, [playlistData, id, db, isOwner])
@@ -1018,7 +1034,6 @@ export default function PlaylistDetail({
   )
 }
 
-// CSS 스타일은 기존과 동일하게 유지
 const sectionOneContainer = css`
   iframe {
   }
@@ -1142,3 +1157,4 @@ const videoTitleStyle = css`
 const dragIconStyle = css`
   flex-shrink: 0;
 `
+

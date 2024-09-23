@@ -18,7 +18,7 @@ export default function Home() {
     setTitle('Home');
   }, [setTitle]);
 
-  const { data, isLoading } = useFetchPlaylists();
+  const { data, isLoading } = useFetchPlaylists(false);
 
   const handlePlaylistClick = (playlist: PlaylistType) => {
     navigate(`/playlist/${playlist.id}`, { state: { playlist } });
