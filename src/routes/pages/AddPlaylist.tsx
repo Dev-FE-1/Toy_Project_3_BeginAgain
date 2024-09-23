@@ -11,7 +11,7 @@ const AddPlaylist = () => {
   const { setIsDone, setPlaylistData } = useAddPlaylistStore()
 
   useEffect(() => {
-    setTitle('Add Playlist')
+    setTitle('컨텐츠 추가')
   }, [setTitle])
 
   const [videoUrls, setVideoUrls] = useState<string[]>([])
