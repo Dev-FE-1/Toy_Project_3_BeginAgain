@@ -77,6 +77,7 @@ const AddPlaylist = () => {
   }
   return (
     <>
+      <div className="nav-margin-top"></div>
       <div css={DivContainer}>
         <div css={TitleContainer}>
           <span css={requiredTitleStyle}>동영상 링크</span>
