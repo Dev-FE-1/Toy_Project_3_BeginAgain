@@ -4,7 +4,9 @@ import {
   collection,
   getDocs,
   query,
-  where
+  where,
+  doc,
+  getDoc
 } from 'firebase/firestore'
 import type { User } from 'firebase/auth'
 
@@ -14,6 +16,7 @@ export interface Comment {
   content: string
   createdAt: string
   playlistid: string
+  userId: string
 }
 
 export const useFetchComments = (playlistid: string) => {
