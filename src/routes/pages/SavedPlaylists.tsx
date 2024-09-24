@@ -74,9 +74,11 @@ export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
           </div>
           <div css={infoRightStyle}>
             <div css={buttonStyle}>
-              <CgLock onClick={() => updatePlayList(playlist)} />
-              {/* <CgLockUnlock /> */}
-              {/* 공개/비공개 여부에 따라 lock/unlock 아이콘 변경되는 로직 추가 필요 */}
+              {playlist.isPublic ? (
+                <CgLockUnlock onClick={() => updatePlayList(playlist)} />
+              ) : (
+                <CgLock onClick={() => updatePlayList(playlist)} />
+              )}
               <CgTrash
                 onClick={() => setIsModalOpen(true)}
                 className="trashIcon"
