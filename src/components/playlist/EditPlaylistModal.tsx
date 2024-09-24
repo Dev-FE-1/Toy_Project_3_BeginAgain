@@ -1,11 +1,17 @@
 import { css } from '@emotion/react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { Playlist, useFetchPlaylist } from '@/hooks/useFetchPlaylist'
 import { CgClose } from 'react-icons/cg'
 import theme from '@/styles/theme'
 import LongButton from '@/components/common/LongButton'
 
-const EditPlaylist = ({ closeEdit }: { closeEdit: () => void }) => {
+interface PlayListProps {
+  closeEdit: () => void
+  playlist: Playlist // 부모 컴포넌트로부터 playlist 전달 받음
+}
+
+const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
   const pageEffect = {
     hidden: {
       opacity: 0,
@@ -29,11 +35,21 @@ const EditPlaylist = ({ closeEdit }: { closeEdit: () => void }) => {
 
   const navigate = useNavigate()
 
-  const handleEditInfo = () => {
-    navigate('/edit-playlist')
+  // EditPlaylist 컴포넌트
+  const handleEditInfo = (playlist: Playlist) => {
+    if (!playlist) {
+      console.error('Playlist data is missing')
+      return
+    }
+    navigate(`/edit-playlist/${playlist.id}`, { state: { playlist } })
   }
-  const handleDelete = () => {
-    navigate('/delete-videos')
+
+  const handleDelete = (playlist: Playlist) => {
+    if (!playlist) {
+      console.error('Playlist data is missing')
+      return
+    }
+    navigate(`/delete-videos/${playlist.id}`, { state: { playlist } })
   }
 
   return (
@@ -59,8 +75,12 @@ const EditPlaylist = ({ closeEdit }: { closeEdit: () => void }) => {
             <CgClose fontSize={theme.fontSize.lg} />
           </button>
           <div css={longButtonStyle}>
-            <LongButton onClick={handleEditInfo}>정보 수정</LongButton>
-            <LongButton onClick={handleDelete}>동영상 삭제</LongButton>
+            <LongButton onClick={() => handleEditInfo(playlist)}>
+              정보 수정
+            </LongButton>
+            <LongButton onClick={() => handleDelete(playlist)}>
+              동영상 삭제
+            </LongButton>
           </div>
         </div>
       </>
