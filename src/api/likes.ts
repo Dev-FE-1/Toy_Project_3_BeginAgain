@@ -37,6 +37,7 @@ export const updateLikes = async (
       })
     } else {
       newLikeCount = Math.max(0, (currentData.likeCount || 0) - 1)
+
       await updateDoc(docRef, {
         [`userLikes.${userId}`]: null
       })
@@ -50,10 +51,12 @@ export const updateLikes = async (
       }
     }
   } else {
-    newLikeCount = isLiked ? 1 : 0
-    await setDoc(docRef, {
-      likeCount: newLikeCount,
-      userLikes: { [userId]: isLiked }
-    })
+    if (isLiked) {
+      newLikeCount = 1
+      await setDoc(docRef, {
+        likeCount: newLikeCount,
+        userLikes: { [userId]: true }
+      })
+    }
   }
 }
