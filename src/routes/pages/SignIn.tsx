@@ -7,6 +7,46 @@ import { css } from '@emotion/react'
 import LongButton from '@/components/common/LongButton'
 import theme from '@/styles/theme'
 
+export default function SignIn() {
+  const navigate = useNavigate()
+
+  async function handleSignIn() {
+    try {
+      await signInWithGoogleAndCreateUser()
+      navigate('/')
+    } catch (error) {
+      console.error('로그인 실패:', error)
+    }
+  }
+
+  return (
+    <div css={containerStyle}>
+      <div css={contentStyle}>
+        <img
+          css={logoStyle}
+          src={logo}
+          alt="Logo"
+        />
+      </div>
+
+      <div css={buttonStyle}>
+        <LongButton onClick={handleSignIn}>
+          <img
+            src={googleLogo}
+            alt="Google Logo"
+            style={{ width: '20px', height: '20px' }}
+          />
+          Google 로그인
+        </LongButton>
+      </div>
+
+      <div>
+        <p css={signInText}>ⓒ MAZI. All Rights Reserved.</p>
+      </div>
+    </div>
+  )
+}
+
 const containerStyle = css`
   height: 100vh;
   width: 100%;
@@ -65,43 +105,3 @@ const signInText = css`
   transform: translate(-50%, -50%);
   font-size: ${theme.fontSize.sm};
 `
-export default function SignIn() {
-  const navigate = useNavigate()
-
-  async function handleSignIn() {
-    try {
-      await signInWithGoogleAndCreateUser()
-      navigate('/')
-    } catch (error) {
-      console.error('로그인 실패:', error)
-      // 에러 처리 로직 추가
-    }
-  }
-
-  return (
-    <div css={containerStyle}>
-      <div css={contentStyle}>
-        <img
-          css={logoStyle}
-          src={logo}
-          alt="Logo"
-        />
-      </div>
-
-      <div css={buttonStyle}>
-        <LongButton onClick={handleSignIn}>
-          <img
-            src={googleLogo}
-            alt="Google Logo"
-            style={{ width: '20px', height: '20px' }}
-          />
-          Google 로그인
-        </LongButton>
-      </div>
-
-      <div>
-        <p css={signInText}>ⓒ MAZI. All Rights Reserved.</p>
-      </div>
-    </div>
-  )
-}

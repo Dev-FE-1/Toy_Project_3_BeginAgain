@@ -15,16 +15,18 @@ export default function Home() {
   const location = useLocation()
   const [showToast, setShowToast] = useState(false)
   const navigate = useNavigate()
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(['전체'])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    '전체'
+  ])
   const [displayName, setDisplayName] = useState<string | null>(null)
 
   useEffect(() => {
-    setTitle('Home');
+    setTitle('Home')
 
-    const auth = getAuth();
-    const user = auth.currentUser;
+    const auth = getAuth()
+    const user = auth.currentUser
     if (user) {
-      setDisplayName(user.displayName);
+      setDisplayName(user.displayName)
     }
   }, [setTitle])
 
@@ -52,14 +54,16 @@ export default function Home() {
     }
   }, [selectedCategories])
 
-  const filteredData =
-    selectedCategories.length > 0
-      ? data?.filter(
-          pl =>
-            Array.isArray(pl.categories) &&
-            selectedCategories.some(cat => pl.categories.includes(cat))
-        )
-      : data
+  const filteredAndSortedData: PlaylistType[] | undefined = data
+    ?.filter(
+      (pl): pl is PlaylistType =>
+        Array.isArray(pl.categories) &&
+        selectedCategories.some(cat => pl.categories.includes(cat))
+    )
+    ?.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
 
   return (
     <>
@@ -68,10 +72,10 @@ export default function Home() {
         selectedCategories={selectedCategories}
         onSelectCategory={setSelectedCategories}
       />
-
-      {isLoading && <div>데이터를 가져오고 있는 중...</div>}
-      {filteredData &&
-        filteredData.map(pl => (
+      {/* 
+      {isLoading && <div>데이터 불러오기</div>} */}
+      {filteredAndSortedData &&
+        filteredAndSortedData.map(pl => (
           <Playlist
             key={pl.id}
             playlist={pl}

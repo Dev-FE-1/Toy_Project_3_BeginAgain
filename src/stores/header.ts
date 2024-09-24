@@ -3,7 +3,7 @@ import { combine } from 'zustand/middleware'
 export const useHeaderStore = create(
   combine(
     {
-      title: 'MAZI',
+      title: '',
       handleClickRightButton: () => {}
     },
     set => ({
