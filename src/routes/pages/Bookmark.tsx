@@ -7,16 +7,18 @@ import { useFetchUserBookmark } from '@/hooks/useFetchUserBookmark'
 import { useHeaderStore } from '@/stores/header'
 import { css } from '@emotion/react'
 import Sortable from 'sortablejs'
+import Toast from '@/components/common/Toast'
 
 const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
-  const { data: playlists } = useFetchPlaylists()
+  const { data: Playlists } = useFetchPlaylists()
   const { data: Bookmarks } = useFetchUserBookmark()
   const ItemRef = useRef<HTMLDivElement | null>(null)
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     '전체'
   ])
+  const [isToastVisible, setIsToastVisible] = useState(false)
 
   useEffect(() => {
     setTitle('북마크')
@@ -31,12 +33,12 @@ const Bookmark = () => {
 
   const filteredData =
     selectedCategories.length > 0
-      ? playlists?.filter(
+      ? Playlists?.filter(
           pl =>
             Array.isArray(pl.categories) &&
             selectedCategories.some(cat => pl.categories.includes(cat))
         )
-      : playlists
+      : Playlists
 
   // 북마크된 플레이리스트만 필터링
   const filteredPlaylists = filteredData?.filter(pl =>
@@ -61,6 +63,10 @@ const Bookmark = () => {
     })
   }, [filteredPlaylists])
 
+  const handleBookmarkToggle = () => {
+    setIsToastVisible(true)
+  }
+
   return (
     <main>
       <div className="nav-margin-top"></div>
@@ -76,6 +82,7 @@ const Bookmark = () => {
             <BookmarkItem
               key={pl.id}
               playlist={pl}
+              onBookmarkToggle={handleBookmarkToggle}
             />
           ))}
         </div>
@@ -87,6 +94,11 @@ const Bookmark = () => {
           />
         </div>
       )}
+      <Toast
+        message="북마크가 해제되었습니다"
+        isVisible={isToastVisible}
+        onHide={() => setIsToastVisible(false)}
+      />
       <div className="nav-margin-bottom"></div>
     </main>
   )
