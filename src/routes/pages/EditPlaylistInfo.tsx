@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Category from '@/components/common/Category'
 import { Playlist } from '@/hooks/useFetchPlaylists'
+import { useEditPlaylistInfo } from '@/hooks/useEditPlaylistInfo'
 
 export default function EditPlaylistInfo() {
   const setTitle = useHeaderStore(state => state.setTitle)
@@ -55,10 +56,12 @@ export default function EditPlaylistInfo() {
     setSelectedCategories(categories)
   }
 
-  const handleSave = async () => {
+  const handleEdit = async () => {
     // 데이터 저장 로직 구현 (예: Firebase 업데이트)
     try {
-      // 예시로 console.log로 데이터 확인
+      if (playlist) {
+        editPlaylist.mutate(playlist)
+      }
       console.log({
         title: videoTitle,
         description: videoDescription,
@@ -72,6 +75,8 @@ export default function EditPlaylistInfo() {
       console.error('Error saving playlist:', error)
     }
   }
+
+  const editPlaylist = useEditPlaylistInfo()
 
   return (
     <>
@@ -140,8 +145,7 @@ export default function EditPlaylistInfo() {
         </label>
 
         <div>
-          <button onClick={handleSave}>저장</button>
-          <button onClick={() => navigate(-1)}>취소</button>
+          <button onClick={handleEdit}>저장</button>
         </div>
       </div>
       <div className="nav-margin-bottom"></div>
