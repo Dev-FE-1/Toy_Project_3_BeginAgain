@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import Toast from '@/components/common/Toast'
+import { getAuth } from 'firebase/auth'
 
 export default function Home() {
   const setTitle = useHeaderStore(state => state.setTitle)
@@ -15,9 +16,16 @@ export default function Home() {
   const [showToast, setShowToast] = useState(false)
   const navigate = useNavigate()
   const [selectedCategories, setSelectedCategories] = useState<string[]>(['전체'])
+  const [displayName, setDisplayName] = useState<string | null>(null)
 
   useEffect(() => {
-    setTitle('Home')
+    setTitle('Home');
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      setDisplayName(user.displayName);
+    }
   }, [setTitle])
 
   const { data, isLoading } = useFetchPlaylists(false)
