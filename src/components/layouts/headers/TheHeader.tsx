@@ -74,8 +74,8 @@ export default function TheHeader(id: string, playlist: Playlist) {
   const location = useLocation()
   const { isDone, savePlaylist, isPublic } = useAddPlaylistStore()
   const isAddPlaylist = location.pathname === '/add-playlist'
-  const isEditPlaylist = location.pathname === '/edit-playlist'
-  const isDeleteVideos = location.pathname === '/delete-videos'
+  const isEditPlaylist = location.pathname.includes('/edit-playlist')
+  const isDeleteVideos = location.pathname.includes('/delete-videos')
   const isProfile = location.pathname === '/profile'
 
   const handleComplete = async () => {
