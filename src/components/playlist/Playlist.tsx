@@ -3,26 +3,12 @@ import { VscHeartFilled } from 'react-icons/vsc'
 import theme from '@/styles/theme'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { useFetchComments } from '@/hooks/useFetchComments'
-import { auth } from '@/api/firebaseApp'
 import Toast from '@/components/common/Toast'
-import { useToggleBookmark } from '@/hooks/useToggleBookmark'
-import { useFetchUserData } from '@/hooks/useFetchUser'
-import { useFetchBookmarks } from '@/hooks/useFetchBookmark'
-import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
+import { usePlaylistData } from '@/hooks/useFetchPlaylistData'
+import { useHeartData } from '@/hooks/useHeartData'
+import { useExtractVideoId } from '@/hooks/useExtractVideoId'
 import { css } from '@emotion/react'
-export interface Playlist {
-  id: string
-  urls: string[]
-  title: string
-  description: string
-  isPublic: boolean
-  categories: string[]
-  userId: string
-  createdAt: Date | string
-  onClick?: () => void
-}
+import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 
 export default function Playlist({
   playlist
@@ -30,58 +16,19 @@ export default function Playlist({
   playlist: Playlist | undefined
 }) {
   const navigate = useNavigate()
+  const {
+    commentCount,
+    userData,
+    isBookmarked,
+    handleBookmark,
+    toastMessage,
+    isToastVisible,
+    hideToast
+  } = usePlaylistData(playlist)
 
-  const [isHeartFilled, setIsHeartFilled] = useState(false)
-  const [commentCount, setCommentCount] = useState(0)
-  const user = auth.currentUser
-  const { data: comments } = useFetchComments(playlist?.id || '')
-  const userData = useFetchUserData(playlist?.userId)
+  const { isHeartFilled, handleHeartClick } = useHeartData()
+  const { extractVideoId } = useExtractVideoId()
 
-  useEffect(() => {
-    if (comments) {
-      setCommentCount(comments.length)
-    }
-  }, [comments])
-
-  const { mutate: toggleBookmark } = useToggleBookmark(playlist?.id || '')
-  const { data: BookmarkedData } = useFetchBookmarks(playlist?.id || '')
-  const [isBookmarked, setIsBookmarked] = useState(false)
-  const [toastMessage, setToastMessage] = useState<string | null>(null)
-  const [isToastVisible, setIsToastVisible] = useState(false)
-
-  useEffect(() => {
-    if (BookmarkedData) {
-      setIsBookmarked(BookmarkedData.length > 0)
-    } else {
-      setIsBookmarked(false)
-    }
-  }, [BookmarkedData])
-  const handleBookmark = () => {
-    if (playlist && BookmarkedData !== undefined) {
-      toggleBookmark(isBookmarked)
-      if (!isBookmarked) {
-        setToastMessage('북마크가 추가되었습니다.')
-      } else {
-        setToastMessage('북마크가 해제되었습니다.')
-      }
-      setIsToastVisible(true)
-    }
-  }
-  const hideToast = () => {
-    setIsToastVisible(false)
-  }
-  function handleHeartClick() {
-    setIsHeartFilled(!isHeartFilled)
-  }
-  const profileImageUrl =
-    user?.photoURL || 'https://example.com/default-profile.png'
-  function extractVideoId(url?: string) {
-    if (!url) {
-      console.error('URL is undefined or empty')
-      return '' // 기본 값 반환
-    }
-    return url.replace('https://www.youtube.com/watch?v=', '')
-  }
   return (
     <div css={playlistStyle}>
       <div css={headerStyle}>
@@ -98,12 +45,17 @@ export default function Playlist({
       <div
         css={videoIdStyle}
         onClick={() => navigate(`/playlist-details/${playlist?.id}`)}>
-        <img
-          width="100%"
-          src={`https://img.youtube.com/vi/${extractVideoId(playlist?.urls[0])}/maxresdefault.jpg`}
-          alt=""
-        />
+        {playlist?.urls[0] ? (
+          <img
+            width="100%"
+            src={`https://img.youtube.com/vi/${extractVideoId(playlist.urls[0])}/maxresdefault.jpg`}
+            alt="Video Thumbnail"
+          />
+        ) : (
+          <p>썸네일을 불러올 수 없습니다.</p>
+        )}
       </div>
+
       <div css={footerStyle}>
         <div css={iconsStyle}>
           {isHeartFilled ? (
@@ -123,19 +75,17 @@ export default function Playlist({
             <CgComment css={commentIconStyle} />
             <span css={commentCountStyle}>{commentCount}</span>
           </div>
-          {user && user.uid !== playlist?.userId ? (
-            isBookmarked ? (
-              <FaBookmark
-                onClick={handleBookmark}
-                css={fillbookmarkIconStyle}
-              />
-            ) : (
-              <FaRegBookmark
-                onClick={handleBookmark}
-                css={bookmarkIconStyle}
-              />
-            )
-          ) : null}
+          {isBookmarked ? (
+            <FaBookmark
+              onClick={handleBookmark}
+              css={filledbookmarkIconStyle}
+            />
+          ) : (
+            <FaRegBookmark
+              onClick={handleBookmark}
+              css={bookmarkIconStyle}
+            />
+          )}
         </div>
         <div css={titleStyle}>
           <p>{playlist?.title}</p>
@@ -152,6 +102,7 @@ export default function Playlist({
     </div>
   )
 }
+
 const playlistStyle = css`
   margin-top: 30px;
   cursor: pointer;
@@ -224,7 +175,7 @@ const bookmarkIconStyle = css`
   color: ${theme.colors.charcoalGrey};
   cursor: pointer;
 `
-const fillbookmarkIconStyle = css`
+const filledbookmarkIconStyle = css`
   font-size: ${theme.fontSize.xl};
   margin-left: auto;
   margin-right: 20px;
