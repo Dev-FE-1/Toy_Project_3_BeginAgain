@@ -78,7 +78,7 @@ export default function PlaylistDetail({
   const isOwner = user?.uid === playlistData?.userId
 
   useEffect(() => {
-    setTitle('Playlist Detail')
+    setTitle('플레이리스트 상세보기')
   }, [setTitle])
 
   useEffect(() => {
@@ -200,7 +200,12 @@ export default function PlaylistDetail({
           )}
         </div>
         <AnimatePresence>
-          {isEditOpen && <EditPlaylistModal closeEdit={closeEdit} />}
+          {isEditOpen && (
+            <EditPlaylistModal
+              closeEdit={closeEdit}
+              playlist={playlistData}
+            />
+          )}
         </AnimatePresence>
         <div css={otherInfoStyle}>
           {showLockIcon && (

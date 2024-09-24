@@ -2,14 +2,30 @@ import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import { useHeaderStore } from '@/stores/header'
 import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Category from '@/components/common/Category'
+import { Playlist } from '@/hooks/useFetchPlaylists'
 
 export default function EditPlaylistInfo() {
   const setTitle = useHeaderStore(state => state.setTitle)
+  const location = useLocation() // playlist 데이터를 받기 위함
+  const navigate = useNavigate()
+
+  // location에서 playlist 데이터 가져오기
+  const playlist = location.state?.playlist as Playlist | undefined
 
   useEffect(() => {
+    if (!playlist) {
+      console.error('Playlist not found')
+      navigate(-1) // 데이터가 없으면 이전 페이지로 돌아감
+      return
+    }
     setTitle('플레이리스트 편집')
-  }, [setTitle])
+    setVideoTitle(playlist.title)
+    setVideoDescription(playlist.description)
+    setIsPublic(playlist.isPublic)
+    setSelectedCategories(playlist.categories || ['전체'])
+  }, [playlist, navigate])
 
   const [videoTitle, setVideoTitle] = useState('')
   const [videoDescription, setVideoDescription] = useState('')
@@ -39,6 +55,24 @@ export default function EditPlaylistInfo() {
     setSelectedCategories(categories)
   }
 
+  const handleSave = async () => {
+    // 데이터 저장 로직 구현 (예: Firebase 업데이트)
+    try {
+      // 예시로 console.log로 데이터 확인
+      console.log({
+        title: videoTitle,
+        description: videoDescription,
+        isPublic,
+        categories: selectedCategories
+      })
+
+      // 저장 후 페이지 이동 (리다이렉션)
+      navigate(-1) // 이전 페이지로 돌아가기
+    } catch (error) {
+      console.error('Error saving playlist:', error)
+    }
+  }
+
   return (
     <>
       <div className="nav-margin-top"></div>
@@ -50,10 +84,7 @@ export default function EditPlaylistInfo() {
           type="text"
           placeholder="제목을 입력해주세요."
           value={videoTitle}
-          onChange={e => {
-            setVideoTitle(e.target.value)
-            onTitleInputHandler(e)
-          }}
+          onChange={onTitleInputHandler}
           css={TitleInputContainer}
           maxLength={15}
         />
@@ -66,10 +97,7 @@ export default function EditPlaylistInfo() {
         <textarea
           placeholder="설명을 입력해주세요."
           value={videoDescription}
-          onChange={e => {
-            setVideoDescription(e.target.value)
-            onDescriptionInputHandler(e)
-          }}
+          onChange={onDescriptionInputHandler}
           rows={3}
           maxLength={30}
           css={textAreaContainer}
@@ -110,6 +138,11 @@ export default function EditPlaylistInfo() {
           />
           비공개
         </label>
+
+        <div>
+          <button onClick={handleSave}>저장</button>
+          <button onClick={() => navigate(-1)}>취소</button>
+        </div>
       </div>
       <div className="nav-margin-bottom"></div>
     </>
