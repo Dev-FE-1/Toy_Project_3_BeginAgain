@@ -42,7 +42,7 @@ const successBtn = (isDone: boolean) => css`
   border: none;
   cursor: ${isDone ? 'pointer' : 'default'};
 `
-const okayButtonStyle = css`
+const buttonStyle = css`
   position: absolute;
   display: sticky;
   right: 10px;
@@ -91,6 +91,11 @@ export default function TheHeader(id: string, playlist: Playlist) {
     }
   }
 
+  const handleEditBtn = () => {
+    navigate('/EditProfile');
+  }
+
+
   return (
     <header css={headerStyle}>
       {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집') && (
@@ -118,14 +123,15 @@ export default function TheHeader(id: string, playlist: Playlist) {
       )}
       {isEditPlaylist && (
         <button
-          css={okayButtonStyle}
-          onClick={() => {}}>
+          css={buttonStyle}
+          onClick={handleEditBtn}
+        >
           수정
         </button>
       )}
       {isDeleteVideos && (
         <button
-          css={okayButtonStyle}
+          css={buttonStyle}
           onClick={() => {}}>
           삭제
         </button>
