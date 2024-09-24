@@ -18,13 +18,7 @@ import { AnimatePresence } from 'framer-motion'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import { auth } from '@/api/firebaseApp'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import 'dayjs/locale/ko'
 import Sortable from 'sortablejs'
-
-dayjs.locale('ko')
-dayjs.extend(relativeTime)
 
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
 const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/videos'
@@ -65,6 +59,7 @@ export default function PlaylistDetail({
   const setTitle = useHeaderStore(state => state.setTitle)
   const { id } = useParams()
   const [playlistData, setPlaylistData] = useState<any>(null)
+  const [userData, setUserData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
@@ -85,9 +80,8 @@ export default function PlaylistDetail({
     const fetchData = async () => {
       try {
         const playlistDocRef = doc(db, 'Playlists', id!)
-  
         const playlistSnap = await getDoc(playlistDocRef)
-  
+
         if (playlistSnap.exists()) {
           setPlaylistData({ id: playlistSnap.id, ...playlistSnap.data() })
         } else {
@@ -99,7 +93,7 @@ export default function PlaylistDetail({
         setIsLoading(false)
       }
     }
-  
+
     fetchData()
   }, [id, db])
 
@@ -191,7 +185,12 @@ export default function PlaylistDetail({
           )}
         </div>
         <AnimatePresence>
-          {isEditOpen && <EditPlaylistModal closeEdit={closeEdit} />}
+          {isEditOpen && (
+            <EditPlaylistModal
+              closeEdit={closeEdit}
+              playlist={playlistData}
+            />
+          )}
         </AnimatePresence>
         <div css={otherInfoStyle}>
           {showLockIcon && (
@@ -200,9 +199,6 @@ export default function PlaylistDetail({
               <span className="Lock">비공개/공개</span>
             </div>
           )}
-          <span css={timeRecordStyle}>
-            {dayjs(playlistData.createdAt).fromNow()}
-          </span>
         </div>
 
         <div css={buttonContainerStyle}>
@@ -337,18 +333,12 @@ const sectionThreeContainer = css`
 `
 
 const profileImageStyle = css`
+  margin-left: 20px;
   width: 24px;
   height: 24px;
   margin-right: 6px;
   border-radius: 50%;
   object-fit: cover;
-`
-
-const timeRecordStyle = css`
-  color: ${theme.colors.darkGrey};
-  font-size: ${theme.fontSize.md};
-  text-align: right;
-  align-self: center;
 `
 
 const otherInfoStyle = css`
