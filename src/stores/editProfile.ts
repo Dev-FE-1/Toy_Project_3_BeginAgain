@@ -1,25 +1,34 @@
-import create from 'zustand';
+import create from 'zustand'
 import { getAuth, updateProfile } from "firebase/auth"
+import { NavigateFunction } from 'react-router-dom'
 
 interface ProfileState {
-  displayName: string;
-  setDisplayName: (name: string) => void;
-  saveProfile: () => Promise<void>;
+  displayName: string
+  photoURL: string | null
+  setDisplayName: (name: string) => void
+  setPhotoURL: (url: string) => void
+  saveProfile: (navigate: NavigateFunction) => Promise<void>
 }
 
 export const useProfileStore = create<ProfileState>((set, get) => ({
   displayName: '',
+  photoURL: null,
   setDisplayName: (name) => set({ displayName: name }),
-  saveProfile: async () => {
+  setPhotoURL: (url) => set({ photoURL: url }),
+  saveProfile: async (navigate) => {
     const auth = getAuth()
     const user = auth.currentUser
+
     if (user) {
       try {
-        await updateProfile(user, { displayName: get().displayName })
-        alert('프로필이 성공적으로 저장되었습니다.')
+        await updateProfile(user, { 
+          displayName: get().displayName, 
+          photoURL: get().photoURL || user.photoURL
+        })
+
+        navigate('/profile', { state: { showToast: true } });
       } catch (error) {
-        console.error('프로필 저장 중 오류 발생:', error)
-        alert('프로필 저장에 실패했습니다.')
+        console.error('프로필 저장 실패!', error)
       }
     }
   }
