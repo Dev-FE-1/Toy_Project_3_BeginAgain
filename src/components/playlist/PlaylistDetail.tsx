@@ -200,7 +200,12 @@ export default function PlaylistDetail({
           )}
         </div>
         <AnimatePresence>
-          {isEditOpen && <EditPlaylistModal closeEdit={closeEdit} />}
+          {isEditOpen && (
+            <EditPlaylistModal
+              closeEdit={closeEdit}
+              playlist={playlistData}
+            />
+          )}
         </AnimatePresence>
         <div css={otherInfoStyle}>
           {showLockIcon && (
