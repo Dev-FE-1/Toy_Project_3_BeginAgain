@@ -1,36 +1,31 @@
-import { useState, useEffect } from 'react'
-import { db } from '@/api/firebaseApp'
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
+import { fetchLikes, updateLikes } from '@/api/likes'
 
-export const useLikeData = (playlistId: string) => {
+export const useLikeData = (playlistId: string, userId: string) => {
   const [isLikeFilled, setIsLikeFilled] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
 
   useEffect(() => {
-    const fetchLikeStatus = async () => {
-      const docRef = doc(db, 'Likes', playlistId)
-      const docSnap = await getDoc(docRef)
-
-      if (docSnap.exists()) {
-        setIsLikeFilled(docSnap.data().isLikeFilled)
+    const loadLikes = async () => {
+      try {
+        const data = await fetchLikes(playlistId)
+        setLikeCount(data.likeCount || 0)
+        setIsLikeFilled(!!data.userLikes[userId])
+      } catch (error) {
+        console.error('좋아요 실패', error)
       }
     }
 
-    fetchLikeStatus()
-  }, [playlistId])
+    loadLikes()
+  }, [playlistId, userId])
 
   const handleLikeClick = async () => {
-    const docRef = doc(db, 'Likes', playlistId)
-    setIsLikeFilled(prev => !prev)
-    setLikeCount(prevCount => (isLikeFilled ? prevCount - 1 : prevCount + 1))
+    const newLikeFilled = !isLikeFilled
+    setIsLikeFilled(newLikeFilled)
 
-    if (isLikeFilled) {
-      await updateDoc(docRef, { isLikeFilled: false })
-      setIsLikeFilled(false)
-    } else {
-      await setDoc(docRef, { isLikeFilled: true }, { merge: true })
-      setIsLikeFilled(true)
-    }
+    const newCount = newLikeFilled ? 1 : 0
+    setLikeCount(newCount)
+    await updateLikes(playlistId, userId, newLikeFilled)
   }
 
   return {
