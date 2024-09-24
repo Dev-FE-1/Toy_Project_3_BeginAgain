@@ -28,7 +28,7 @@ export const useDeletePlaylist = () => {
       }
     },
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: ['playlists'] })
+      queryClient.invalidateQueries({ queryKey: ['Playlists'] })
     }
   })
 }

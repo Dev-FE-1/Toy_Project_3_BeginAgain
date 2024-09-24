@@ -26,7 +26,7 @@ export default function Playlist({
     hideToast
   } = usePlaylistData(playlist)
 
-  const { isLikeFilled, handleLikeClick } = useLikeData(playlist.id)
+  const { isLikeFilled, handleLikeClick, likeCount } = useLikeData(playlist.id)
   const { extractVideoId } = useExtractVideoId()
 
   return (
@@ -69,6 +69,7 @@ export default function Playlist({
               onClick={handleLikeClick}
             />
           )}
+          <span css={likeCountStyle}>{likeCount}</span>
           <div
             css={commentContainerStyle}
             onClick={() => navigate(`/playlist-details/${playlist?.id}`)}>
@@ -136,6 +137,12 @@ const profileImageStyle = css`
   object-fit: cover;
   background-color: ${theme.colors.lightGrey};
 `
+const likeCountStyle = css`
+  font-size: ${theme.fontSize.lg};
+  margin-left: 10px;
+  color: ${theme.colors.charcoalGrey};
+`
+
 const emptyHeartIconStyle = css`
   font-size: 24px;
   margin-right: 30px;
