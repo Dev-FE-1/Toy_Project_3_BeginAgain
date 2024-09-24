@@ -11,9 +11,11 @@ import { css } from '@emotion/react'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 
 export default function Playlist({
-  playlist
+  playlist,
+  userId
 }: {
   playlist: Playlist | undefined
+  userId: string
 }) {
   const navigate = useNavigate()
   const {
@@ -25,8 +27,10 @@ export default function Playlist({
     isToastVisible,
     hideToast
   } = usePlaylistData(playlist)
-
-  const { isLikeFilled, handleLikeClick } = useLikeData(playlist.id)
+  const { isLikeFilled, handleLikeClick, likeCount } = useLikeData(
+    playlist.id,
+    userId
+  )
   const { extractVideoId } = useExtractVideoId()
 
   return (
@@ -58,17 +62,21 @@ export default function Playlist({
 
       <div css={footerStyle}>
         <div css={iconsStyle}>
-          {isLikeFilled ? (
-            <VscHeartFilled
-              css={filledHeartIconStyle}
-              onClick={handleLikeClick}
-            />
-          ) : (
-            <CgHeart
-              css={emptyHeartIconStyle}
-              onClick={handleLikeClick}
-            />
-          )}
+          <div css={likeContainerStyle}>
+            {isLikeFilled ? (
+              <VscHeartFilled
+                css={filledHeartIconStyle}
+                onClick={handleLikeClick}
+              />
+            ) : (
+              <CgHeart
+                css={emptyHeartIconStyle}
+                onClick={handleLikeClick}
+              />
+            )}
+            <span css={likeCountStyle}>{likeCount}</span>
+          </div>
+
           <div
             css={commentContainerStyle}
             onClick={() => navigate(`/playlist-details/${playlist?.id}`)}>
@@ -136,9 +144,10 @@ const profileImageStyle = css`
   object-fit: cover;
   background-color: ${theme.colors.lightGrey};
 `
+
 const emptyHeartIconStyle = css`
   font-size: 24px;
-  margin-right: 30px;
+  margin-right: 10px;
   color: ${theme.colors.charcoalGrey};
   cursor: pointer;
   transition:
@@ -147,26 +156,36 @@ const emptyHeartIconStyle = css`
 `
 const filledHeartIconStyle = css`
   font-size: 24px;
-  margin-right: 30px;
+  margin-right: 10px;
   color: ${theme.colors.red};
   cursor: pointer;
   transition:
     color 0.9s ease,
     transform 0.9s ease;
 `
+const likeContainerStyle = css`
+  display: flex;
+  align-items: center;
+`
+const likeCountStyle = css`
+  font-size: ${theme.fontSize.md};
+  color: ${theme.colors.charcoalGrey};
+  margin-right: 10px;
+`
+
 const commentContainerStyle = css`
   display: flex;
   align-items: center;
   color: ${theme.colors.charcoalGrey};
   cursor: pointer;
-  margin-right: 30px;
+  margin-right: 10px;
 `
 const commentIconStyle = css`
   font-size: 24px;
   margin-right: 7px;
 `
 const commentCountStyle = css`
-  font-size: ${theme.fontSize.xl};
+  font-size: ${theme.fontSize.md};
 `
 const bookmarkIconStyle = css`
   font-size: ${theme.fontSize.xl};
