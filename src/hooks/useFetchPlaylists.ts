@@ -1,6 +1,3 @@
-// GET - useQuery
-// POST, PUT, PATCH, DELETE - useMutation
-
 import { useQuery } from '@tanstack/react-query'
 import {
   getFirestore,
@@ -37,21 +34,7 @@ export const useFetchPlaylists = (myPlaylists: boolean = false) => {
           collection(db, 'Playlists'),
           where('userId', '==', user.uid)
         )
-        const publicPlaylistsQuery = query(
-          collection(db, 'PublicPlaylists'),
-          where('userId', '==', user.uid)
-        )
-
-        const [userPlaylistsSnapshot, publicPlaylistsSnapshot] =
-          await Promise.all([
-            getDocs(userPlaylistsQuery),
-            getDocs(publicPlaylistsQuery)
-          ])
-
-        querySnapshot = [
-          ...userPlaylistsSnapshot.docs,
-          ...publicPlaylistsSnapshot.docs
-        ]
+        querySnapshot = (await getDocs(userPlaylistsQuery)).docs
       } else {
         const playlistsQuery = query(
           collection(db, 'Playlists'),

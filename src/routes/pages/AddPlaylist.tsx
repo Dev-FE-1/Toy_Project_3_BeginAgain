@@ -5,9 +5,11 @@ import theme from '@/styles/theme'
 import { IoIosAddCircleOutline, IoIosRemove } from 'react-icons/io'
 import { useHeaderStore } from '@/stores/header'
 import { useAddPlaylistStore } from '@/stores/addPlaylist'
+
 const AddPlaylist = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { setIsDone, setPlaylistData } = useAddPlaylistStore()
+
   useEffect(() => {
     setTitle('Add Playlist')
   }, [setTitle])
@@ -18,9 +20,8 @@ const AddPlaylist = () => {
   const [isPublic, setIsPublic] = useState(true)
   const [titleInputCount, setTitleInputCount] = useState(0)
   const [descriptionInputCount, setDescriptionInputCount] = useState(0)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([
-    '전체'
-  ])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(['전체'])
+
   useEffect(() => {
     const hasRequiredData =
       videoUrls.length > 1 &&
@@ -43,6 +44,7 @@ const AddPlaylist = () => {
     setIsDone,
     setPlaylistData
   ])
+
   const addVideoUrl = () => {
     const pattern = /^https:\/\/www\.youtube\.com\/watch\?v=.*/
     if (!currentVideoUrl.match(pattern)) {
@@ -56,25 +58,30 @@ const AddPlaylist = () => {
       setCurrentVideoUrl('')
     }
   }
+
   const removeVideoUrl = (index: number) => {
     setVideoUrls(videoUrls.filter((_, i) => i !== index))
   }
+
   const onTitleInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVideoTitle(e.target.value)
     setTitleInputCount(e.target.value.length)
   }
+
   const onDescriptionInputHandler = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setVideoDescription(e.target.value)
+    setVideoDescription(e.target.value);
     setDescriptionInputCount(e.target.value.length)
   }
+
   const handleCategorySelect = (categories: string[]) => {
     if (!categories.includes('전체')) {
       categories = ['전체', ...categories]
     }
     setSelectedCategories(categories)
   }
+
   return (
     <>
       <div className="nav-margin-top"></div>
@@ -187,6 +194,8 @@ const AddPlaylist = () => {
     </>
   )
 }
+
+
 const requiredTitleStyle = css`
   &::after {
     content: '*';
