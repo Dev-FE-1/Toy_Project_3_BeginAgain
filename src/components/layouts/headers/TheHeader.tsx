@@ -6,52 +6,35 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useAddPlaylistStore } from '@/stores/addPlaylist'
 import { Playlist } from '@/hooks/useFetchPlaylists'
 import { useEditPlaylistInfo } from '@/hooks/useEditPlaylistInfo'
-import { getAuth, updateProfile } from 'firebase/auth';
-import { useProfileStore } from '@/stores/editProfile';
+import { getAuth, updateProfile } from 'firebase/auth'
+import { useProfileStore } from '@/stores/editProfile'
 
 export default function TheHeader() {
   const title = useHeaderStore(state => state.title)
-  const handleClickRightButton = useHeaderStore(
-    state => state.handleClickRightButton
-  )
+  const handleClickRightButton = useHeaderStore(state => state.handleClickRightButton)
   const navigate = useNavigate()
   const location = useLocation()
   const { isDone, savePlaylist, isPublic } = useAddPlaylistStore()
+  const { saveProfile } = useProfileStore()
   const isAddPlaylist = location.pathname === '/add-playlist'
   const isEditPlaylist = location.pathname.includes('/edit-playlist')
   const isDeleteVideos = location.pathname.includes('/delete-videos')
   const isProfile = location.pathname === '/profile'
-  const isEditProfile = location.pathname === '/edit-profile';
-  const displayName = useProfileStore(state => state.displayName);
+  const isEditProfile = location.pathname === '/edit-profile'
 
 
   const handleComplete = async () => {
     try {
-      await savePlaylist();
+      await savePlaylist()
       if (isPublic) {
-        navigate('/', { state: { showToast: true } });
+        navigate('/', { state: { showToast: true } })
       } else {
-        navigate('/');
+        navigate('/')
       }
     } catch (error) {
-      console.error('저장 실패:', error);
+      console.error('저장 실패:', error)
     }
-  };
-
-  const handleSaveProfile = async () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-      try {
-        await updateProfile(user, { displayName });
-        alert('프로필이 성공적으로 저장되었습니다.');
-        navigate(-1); // 이전 페이지로 이동
-      } catch (error) {
-        console.error('프로필 수정 실패!', error);
-        alert('프로필 수정 실패!');
-      }
-    }
-  };
+  }
 
   return (
     <header css={headerStyle}>
@@ -80,7 +63,7 @@ export default function TheHeader() {
       )}
       {isEditPlaylist && (
         <button
-          css={okayButtonStyle}
+          css={buttonStyle}
           onClick={handleClickRightButton}>
           수정
         </button>
@@ -103,13 +86,13 @@ export default function TheHeader() {
       {isEditProfile && (
         <button
           css={editBtn}
-          onClick={handleSaveProfile}
+          onClick={saveProfile}
         >
           완료
         </button>
       )}
     </header>
-  );
+  )
 }
 
 const headerStyle = css`
@@ -148,7 +131,7 @@ const successBtn = (isDone: boolean) => css`
   border: none;
   cursor: ${isDone ? 'pointer' : 'default'};
 `
-const okayButtonStyle = css`
+const buttonStyle = css`
   position: absolute;
   display: sticky;
   right: 10px;

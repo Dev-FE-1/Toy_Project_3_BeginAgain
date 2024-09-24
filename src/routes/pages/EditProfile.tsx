@@ -6,18 +6,18 @@ import theme from '@/styles/theme'
 import { useProfileStore } from '@/stores/editProfile'
 
 export default function EditProfile() {
-  const setTitle = useHeaderStore(state => state.setTitle);
-  const displayName = useProfileStore(state => state.displayName);
-  const setDisplayName = useProfileStore(state => state.setDisplayName);
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const setTitle = useHeaderStore(state => state.setTitle)
+  const displayName = useProfileStore(state => state.displayName)
+  const setDisplayName = useProfileStore(state => state.setDisplayName)
+  const auth = getAuth()
+  const user = auth.currentUser
 
   useEffect(() => {
-    setTitle('프로필 수정');
+    setTitle('프로필 수정')
     if (user) {
-      setDisplayName(user.displayName || '');
+      setDisplayName(user.displayName || '')
     }
-  }, [setTitle, user, setDisplayName]);
+  }, [setTitle, user, setDisplayName])
 
   return (
     <div css={pageStyle}>
@@ -46,7 +46,7 @@ export default function EditProfile() {
         </>
       )}
     </div>
-  );
+  )
 }
 
 const pageStyle = css`
