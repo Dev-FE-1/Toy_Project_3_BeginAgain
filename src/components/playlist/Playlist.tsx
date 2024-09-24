@@ -7,6 +7,7 @@ import Toast from '@/components/common/Toast'
 import { usePlaylistData } from '@/hooks/useFetchPlaylistData'
 import { useLikeData } from '@/hooks/useLikeData'
 import { useExtractVideoId } from '@/hooks/useExtractVideoId'
+import { useFetchComments } from '@/hooks/useFetchComments'
 import { css } from '@emotion/react'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 
@@ -18,7 +19,6 @@ export default function Playlist({
 }) {
   const navigate = useNavigate()
   const {
-    commentCount,
     userData,
     isBookmarked,
     handleBookmark,
@@ -29,6 +29,7 @@ export default function Playlist({
 
   const { isLikeFilled, handleLikeClick, likeCount } = useLikeData(playlist.id)
   const { extractVideoId } = useExtractVideoId()
+  const { data: comments } = useFetchComments(playlist?.id)
 
   return (
     <div css={playlistStyle}>
@@ -78,7 +79,7 @@ export default function Playlist({
             css={commentContainerStyle}
             onClick={() => navigate(`/playlist-details/${playlist?.id}`)}>
             <CgComment css={commentIconStyle} />
-            <span css={commentCountStyle}>{commentCount}</span>
+            <span css={commentCountStyle}>{comments?.length || 0}</span>
           </div>
           {handleBookmark &&
             (isBookmarked ? (
@@ -133,6 +134,7 @@ const footerStyle = css`
 `
 const iconsStyle = css`
   display: flex;
+  margin-top: 10px;
   margin-bottom: 10px;
 `
 const profileImageStyle = css`
@@ -206,6 +208,7 @@ const titleStyle = css`
   font-size: ${theme.fontSize.lg};
   color: ${theme.colors.black};
   margin: 0;
+  margin-top: 5px;
   margin-bottom: 10px;
 `
 const timeRecordStyle = css`

@@ -13,30 +13,28 @@ export interface Comment {
   user: User
   content: string
   createdAt: string
-  playlistid: string
+  playlistId: string
   userId: string
 }
 
-export const useFetchComments = (playlistid: string) => {
+export const useFetchComments = (playlistId: string) => {
   return useQuery<Comment[]>({
-    queryKey: ['comments', playlistid],
+    queryKey: ['comments', playlistId],
     queryFn: async () => {
       const db = getFirestore()
       const coll = collection(db, 'Comments')
-      console.log('playlistid::', playlistid)
       const querySnapshot = await getDocs(
-        query(coll, where('playlistId', '==', playlistid))
+        query(coll, where('playlistId', '==', playlistId))
       )
       return querySnapshot.docs.map(doc => {
-        console.log(doc)
+        const data = doc.data() as Omit<Comment, 'id'>
         return {
           id: doc.id,
-          ...doc.data()
+          ...data
         }
-      }) as Comment[]
+      })
     },
     select(data) {
-      console.log('select::', data)
       return data.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     }
   })
