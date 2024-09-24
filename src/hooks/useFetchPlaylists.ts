@@ -21,7 +21,7 @@ export interface Playlist {
 
 export const useFetchPlaylists = (myPlaylists: boolean = false) => {
   return useQuery<Playlist[]>({
-    queryKey: ['playlists', myPlaylists ? auth.currentUser?.uid : 'public'],
+    queryKey: ['Playlists', myPlaylists ? auth.currentUser?.uid : 'public'],
     queryFn: async () => {
       const db = getFirestore()
       let querySnapshot
@@ -36,11 +36,11 @@ export const useFetchPlaylists = (myPlaylists: boolean = false) => {
         )
         querySnapshot = (await getDocs(userPlaylistsQuery)).docs
       } else {
-        const playlistsQuery = query(
+        const PlaylistsQuery = query(
           collection(db, 'Playlists'),
           where('isPublic', '==', true)
         )
-        querySnapshot = (await getDocs(playlistsQuery)).docs
+        querySnapshot = (await getDocs(PlaylistsQuery)).docs
       }
 
       return querySnapshot.map(doc => ({
