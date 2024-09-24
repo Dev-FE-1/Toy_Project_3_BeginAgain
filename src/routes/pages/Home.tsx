@@ -14,9 +14,7 @@ export default function Home() {
   const location = useLocation()
   const [showToast, setShowToast] = useState(false)
   const navigate = useNavigate()
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([
-    '전체'
-  ])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(['전체'])
 
   useEffect(() => {
     setTitle('Home')

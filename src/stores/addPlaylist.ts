@@ -49,7 +49,7 @@ export const useAddPlaylistStore = create<PlaylistState>((set, get) => ({
       throw new Error('사용자가 인증되지 않았습니다.')
     }
 
-    const coll = isPublic ? collection(db, 'Playlists') : collection(db, 'PublicPlaylists')
+    const coll = collection(db, 'Playlists')
 
     await addDoc(coll, {
       urls: videoUrls,
