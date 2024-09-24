@@ -4,7 +4,7 @@ import { useDeleteComment } from '@/hooks/useDeleteComment'
 import type { Comment } from '@/hooks/useFetchComments'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
-import { CgCloseO, CgTrash } from 'react-icons/cg'
+import { CgClose, CgTrash } from 'react-icons/cg'
 
 interface CommentsModalProps {
   comments: Comment[]
@@ -16,7 +16,7 @@ interface CommentsModalProps {
   playlistId: string
 }
 
-const CommentModal: React.FC<CommentsModalProps> = ({
+const CommentsModal: React.FC<CommentsModalProps> = ({
   comments,
   onClose,
   playlistId
@@ -29,7 +29,6 @@ const CommentModal: React.FC<CommentsModalProps> = ({
     setComment(e.target.value)
   }
   const handleCommentSubmit = () => {
-    console.log('comment!!', comment)
     if (comment.trim() === '') return
     if (!playlistId) {
       console.error('playlistId is undefined')
@@ -48,7 +47,7 @@ const CommentModal: React.FC<CommentsModalProps> = ({
       <div css={modalContainerStyle}>
         <div css={headerContainerStyle}>
           <h1 css={modalTitleStyle}>댓글</h1>
-          <CgCloseO
+          <CgClose
             onClick={onClose}
             css={closeButtonStyle}
           />
@@ -100,7 +99,7 @@ const CommentModal: React.FC<CommentsModalProps> = ({
   )
 }
 
-export default CommentModal
+export default CommentsModal
 
 const modalOverlayStyle = css`
   position: fixed;
