@@ -151,10 +151,6 @@ export default function EditPlaylistInfo() {
           />
           비공개
         </label>
-
-        <div>
-          <button onClick={handleEdit}>저장</button>
-        </div>
       </div>
       <div className="nav-margin-bottom"></div>
     </>
