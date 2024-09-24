@@ -1,10 +1,8 @@
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import { useNavigate } from 'react-router-dom'
-import { auth } from '@/api/firebaseApp'
 import { useState } from 'react'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
-import { useUpdatePlaylist } from '@/hooks/useUpdatePlaylist'
 import { CgTrash, CgLock, CgLockUnlock } from 'react-icons/cg'
 import Toast from '@/components/common/Toast'
 import Modal from '@/components/common/TheModal'
@@ -29,8 +27,6 @@ export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isToastVisible, setIsToastVisible] = useState(false)
-  const user = auth.currentUser
-  const { mutate: updatePlayList } = useUpdatePlaylist()
   const { mutate: deletePlayList } = useDeletePlaylist()
 
   const handleDelete = () => {
@@ -74,11 +70,7 @@ export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
           </div>
           <div css={infoRightStyle}>
             <div css={buttonStyle}>
-              {playlist.isPublic ? (
-                <CgLockUnlock onClick={() => updatePlayList(playlist)} />
-              ) : (
-                <CgLock onClick={() => updatePlayList(playlist)} />
-              )}
+              {playlist.isPublic ? <CgLockUnlock /> : <CgLock />}
               <CgTrash
                 onClick={() => setIsModalOpen(true)}
                 className="trashIcon"
@@ -163,7 +155,7 @@ const buttonStyle = css`
   font-size: ${theme.fontSize.xxl};
   color: ${theme.colors.charcoalGrey};
   display: flex;
-  gap: 10px;
+  gap: 5px;
   align-items: center;
 
   .trashIcon {

@@ -7,7 +7,8 @@ import {
   CgChevronDown,
   CgPlayList,
   CgFormatJustify,
-  CgLockUnlock
+  CgLockUnlock,
+  CgLock
 } from 'react-icons/cg'
 import { GoKebabHorizontal } from 'react-icons/go'
 import { FaPencilAlt } from 'react-icons/fa'
@@ -195,8 +196,17 @@ export default function PlaylistDetail({
         <div css={otherInfoStyle}>
           {showLockIcon && (
             <div css={lockStyle}>
-              <CgLockUnlock />
-              <span className="Lock">비공개/공개</span>
+              {playlistData.isPublic ? (
+                <>
+                  <CgLockUnlock />
+                  <span>공개</span>
+                </>
+              ) : (
+                <>
+                  <CgLock />
+                  <span>비공개</span>
+                </>
+              )}
             </div>
           )}
         </div>
