@@ -4,12 +4,14 @@ import { useDeleteComment } from '@/hooks/useDeleteComment'
 import type { Comment } from '@/hooks/useFetchComments'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
+import { CgCloseO, CgTrash } from 'react-icons/cg'
 
 interface CommentsModalProps {
   comments: Comment[]
   onClose: () => void
-  myProfile: {
+  userData: {
     photoURL: string
+    displayName?: string
   }
   playlistId: string
 }
@@ -17,7 +19,6 @@ interface CommentsModalProps {
 const CommentModal: React.FC<CommentsModalProps> = ({
   comments,
   onClose,
-  myProfile,
   playlistId
 }) => {
   const [comment, setComment] = useState('')
@@ -34,8 +35,8 @@ const CommentModal: React.FC<CommentsModalProps> = ({
       console.error('playlistId is undefined')
       return
     }
-    createComment({ comment, playlistId }) // 여기서 playlistId가 제대로 전달되어야 합니다.
-    setComment('') // 댓글 입력 후 초기화
+    createComment({ comment, playlistId })
+    setComment('')
   }
 
   const handleCommentDelete = (commentId: string) => {
@@ -45,7 +46,13 @@ const CommentModal: React.FC<CommentsModalProps> = ({
   return (
     <div css={modalOverlayStyle}>
       <div css={modalContainerStyle}>
-        <h1>댓글</h1>
+        <div css={headerContainerStyle}>
+          <h1 css={modalTitleStyle}>댓글</h1>
+          <CgCloseO
+            onClick={onClose}
+            css={closeButtonStyle}
+          />
+        </div>
         <hr css={dividerStyle} />
         <div css={commentsContainerStyle}>
           {comments.length === 0 ? (
@@ -62,25 +69,19 @@ const CommentModal: React.FC<CommentsModalProps> = ({
                   alt={comment.user.displayName || 'User'}
                   css={profileImageStyle}
                 />
+                <span css={usernameStyle}>{comment.user.displayName}</span>
                 <div css={commentContentStyle}>
-                  <span css={usernameStyle}>{comment.user.displayName}</span>
                   <p>{comment.content}</p>
                 </div>
-                <button
+                <CgTrash
                   onClick={() => handleCommentDelete(comment.id)}
-                  css={deleteButtonStyle}>
-                  삭제
-                </button>
+                  css={deleteButtonStyle}
+                />
               </div>
             ))
           )}
         </div>
         <div css={inputContainerStyle}>
-          <img
-            src={myProfile.photoURL || '/default-profile.png'}
-            alt="My Profile"
-            css={profileImageStyle}
-          />
           <input
             type="text"
             value={comment}
@@ -91,14 +92,9 @@ const CommentModal: React.FC<CommentsModalProps> = ({
           <button
             onClick={handleCommentSubmit}
             css={submitButtonStyle}>
-            제출
+            전송
           </button>
         </div>
-        <button
-          onClick={onClose}
-          css={closeButtonStyle}>
-          닫기
-        </button>
       </div>
     </div>
   )
@@ -123,12 +119,35 @@ const modalContainerStyle = css`
   padding: 20px;
   border-radius: 8px;
   width: 430px;
-  /* height: auto; */
   max-width: 600px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   max-height: calc(100vh - 220px);
   overflow-y: auto;
+  position: relative;
+`
+const headerContainerStyle = css`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-top: 10px;
+`
+const modalTitleStyle = css`
+  font-size: ${theme.fontSize.lg};
+  font-weight: ${theme.fontWeight.semiBold};
+  text-align: center;
+  flex: 1;
+`
+
+const closeButtonStyle = css`
+  color: ${theme.colors.charcoalGrey};
+  cursor: pointer;
+  font-size: ${theme.fontSize.lg};
+
+  &:hover {
+    color: ${theme.colors.lightBlue};
+  }
 `
 
 const dividerStyle = css`
@@ -159,10 +178,12 @@ const commentContentStyle = css`
   display: flex;
   flex-direction: column;
   flex: 1;
+  color: ${theme.colors.black};
 `
 
 const usernameStyle = css`
-  font-weight: ${theme.fontWeight.bold};
+  font-weight: ${theme.fontWeight.semiBold};
+  color: ${theme.colors.charcoalGrey};
   margin-bottom: 5px;
 `
 
@@ -187,39 +208,27 @@ const inputStyle = css`
 
 const submitButtonStyle = css`
   margin-left: 10px;
-  padding: 10px 20px;
+  padding: 10px 15px;
   border: none;
   background-color: ${theme.colors.lightBlue};
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  font-size: ${theme.fontSize.xs};
 
   &:hover {
-    background-color: ${theme.colors.lightBlue};
-  }
-`
-
-const closeButtonStyle = css`
-  display: block;
-  margin: 10px auto 0;
-  padding: 10px;
-  border: none;
-  background-color: ${theme.colors.lightBlue};
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${theme.colors.lightBlue};
+    background-color: ${theme.colors.skyBlue};
   }
 `
 
 const deleteButtonStyle = css`
   position: absolute;
   right: 0;
+  width: 18px;
+  height: 18px;
   border: none;
   background-color: transparent;
-  color: ${theme.colors.red};
+  color: ${theme.colors.charcoalGrey};
   cursor: pointer;
 
   &:hover {

@@ -2,7 +2,45 @@ import { useState } from 'react'
 import { useFetchComments } from '@/hooks/useFetchComments'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
-import CommentsModal from './CommentsModal'
+import CommentsModal from '@/components/comments/CommentsModal'
+
+const sectionContainer = css`
+  font-size: ${theme.fontSize.md};
+  color: ${theme.colors.black};
+  margin: 20px 20px;
+  background-color: ${theme.colors.lightGrey};
+  border-radius: 8px;
+  padding: 20px;
+`
+
+const headerStyle = css`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: ${theme.fontSize.md};
+  color: ${theme.colors.black};
+  cursor: pointer;
+  h1 {
+    margin-right: 10px;
+    font-weight: ${theme.fontWeight.semiBold};
+  }
+`
+
+const commentContainerStyle = css`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+`
+
+const recentUserImageStyle = css`
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+`
+
+const recentCommentStyle = css`
+  margin-left: 10px;
+`
 
 interface CommentsProps {
   playlistId: string
@@ -27,7 +65,7 @@ const Comment: React.FC<CommentsProps> = ({ playlistId }) => {
   const recentComment = comments && comments.length > 0 ? comments[0] : null
 
   return (
-    <div css={sectionFourContainer}>
+    <div css={sectionContainer}>
       <div
         css={headerStyle}
         onClick={openModal}>
@@ -39,10 +77,9 @@ const Comment: React.FC<CommentsProps> = ({ playlistId }) => {
           <img
             src={recentComment.user.photoURL || '/default-profile.png'}
             alt={recentComment.user.displayName || 'User'}
-            width="20"
+            css={recentUserImageStyle}
           />
-          <span>{recentComment.user.displayName}</span>
-          <span>{recentComment.content}</span>
+          <span css={recentCommentStyle}>{recentComment.content}</span>
         </div>
       )}
       {isModalOpen && (
@@ -58,34 +95,3 @@ const Comment: React.FC<CommentsProps> = ({ playlistId }) => {
 }
 
 export default Comment
-
-const sectionFourContainer = css`
-  font-size: ${theme.fontSize.md};
-  color: ${theme.colors.black};
-  margin: 20px 20px;
-  background-color: ${theme.colors.lightGrey};
-  border-radius: 8px;
-  padding: 20px;
-  cursor: pointer;
-`
-
-const headerStyle = css`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  font-size: ${theme.fontSize.md};
-  color: ${theme.colors.black};
-  h1 {
-    margin-right: 10px;
-    font-weight: ${theme.fontWeight.semiBold};
-  }
-`
-
-const commentContainerStyle = css`
-  display: flex;
-  align-items: center;
-  background-color: ${theme.colors.white};
-  border-radius: 4px;
-  padding: 10px;
-  border: 1px solid ${theme.colors.grey};
-`
