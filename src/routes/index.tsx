@@ -5,6 +5,7 @@ import AddPlaylist from '@/routes/pages/AddPlaylist'
 import Bookmark from '@/routes/pages/Bookmark'
 import MyPlaylist from '@/routes/pages/MyPlaylist'
 import Profile from '@/routes/pages/Profile'
+import EditProfile from '@/routes/pages/EditProfile'
 import PlaylistDetail from '@/routes/pages/PlaylistDetail'
 import SavedPlaylistDetail from '@/routes/pages/SavedPlaylistsDetail'
 import BookmarkedPlaylist from '@/routes/pages/BookmarkedPlaylist'
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
           { path: '/edit-playlist/:id', element: <EditPlaylistInfo /> },
           { path: '/delete-videos/:id', element: <DeleteVideos /> },
           { path: '/profile', element: <Profile /> }
+          { path: '/edit-profile', element: <EditProfile /> }
         ]
       }
     ]
