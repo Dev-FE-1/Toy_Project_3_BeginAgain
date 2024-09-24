@@ -11,8 +11,7 @@ import { css } from '@emotion/react'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 
 export default function Playlist({
-  playlist,
-  userId
+  playlist
 }: {
   playlist: Playlist | undefined
   userId: string
@@ -27,10 +26,8 @@ export default function Playlist({
     isToastVisible,
     hideToast
   } = usePlaylistData(playlist)
-  const { isLikeFilled, handleLikeClick, likeCount } = useLikeData(
-    playlist.id,
-    userId
-  )
+
+  const { isLikeFilled, handleLikeClick, likeCount } = useLikeData(playlist.id)
   const { extractVideoId } = useExtractVideoId()
 
   return (
