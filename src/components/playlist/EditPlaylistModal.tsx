@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { Playlist, useFetchPlaylist } from '@/hooks/useFetchPlaylist'
+import { Playlist } from '@/hooks/useFetchPlaylist'
 import { CgClose } from 'react-icons/cg'
 import theme from '@/styles/theme'
 import LongButton from '@/components/common/LongButton'
@@ -36,20 +36,24 @@ const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
   const navigate = useNavigate()
 
   // EditPlaylist 컴포넌트
-  const handleEditInfo = (playlist: Playlist) => {
-    if (!playlist) {
-      console.error('Playlist data is missing')
-      return
-    }
-    navigate(`/edit-playlist/${playlist.id}`, { state: { playlist } })
-  }
+  // const handleEditInfo = (playlist: Playlist) => {
+  //   if (!playlist) {
+  //     console.error('Playlist data is missing')
+  //     return
+  //   }
+  //   navigate(`/edit-playlist/${playlist.id}`, { state: { playlist } })
+  // }
 
   const handleDelete = (playlist: Playlist) => {
     if (!playlist) {
       console.error('Playlist data is missing')
       return
     }
-    navigate(`/delete-videos/${playlist.id}`, { state: { playlist } })
+    // navigate(`/delete-videos/${playlist.id}`, { state: { playlist } })
+    //     1. 파베에 해당 클릭한 동영상만 찾아서 삭제 후 나머지 것들을 리턴하는 api를 호출 (이제 만들어야함) await 파베삭제api(클릭한 영상의 아이디)
+    // 2. 호출의 결과로 리턴한 결과값을 받아와야지
+    console.log(`해당 플레이리스트가 삭제되었습니다.`)
+    closeEdit() // 모달 닫기
   }
 
   return (
@@ -68,6 +72,7 @@ const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
         zIndex: 3
       }}>
       <>
+        <div css={bgStyle}></div>
         <div css={EditModalContainerStyle}>
           <button
             css={cancelButtonStyle}
@@ -75,9 +80,9 @@ const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
             <CgClose fontSize={theme.fontSize.lg} />
           </button>
           <div css={longButtonStyle}>
-            <LongButton onClick={() => handleEditInfo(playlist)}>
+            {/* <LongButton onClick={() => handleEditInfo(playlist)}>
               정보 수정
-            </LongButton>
+            </LongButton> */}
             <LongButton onClick={() => handleDelete(playlist)}>
               동영상 삭제
             </LongButton>
@@ -90,14 +95,23 @@ const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
 
 export default EditPlaylist
 
+const bgStyle = css`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: -1;
+`
+
 const EditModalContainerStyle = css`
   height: 100%;
   width: 430px;
   background-color: ${theme.colors.white};
   display: flex;
   flex-direction: column;
-  border-radius: 45px 45px 0 0;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 35px 35px 0 0;
   padding: 20px;
   align-items: center;
   justify-content: center;

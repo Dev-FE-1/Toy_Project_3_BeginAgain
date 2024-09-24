@@ -1,6 +1,6 @@
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { useState, useEffect, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
 import {
   CgChevronUp,
@@ -9,9 +9,9 @@ import {
   CgFormatJustify,
   CgLockUnlock
 } from 'react-icons/cg'
+import { GoKebabHorizontal } from 'react-icons/go'
 import { FaPencilAlt } from 'react-icons/fa'
 import Playlist from '@/components/playlist/Playlist'
-import Category from '@/components/common/Category'
 import EditPlaylistModal from '@/components/playlist/EditPlaylistModal'
 import Comment from '@/components/Comments/Comments'
 import { AnimatePresence } from 'framer-motion'
@@ -57,6 +57,7 @@ export default function PlaylistDetail({
   playlist?: typeof Playlist
 }) {
   const setTitle = useHeaderStore(state => state.setTitle)
+  const navigate = useNavigate()
   const { id } = useParams()
   const [playlistData, setPlaylistData] = useState<any>(null)
   const [userData, setUserData] = useState<any>(null)
@@ -64,9 +65,9 @@ export default function PlaylistDetail({
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
   const [videoTitles, setVideoTitles] = useState<string[]>([])
-  const [isEditOpen, setIsEditOpen] = useState(false)
-  const openEdit = () => setIsEditOpen(true)
-  const closeEdit = () => setIsEditOpen(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const openDeleteModal = () => setIsDeleteModalOpen(true)
+  const closeDeleteModal = () => setIsDeleteModalOpen(false)
   const user = auth.currentUser
   const ItemRef = useRef<HTMLDivElement | null>(null)
   const db = getFirestore()
@@ -121,9 +122,9 @@ export default function PlaylistDetail({
       return
 
     const sortable = new Sortable(ItemRef.current, {
-      handle: '.drag-handle',
+      handle: '.handle',
       animation: 150,
-      forceFallback: false,
+      // forceFallback: false,
       onEnd: async event => {
         if (event.oldIndex === undefined || event.newIndex === undefined) return
 
@@ -147,6 +148,12 @@ export default function PlaylistDetail({
       sortable.destroy()
     }
   }, [playlistData, id, db, isOwner])
+
+  const handleEditClick = () => {
+    navigate(`/edit-playlist/${playlistData.id}`, {
+      state: { playlist: playlistData }
+    })
+  }
 
   if (isLoading) {
     return <div>로딩 중...</div>
@@ -179,19 +186,12 @@ export default function PlaylistDetail({
           <h2 css={titleStyle}>{playlistData.title}</h2>
           {showEditButton && (
             <FaPencilAlt
-              onClick={openEdit}
+              onClick={handleEditClick}
               css={editButtonStyle}
             />
           )}
         </div>
-        <AnimatePresence>
-          {isEditOpen && (
-            <EditPlaylistModal
-              closeEdit={closeEdit}
-              playlist={playlistData}
-            />
-          )}
-        </AnimatePresence>
+
         <div css={otherInfoStyle}>
           {showLockIcon && (
             <div css={lockStyle}>
@@ -236,12 +236,19 @@ export default function PlaylistDetail({
       </div>
 
       <div
-        css={videoContainerStyle}
+        css={videoContainerStyle(isOwner)}
         ref={ItemRef}>
         {playlistData?.urls.map((url, index) => (
           <div
             key={url}
-            css={videoInfoLayoutStyle}>
+            css={videoInfoLayoutStyle(isOwner)}>
+            {isOwner && (
+              <CgFormatJustify
+                css={dragIconStyle}
+                className="handle"
+                style={{ cursor: 'grab', borderRadius: '8px' }}
+              />
+            )}
             <img
               src={extractThumbnailUrl(url)}
               alt={`Video thumbnail ${index + 1}`}
@@ -250,16 +257,23 @@ export default function PlaylistDetail({
               onClick={() => setCurrentVideoUrl(url)}
               style={{ cursor: 'pointer', borderRadius: '8px' }}
             />
-            <span css={videoTitleStyle}>
+            <span css={videoTitleStyle(isOwner)}>
               {videoTitles[index] || '제목 로딩 중...'}
             </span>
             {isOwner && (
-              <CgFormatJustify
-                css={dragIconStyle}
-                className="drag-handle"
-                style={{ cursor: 'ns-resize', borderRadius: '8px' }}
+              <GoKebabHorizontal
+                css={iconStyle}
+                onClick={openDeleteModal} // 삭제함수 추가 => 바텀시트로 동영상 삭제
               />
             )}
+            <AnimatePresence>
+              {isDeleteModalOpen && (
+                <EditPlaylistModal
+                  closeEdit={closeDeleteModal}
+                  playlist={playlistData}
+                />
+              )}
+            </AnimatePresence>
           </div>
         ))}
       </div>
@@ -268,6 +282,12 @@ export default function PlaylistDetail({
   )
 }
 
+const iconStyle = css`
+  cursor: pointer;
+  transform: rotate(90deg);
+  align-self: flex-start;
+  justify-self: flex-end;
+`
 const sectionOneContainer = css`
   iframe {
   }
@@ -333,12 +353,18 @@ const sectionThreeContainer = css`
 `
 
 const profileImageStyle = css`
-  margin-left: 20px;
   width: 24px;
   height: 24px;
   margin-right: 6px;
   border-radius: 50%;
   object-fit: cover;
+`
+
+const timeRecordStyle = css`
+  color: ${theme.colors.darkGrey};
+  font-size: ${theme.fontSize.md};
+  text-align: right;
+  align-self: center;
 `
 
 const otherInfoStyle = css`
@@ -358,31 +384,32 @@ const lockStyle = css`
   gap: 5px;
 `
 
-const videoContainerStyle = css`
+const videoContainerStyle = (isOwner: boolean) => css`
   max-height: 300px;
   overflow-y: auto;
   padding-right: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 20px;
+  padding: ${isOwner ? '0 16px' : '0 20px'};
   margin-top: 10px;
-  gap: 20px;
 `
 
-const videoInfoLayoutStyle = css`
+const videoInfoLayoutStyle = (isOwner: boolean) => css`
   display: flex;
   align-items: center;
-  gap: 20px;
   width: 100%;
+  margin-bottom: 8px;
+  gap: ${isOwner ? '8px' : '16px'};
 `
 
-const videoTitleStyle = css`
-  flex-grow: 1;
+const videoTitleStyle = (isOwner: boolean) => css`
+  flex-grow: 2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 300px;
+  width: ${isOwner ? '250px' : '300px'};
+  padding-right: 8px;
 `
 
 const dragIconStyle = css`
