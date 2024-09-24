@@ -8,24 +8,26 @@ import backgroundImage from '@/assets/background.png'
 
 const containerStyle = css`
   background-image: url(${backgroundImage});
-  background-size: cover;
+  background-size: 430px 990px;
   background-position: center;
   background-color: white;
+  background-repeat: no-repeat;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 430px;
+  height: 990px;
   display: flex;
   overflow: hidden;
   justify-content: center;
   align-items: center;
+  z-index: 3;
 `
 const logoStyle = css`
   height: 60px;
   width: 200px;
   text-align: center;
-  z-index: 2;
+  z-index: 4;
 `
 
 export default function App() {

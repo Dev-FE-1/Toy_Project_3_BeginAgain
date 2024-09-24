@@ -12,7 +12,7 @@ import {
 import { FaPencilAlt } from 'react-icons/fa'
 import Playlist from '@/components/playlist/Playlist'
 import Category from '@/components/common/Category'
-import EditPlaylist from '@/components/EditPlaylistModal'
+import EditPlaylistModal from '@/components/playlist/EditPlaylistModal'
 import Comment from '@/components/Comments/Comments'
 import { AnimatePresence } from 'framer-motion'
 import { css } from '@emotion/react'
@@ -128,6 +128,7 @@ export default function PlaylistDetail({
 
       fetchTitles()
     }
+    console.log('playlistData:', playlistData)
   }, [playlistData])
 
   useEffect(() => {
@@ -141,7 +142,7 @@ export default function PlaylistDetail({
       onEnd: async event => {
         if (event.oldIndex === undefined || event.newIndex === undefined) return
 
-        const newUrls = Array.from(playlistData.urls)
+        const newUrls: string[] = Array.from(playlistData.urls)
         const [movedItem] = newUrls.splice(event.oldIndex, 1)
         newUrls.splice(event.newIndex, 0, movedItem)
 
@@ -153,7 +154,7 @@ export default function PlaylistDetail({
           setPlaylistData({ ...playlistData, urls: newUrls }) // Update local state
         }
 
-        setCurrentVideoUrl(newUrls[0])
+        setCurrentVideoUrl(newUrls[0] as string)
       }
     })
 
@@ -199,7 +200,7 @@ export default function PlaylistDetail({
           )}
         </div>
         <AnimatePresence>
-          {isEditOpen && <EditPlaylist closeEdit={closeEdit} />}
+          {isEditOpen && <EditPlaylistModal closeEdit={closeEdit} />}
         </AnimatePresence>
         <div css={otherInfoStyle}>
           {showLockIcon && (
@@ -214,10 +215,6 @@ export default function PlaylistDetail({
         </div>
 
         <div css={buttonContainerStyle}>
-          <Category
-            selectedCategories={[]}
-            onSelectCategory={() => {}}
-          />
           <button
             css={buttonStyle}
             onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}>
@@ -256,7 +253,7 @@ export default function PlaylistDetail({
         ref={ItemRef}>
         {playlistData?.urls.map((url, index) => (
           <div
-            key={index}
+            key={url}
             css={videoInfoLayoutStyle}>
             <img
               src={extractThumbnailUrl(url)}
