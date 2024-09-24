@@ -2,13 +2,16 @@ import LongButton from '@/components/common/LongButton'
 import { css } from '@emotion/react'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/api/firebaseApp'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import theme from '@/styles/theme'
+import Toast from '@/components/common/Toast'
 
 export default function Profile() {
   const setTitle = useHeaderStore(state => state.setTitle)
+  const [showToast, setShowToast] = useState(false)
+  const location = useLocation()
 
   useEffect(() => {
     setTitle('프로필')
@@ -21,8 +24,22 @@ export default function Profile() {
     await signOut(auth)
     navigate('/SignIn')
   }
+
+  useEffect(() => {
+    if (location.state?.showToast) {
+      setShowToast(true)
+
+      setTimeout(() => {
+        setShowToast(false)
+        const newState = { ...location.state, showToast: false }
+        window.history.replaceState(newState, document.title)
+      }, 3000)
+    }
+  }, [location.state])
+
   return (
     <>
+      
       <div css={pageStyle}>
         <div className="nav-margin-top"></div>
         {user && (
@@ -33,7 +50,7 @@ export default function Profile() {
               css={profileStyle}
             />
             <div css={textStyle}>
-              <div css={titleText}>이름</div>
+              <div css={titleText}>닉네임</div>
               <div css={inputText}>{user.displayName}</div>
             </div>
             <div css={textStyle}>
@@ -46,6 +63,15 @@ export default function Profile() {
           <LongButton onClick={logOut}>로그아웃</LongButton>
         </div>
       </div>
+
+      {showToast && (
+        <Toast
+          message="수정되었습니다!"
+          isVisible={showToast}
+          onHide={() => setShowToast(false)}
+        />
+      )}
+
     </>
   )
 }
