@@ -22,8 +22,8 @@ export const signInWithGoogleAndCreateUser = async () => {
       })
       console.log('유저 정보 저장 완료')
 
-      const playlistsCollection = collection(db, 'playlists')
-      const newPlaylistDocRef = doc(playlistsCollection)
+      const PlaylistsCollection = collection(db, 'Playlists')
+      const newPlaylistDocRef = doc(PlaylistsCollection)
       const playlistId = newPlaylistDocRef.id
 
       await setDoc(newPlaylistDocRef, {

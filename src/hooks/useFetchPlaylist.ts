@@ -14,7 +14,7 @@ export interface Playlist {
 
 export const useFetchPlaylist = (id: string) => {
   return useQuery<Playlist>({
-    queryKey: ['playlists', id],
+    queryKey: ['Playlists', id],
     queryFn: async () => {
       console.log('useFetchPlaylist 호출:', id)
       const db = getFirestore()

@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import Toast from '@/components/common/Toast'
 import { usePlaylistData } from '@/hooks/useFetchPlaylistData'
-import { useHeartData } from '@/hooks/useHeartData'
+import { useLikeData } from '@/hooks/useLikeData'
 import { useExtractVideoId } from '@/hooks/useExtractVideoId'
 import { css } from '@emotion/react'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
@@ -26,7 +26,7 @@ export default function Playlist({
     hideToast
   } = usePlaylistData(playlist)
 
-  const { isHeartFilled, handleHeartClick } = useHeartData()
+  const { isLikeFilled, handleLikeClick } = useLikeData(playlist.id)
   const { extractVideoId } = useExtractVideoId()
 
   return (
@@ -58,15 +58,15 @@ export default function Playlist({
 
       <div css={footerStyle}>
         <div css={iconsStyle}>
-          {isHeartFilled ? (
+          {isLikeFilled ? (
             <VscHeartFilled
               css={filledHeartIconStyle}
-              onClick={handleHeartClick}
+              onClick={handleLikeClick}
             />
           ) : (
             <CgHeart
               css={emptyHeartIconStyle}
-              onClick={handleHeartClick}
+              onClick={handleLikeClick}
             />
           )}
           <div
