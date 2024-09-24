@@ -6,7 +6,6 @@ import theme from '@/styles/theme'
 import { useToggleBookmark } from '@/hooks/useToggleBookmark'
 import { useState } from 'react'
 import BookmarkModal from '@/components/bookmarks/BookmarkModal'
-// import Toast from '@/components/common/Toast'
 
 interface Playlist {
   id: string
@@ -21,8 +20,6 @@ function extractVideoId(url: string) {
   return url.replace('https://www.youtube.com/watch?v=', '')
 }
 
-// const BookmarkItem = ({ playlist }: { playlist: Playlist }) => {
-//   const { mutate: toggleBookmark } = useToggleBookmark(playlist.id)
 const BookmarkItem = ({
   playlist,
   onBookmarkToggle
@@ -34,16 +31,11 @@ const BookmarkItem = ({
 
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  // const [isToastVisible, setIsToastVisible] = useState(false)
-
-  // useEffect(() => {
-  //   console.log('isToastVisible:', isToastVisible)
-  // }, [isToastVisible])
 
   const handleDelete = () => {
     toggleBookmark(true)
     setIsModalOpen(false)
-    onBookmarkToggle() // 토스트를 표시
+    onBookmarkToggle() // 토스트 표시
   }
 
   const handleCloseModal = () => {
@@ -81,11 +73,6 @@ const BookmarkItem = ({
           onDelete={handleDelete}
         />
       )}
-      {/* <Toast
-        message="북마크가 해제되었습니다"
-        isVisible={isToastVisible}
-        onHide={() => setIsToastVisible(false)}
-      /> */}
     </main>
   )
 }

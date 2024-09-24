@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { auth } from '@/api/firebaseApp'
 import { useFetchComments } from '@/hooks/useFetchComments'
 import { useFetchUserData } from '@/hooks/useFetchUser'
 import { useFetchBookmarks } from '@/hooks/useFetchBookmark'
@@ -10,6 +11,7 @@ export const usePlaylistData = (playlist?: Playlist) => {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [isToastVisible, setIsToastVisible] = useState(false)
+  const [isOwner, setIsOwner] = useState(false)
 
   const comments = useFetchComments(playlist?.id || '')
   const userData = useFetchUserData(playlist?.userId)
@@ -30,7 +32,16 @@ export const usePlaylistData = (playlist?: Playlist) => {
     }
   }, [BookmarkedData])
 
+  useEffect(() => {
+    const currentUser = auth.currentUser
+    if (currentUser && playlist) {
+      setIsOwner(currentUser.uid === playlist.userId)
+    }
+  }, [playlist])
+
   const handleBookmark = () => {
+    if (isOwner) return
+
     if (playlist && BookmarkedData !== undefined) {
       toggleBookmark(isBookmarked)
       setToastMessage(
@@ -48,9 +59,10 @@ export const usePlaylistData = (playlist?: Playlist) => {
     commentCount,
     userData,
     isBookmarked,
-    handleBookmark,
+    handleBookmark: isOwner ? undefined : handleBookmark,
     toastMessage,
     isToastVisible,
-    hideToast
+    hideToast,
+    isOwner
   }
 }

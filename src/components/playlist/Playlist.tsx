@@ -75,17 +75,18 @@ export default function Playlist({
             <CgComment css={commentIconStyle} />
             <span css={commentCountStyle}>{commentCount}</span>
           </div>
-          {isBookmarked ? (
-            <FaBookmark
-              onClick={handleBookmark}
-              css={filledbookmarkIconStyle}
-            />
-          ) : (
-            <FaRegBookmark
-              onClick={handleBookmark}
-              css={bookmarkIconStyle}
-            />
-          )}
+          {handleBookmark &&
+            (isBookmarked ? (
+              <FaBookmark
+                onClick={handleBookmark}
+                css={filledbookmarkIconStyle}
+              />
+            ) : (
+              <FaRegBookmark
+                onClick={handleBookmark}
+                css={bookmarkIconStyle}
+              />
+            ))}
         </div>
         <div css={titleStyle}>
           <p>{playlist?.title}</p>
