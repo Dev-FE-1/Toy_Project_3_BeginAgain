@@ -17,7 +17,12 @@ const MyPlaylist = () => {
   const { data } = useFetchPlaylists(true)
   const user = auth.currentUser
 
-  const filteredPlaylists = data?.filter(pl => pl.userId === user?.uid)
+  const filteredPlaylists = data
+    ?.filter(pl => pl.userId === user?.uid)
+    ?.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
 
   return (
     <>

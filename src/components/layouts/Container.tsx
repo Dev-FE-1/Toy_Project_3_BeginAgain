@@ -17,7 +17,6 @@ const containerStyle = css`
   margin: 0 auto;
   background-color: ${theme.colors.white};
   height: 100%;
-  max-height: ${theme.height.max};
   overflow-y: auto;
   ::-webkit-scrollbar {
     display: none;
