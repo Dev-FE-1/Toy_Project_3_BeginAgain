@@ -10,6 +10,7 @@ export const useLikeData = (playlistId: string, userId: string) => {
       try {
         const data = await fetchLikes(playlistId)
         setLikeCount(data.likeCount || 0)
+
         setIsLikeFilled(!!data.userLikes[userId])
       } catch (error) {
         console.error('좋아요 실패', error)
@@ -23,8 +24,9 @@ export const useLikeData = (playlistId: string, userId: string) => {
     const newLikeFilled = !isLikeFilled
     setIsLikeFilled(newLikeFilled)
 
-    const newCount = newLikeFilled ? 1 : 0
+    const newCount = newLikeFilled ? likeCount + 1 : likeCount - 1
     setLikeCount(newCount)
+
     await updateLikes(playlistId, userId, newLikeFilled)
   }
 

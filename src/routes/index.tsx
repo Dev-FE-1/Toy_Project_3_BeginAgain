@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
           { path: '/saved-playlists/:id', element: <SavedPlaylistDetail /> },
           { path: '/edit-playlist/:id', element: <EditPlaylistInfo /> },
           { path: '/delete-videos/:id', element: <DeleteVideos /> },
-          { path: '/profile', element: <Profile /> }
+          { path: '/profile', element: <Profile /> },
           { path: '/edit-profile', element: <EditProfile /> }
         ]
       }
