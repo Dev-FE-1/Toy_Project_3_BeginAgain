@@ -11,6 +11,9 @@ export default function EditPlaylistInfo() {
   const setTitle = useHeaderStore(state => state.setTitle)
   const location = useLocation() // playlist 데이터를 받기 위함
   const navigate = useNavigate()
+  const setHandleClickRightButton = useHeaderStore(
+    state => state.setHandleClickRightButton
+  )
 
   // location에서 playlist 데이터 가져오기
   const playlist = location.state?.playlist as Playlist | undefined
@@ -27,6 +30,31 @@ export default function EditPlaylistInfo() {
     setIsPublic(playlist.isPublic)
     setSelectedCategories(playlist.categories || ['전체'])
   }, [playlist, navigate])
+
+  const handleEdit = async () => {
+    if (!playlist) {
+      return
+    }
+
+    const updatedPlaylist = {
+      ...playlist,
+      title: videoTitle,
+      description: videoDescription,
+      isPublic,
+      categories: selectedCategories
+    }
+
+    try {
+      await editPlaylist.mutate(updatedPlaylist)
+      navigate(-1)
+    } catch (error) {
+      console.error('Error saving playlist:', error)
+    }
+  }
+
+  useEffect(() => {
+    setHandleClickRightButton(handleEdit)
+  }, [handleEdit, setHandleClickRightButton])
 
   const [videoTitle, setVideoTitle] = useState('')
   const [videoDescription, setVideoDescription] = useState('')
@@ -54,26 +82,6 @@ export default function EditPlaylistInfo() {
       categories = ['전체', ...categories]
     }
     setSelectedCategories(categories)
-  }
-
-  const handleEdit = async () => {
-    // 데이터 저장 로직 구현 (예: Firebase 업데이트)
-    try {
-      if (playlist) {
-        editPlaylist.mutate(playlist)
-      }
-      console.log({
-        title: videoTitle,
-        description: videoDescription,
-        isPublic,
-        categories: selectedCategories
-      })
-
-      // 저장 후 페이지 이동 (리다이렉션)
-      navigate(-1) // 이전 페이지로 돌아가기
-    } catch (error) {
-      console.error('Error saving playlist:', error)
-    }
   }
 
   const editPlaylist = useEditPlaylistInfo()

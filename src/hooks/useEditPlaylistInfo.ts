@@ -23,7 +23,6 @@ export const useEditPlaylistInfo = () => {
       // Firestore 컬렉션 참조
       const coll = collection(db, 'Playlists')
       const docRef = doc(coll, playlist.id) // 수정할 문서 참조
-      console.log(playlist)
       // 현재 로그인한 사용자가 플레이리스트의 소유자일 때만 업데이트 수행
       if (user && playlist.userId === user.uid) {
         await updateDoc(docRef, {

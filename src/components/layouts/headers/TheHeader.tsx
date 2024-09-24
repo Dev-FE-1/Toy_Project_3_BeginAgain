@@ -5,6 +5,77 @@ import { useHeaderStore } from '@/stores/header'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAddPlaylistStore } from '@/stores/addPlaylist'
 import { Playlist } from '@/hooks/useFetchPlaylists'
+import { useEditPlaylistInfo } from '@/hooks/useEditPlaylistInfo'
+
+export default function TheHeader() {
+  const title = useHeaderStore(state => state.title)
+  const handleClickRightButton = useHeaderStore(
+    state => state.handleClickRightButton
+  )
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { isDone, savePlaylist, isPublic } = useAddPlaylistStore()
+  const isAddPlaylist = location.pathname === '/add-playlist'
+  const isEditPlaylist = location.pathname.includes('/edit-playlist')
+  const isDeleteVideos = location.pathname.includes('/delete-videos')
+  const isProfile = location.pathname === '/profile'
+
+  const handleComplete = async () => {
+    try {
+      await savePlaylist()
+      if (isPublic) {
+        navigate('/', { state: { showToast: true } })
+      } else {
+        navigate('/')
+      }
+    } catch (error) {
+      console.error('저장 실패:', error)
+    }
+  }
+
+  return (
+    <header css={headerStyle}>
+      {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집') && (
+        <CgChevronLeft
+          css={iconStyle}
+          onClick={() => navigate(-1)}
+        />
+      )}
+      {title === 'Home' ? (
+        <img
+          css={logoStyle}
+          src="/src/assets/logo.png"
+          alt="logo"
+        />
+      ) : (
+        <h2 css={titleStyle}>{title}</h2>
+      )}
+      {isAddPlaylist && (
+        <button
+          css={successBtn(isDone)}
+          onClick={isDone ? handleComplete : undefined}
+          disabled={!isDone}>
+          완료
+        </button>
+      )}
+      {isEditPlaylist && (
+        <button
+          css={okayButtonStyle}
+          onClick={handleClickRightButton}>
+          수정
+        </button>
+      )}
+      {isDeleteVideos && (
+        <button
+          css={okayButtonStyle}
+          onClick={() => {}}>
+          삭제
+        </button>
+      )}
+      {isProfile && <button css={editBtn}>수정</button>}
+    </header>
+  )
+}
 
 const headerStyle = css`
   display: flex;
@@ -67,70 +138,3 @@ const logoStyle = css`
   width: 80px;
   height: 25px;
 `
-
-export default function TheHeader(id: string, playlist: Playlist) {
-  const title = useHeaderStore(state => state.title)
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { isDone, savePlaylist, isPublic } = useAddPlaylistStore()
-  const isAddPlaylist = location.pathname === '/add-playlist'
-  const isEditPlaylist = location.pathname.includes('/edit-playlist')
-  const isDeleteVideos = location.pathname.includes('/delete-videos')
-  const isProfile = location.pathname === '/profile'
-
-  const handleComplete = async () => {
-    try {
-      await savePlaylist()
-      if (isPublic) {
-        navigate('/', { state: { showToast: true } })
-      } else {
-        navigate('/')
-      }
-    } catch (error) {
-      console.error('저장 실패:', error)
-    }
-  }
-
-  return (
-    <header css={headerStyle}>
-      {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집') && (
-        <CgChevronLeft
-          css={iconStyle}
-          onClick={() => navigate(-1)}
-        />
-      )}
-      {title === 'Home' ? (
-        <img
-          css={logoStyle}
-          src="/src/assets/logo.png"
-          alt="logo"
-        />
-      ) : (
-        <h2 css={titleStyle}>{title}</h2>
-      )}
-      {isAddPlaylist && (
-        <button
-          css={successBtn(isDone)}
-          onClick={isDone ? handleComplete : undefined}
-          disabled={!isDone}>
-          완료
-        </button>
-      )}
-      {isEditPlaylist && (
-        <button
-          css={okayButtonStyle}
-          onClick={() => {}}>
-          수정
-        </button>
-      )}
-      {isDeleteVideos && (
-        <button
-          css={okayButtonStyle}
-          onClick={() => {}}>
-          삭제
-        </button>
-      )}
-      {isProfile && <button css={editBtn}>수정</button>}
-    </header>
-  )
-}
