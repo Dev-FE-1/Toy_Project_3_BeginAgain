@@ -14,12 +14,14 @@ interface CommentsModalProps {
     displayName?: string
   }
   playlistId: string
+  userId: string
 }
 
 const CommentsModal: React.FC<CommentsModalProps> = ({
   comments,
   onClose,
-  playlistId
+  playlistId,
+  userId
 }) => {
   const [comment, setComment] = useState('')
   const { mutate: createComment } = useCreateComment()
@@ -28,6 +30,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value)
   }
+
   const handleCommentSubmit = () => {
     if (comment.trim() === '') return
     if (!playlistId) {
@@ -74,10 +77,12 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                   <p>{comment.content}</p>
                 </div>
 
-                <CgTrash
-                  onClick={() => handleCommentDelete(comment.id)}
-                  css={deleteButtonStyle}
-                />
+                {comment.user.uid === userId && (
+                  <CgTrash
+                    onClick={() => handleCommentDelete(comment.id)}
+                    css={deleteButtonStyle}
+                  />
+                )}
               </div>
             ))
           )}
