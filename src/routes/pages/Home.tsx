@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import Toast from '@/components/common/Toast'
+import InfiniteScroll from '@/components/infiniteScroll/InfiniteScroll'
 
 export default function Home() {
   const setTitle = useHeaderStore(state => state.setTitle)
@@ -83,6 +84,7 @@ export default function Home() {
       )}
 
       <div className="nav-margin-bottom"></div>
+      <InfiniteScroll />
     </>
   )
 }
