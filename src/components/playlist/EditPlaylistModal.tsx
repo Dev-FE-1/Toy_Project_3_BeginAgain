@@ -1,10 +1,10 @@
 import { css } from '@emotion/react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
 import { Playlist } from '@/hooks/useFetchPlaylist'
 import { CgClose } from 'react-icons/cg'
 import theme from '@/styles/theme'
 import LongButton from '@/components/common/LongButton'
+import { useDeleteVideo } from '@/hooks/useDeleteVideo'
 
 interface PlayListProps {
   closeEdit: () => void
@@ -33,27 +33,24 @@ const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
     }
   }
 
-  const navigate = useNavigate()
+  const deleteVideo = useDeleteVideo()
 
-  // EditPlaylist 컴포넌트
-  // const handleEditInfo = (playlist: Playlist) => {
-  //   if (!playlist) {
-  //     console.error('Playlist data is missing')
-  //     return
-  //   }
-  //   navigate(`/edit-playlist/${playlist.id}`, { state: { playlist } })
-  // }
-
-  const handleDelete = (playlist: Playlist) => {
-    if (!playlist) {
-      console.error('Playlist data is missing')
+  const handleDelete = async (playlist: Playlist) => {
+    if (!playlist || !playlist.urls || playlist.urls.length === 0) {
       return
     }
-    // navigate(`/delete-videos/${playlist.id}`, { state: { playlist } })
-    //     1. 파베에 해당 클릭한 동영상만 찾아서 삭제 후 나머지 것들을 리턴하는 api를 호출 (이제 만들어야함) await 파베삭제api(클릭한 영상의 아이디)
-    // 2. 호출의 결과로 리턴한 결과값을 받아와야지
-    console.log(`해당 플레이리스트가 삭제되었습니다.`)
-    closeEdit() // 모달 닫기
+
+    try {
+      // 첫 번째 비디오 URL을 삭제
+      deleteVideo.mutate({
+        playlist,
+        videoUrl: playlist.urls[0] // 삭제할 비디오 URL (첫 번째 요소)
+      })
+
+      closeEdit() // 모달 닫기
+    } catch (error) {
+      console.error('Error deleting video:', error)
+    }
   }
 
   return (
@@ -80,9 +77,6 @@ const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
             <CgClose fontSize={theme.fontSize.lg} />
           </button>
           <div css={longButtonStyle}>
-            {/* <LongButton onClick={() => handleEditInfo(playlist)}>
-              정보 수정
-            </LongButton> */}
             <LongButton onClick={() => handleDelete(playlist)}>
               동영상 삭제
             </LongButton>

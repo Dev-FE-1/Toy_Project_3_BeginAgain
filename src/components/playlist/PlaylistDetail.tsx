@@ -260,7 +260,7 @@ export default function PlaylistDetail({
           <div
             key={url}
             css={videoInfoLayoutStyle(isOwner)}>
-            {isOwner && (
+            {!showComments && (
               <CgFormatJustify
                 css={dragIconStyle}
                 className="handle"
@@ -278,7 +278,7 @@ export default function PlaylistDetail({
             <span css={videoTitleStyle(isOwner)}>
               {videoTitles[index] || '제목 로딩 중...'}
             </span>
-            {isOwner && (
+            {!showComments && (
               <GoKebabHorizontal
                 css={iconStyle}
                 onClick={openDeleteModal} // 삭제함수 추가 => 바텀시트로 동영상 삭제
@@ -416,32 +416,33 @@ const lockStyle = css`
   color: ${theme.colors.charcoalGrey};
 `
 
-const videoContainerStyle = (isOwner: boolean) => css`
+const videoContainerStyle = (showComments: boolean) => css`
   max-height: 300px;
   overflow-y: auto;
   padding-right: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: ${isOwner ? '0 16px' : '0 20px'};
+  padding: ${showComments ? '0' : '0 20px'};
   margin-top: 10px;
   gap: 5px;
+  margin: ${showComments ? '0 20px 0 20px' : '10px 0'};
 `
 
-const videoInfoLayoutStyle = (isOwner: boolean) => css`
+const videoInfoLayoutStyle = (showComments: boolean) => css`
   display: flex;
   align-items: center;
   width: 100%;
   margin-bottom: 8px;
-  gap: ${isOwner ? '8px' : '16px'};
+  gap: ${showComments ? '8px' : '16px'};
 `
 
-const videoTitleStyle = (isOwner: boolean) => css`
+const videoTitleStyle = (showComments: boolean) => css`
   flex-grow: 2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: ${isOwner ? '250px' : '300px'};
+  width: ${showComments ? '250px' : '300px'};
   padding-right: 8px;
 `
 
