@@ -17,6 +17,8 @@ interface Playlist {
 }
 
 function extractVideoId(url: string) {
+  // console.log('extractVideoId', url)
+  url = url.split('&')[0]
   return url.replace('https://www.youtube.com/watch?v=', '')
 }
 
@@ -46,9 +48,9 @@ const BookmarkItem = ({
     <main>
       <div css={playlistItemStyle}>
         <div css={leftSectionStyle}>
-          <FaBookmark
-            css={bookmarkIconStyle}
-            onClick={() => setIsModalOpen(true)}
+          <CgFormatJustify
+            css={hamburgerIconStyle}
+            className="drag-handle"
           />
         </div>
         <img
@@ -59,9 +61,9 @@ const BookmarkItem = ({
         />
         <div css={playlistInfoStyle}>
           <p css={titleStyle}>{playlist.title}</p>
-          <CgFormatJustify
-            css={hamburgerIconStyle}
-            className="drag-handle"
+          <FaBookmark
+            css={bookmarkIconStyle}
+            onClick={() => setIsModalOpen(true)}
           />
         </div>
       </div>
@@ -88,7 +90,7 @@ const playlistItemStyle = css`
 const leftSectionStyle = css`
   display: flex;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 12px;
 `
 
 const bookmarkIconStyle = css`
