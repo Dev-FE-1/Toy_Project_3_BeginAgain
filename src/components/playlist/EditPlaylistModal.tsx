@@ -126,6 +126,10 @@ const cancelButtonStyle = css`
   border: none;
   background-color: transparent;
   cursor: pointer;
+  color: ${theme.colors.charcoalGrey};
+  &:hover {
+    color: ${theme.colors.lightBlue};
+  }
 `
 
 const longButtonStyle = css`
@@ -133,4 +137,7 @@ const longButtonStyle = css`
   gap: 15px;
   flex-direction: column;
   margin-top: 20px;
+  &:hover {
+    background-color: ${theme.colors.skyBlue};
+  }
 `

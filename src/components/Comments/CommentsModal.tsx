@@ -46,11 +46,11 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     <div css={modalOverlayStyle}>
       <div css={modalContainerStyle}>
         <div css={headerContainerStyle}>
-          <h1 css={modalTitleStyle}>댓글</h1>
           <CgClose
             onClick={onClose}
             css={closeButtonStyle}
           />
+          <h1 css={modalTitleStyle}>댓글</h1>
         </div>
         <hr css={dividerStyle} />
         <div css={commentsContainerStyle}>
@@ -69,9 +69,11 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                   css={profileImageStyle}
                 />
                 <span css={usernameStyle}>{comment.user.displayName}</span>
+
                 <div css={commentContentStyle}>
                   <p>{comment.content}</p>
                 </div>
+
                 <CgTrash
                   onClick={() => handleCommentDelete(comment.id)}
                   css={deleteButtonStyle}
@@ -111,19 +113,24 @@ const modalOverlayStyle = css`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 3;
 `
 
 const modalContainerStyle = css`
   background: white;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 35px 35px 0 0;
   width: 430px;
   max-width: 600px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  max-height: calc(100vh - 220px);
+  max-height: calc(100vh - 426px);
   overflow-y: auto;
-  position: relative;
+  position: fixed;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
 `
 const headerContainerStyle = css`
   display: flex;
@@ -159,11 +166,23 @@ const commentsContainerStyle = css`
   margin-bottom: 20px;
 `
 
+const commentContentStyle = css`
+  flex: 1;
+  display: block;
+  padding-right: 40px;
+  text-align: left;pl
+
+
+`
 const commentItemStyle = css`
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 15px;
   position: relative;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
 `
 
 const profileImageStyle = css`
@@ -173,17 +192,10 @@ const profileImageStyle = css`
   margin-right: 10px;
 `
 
-const commentContentStyle = css`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  color: ${theme.colors.black};
-`
-
 const usernameStyle = css`
   font-weight: ${theme.fontWeight.semiBold};
   color: ${theme.colors.charcoalGrey};
-  margin-bottom: 5px;
+  margin: 0 10px 0 0;
 `
 
 const noCommentsStyle = css`
@@ -194,6 +206,12 @@ const noCommentsStyle = css`
 const inputContainerStyle = css`
   display: flex;
   align-items: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 20px;
+  margin-bottom: 22px;
 `
 
 const inputStyle = css`
@@ -203,6 +221,7 @@ const inputStyle = css`
   border: 0px solid ${theme.colors.grey};
   border-radius: 4px;
   background-color: ${theme.colors.lightGrey};
+  font-size: ${theme.fontSize.sm};
 `
 
 const submitButtonStyle = css`
@@ -213,7 +232,7 @@ const submitButtonStyle = css`
   color: white;
   border-radius: 4px;
   cursor: pointer;
-  font-size: ${theme.fontSize.xs};
+  font-size: ${theme.fontSize.sm};
 
   &:hover {
     background-color: ${theme.colors.skyBlue};
