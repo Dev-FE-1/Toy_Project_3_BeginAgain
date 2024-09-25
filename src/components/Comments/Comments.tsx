@@ -4,49 +4,11 @@ import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import CommentsModal from '@/components/comments/CommentsModal'
 
-const sectionContainer = css`
-  font-size: ${theme.fontSize.md};
-  color: ${theme.colors.black};
-  margin: 20px 20px;
-  background-color: ${theme.colors.lightGrey};
-  border-radius: 8px;
-  padding: 20px;
-`
-
-const headerStyle = css`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  font-size: ${theme.fontSize.md};
-  color: ${theme.colors.black};
-  cursor: pointer;
-  h1 {
-    margin-right: 10px;
-    font-weight: ${theme.fontWeight.semiBold};
-  }
-`
-
-const commentContainerStyle = css`
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-`
-
-const recentUserImageStyle = css`
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-`
-
-const recentCommentStyle = css`
-  margin-left: 10px;
-`
-
 interface CommentsProps {
   playlistId: string
 }
 
-const Comment: React.FC<CommentsProps> = ({ playlistId }) => {
+const Comments: React.FC<CommentsProps> = ({ playlistId }) => {
   const { data: comments, isLoading, isError } = useFetchComments(playlistId)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -94,4 +56,42 @@ const Comment: React.FC<CommentsProps> = ({ playlistId }) => {
   )
 }
 
-export default Comment
+export default Comments
+
+const sectionContainer = css`
+  font-size: ${theme.fontSize.md};
+  color: ${theme.colors.black};
+  margin: 20px 20px;
+  background-color: ${theme.colors.lightGrey};
+  border-radius: 8px;
+  padding: 20px;
+`
+
+const headerStyle = css`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: ${theme.fontSize.md};
+  color: ${theme.colors.black};
+  cursor: pointer;
+  h1 {
+    margin-right: 10px;
+    font-weight: ${theme.fontWeight.semiBold};
+  }
+`
+
+const commentContainerStyle = css`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+`
+
+const recentUserImageStyle = css`
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+`
+
+const recentCommentStyle = css`
+  margin-left: 10px;
+`

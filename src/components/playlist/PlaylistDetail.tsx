@@ -27,9 +27,11 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
 
+// 비디오 ID를 URL에서 추출하는 함수
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
 const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/videos'
 
+// 비디오 제목을 가져오는 함수
 function extractVideoIdFromUrl(url: string): string {
   const urlObj = new URL(url)
   return urlObj.searchParams.get('v') || ''
@@ -45,14 +47,16 @@ async function fetchVideoTitle(videoId: string): Promise<string> {
     return data.items[0].snippet.title
   }
 
-  return 'Unknown Title'
+  return 'Unknown Title' // 제목을 알 수 없으면 기본값 반환
 }
 
+// 썸네일 URL을 추출하는 함수
 function extractThumbnailUrl(url: string) {
   const videoId = extractVideoIdFromUrl(url)
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
 }
 
+// PlaylistDetail 컴포넌트 정의
 export default function PlaylistDetail({
   showComments,
   showLockIcon,
@@ -63,9 +67,9 @@ export default function PlaylistDetail({
   showEditButton?: boolean
   playlist?: typeof Playlist
 }) {
-  const setTitle = useHeaderStore(state => state.setTitle)
+  const setTitle = useHeaderStore(state => state.setTitle) // 제목 설정
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { id } = useParams() // URL 파라미터에서 id 추출
   const [playlistData, setPlaylistData] = useState<any>(null)
   const [userData, setUserData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -73,17 +77,22 @@ export default function PlaylistDetail({
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
   const [videoTitles, setVideoTitles] = useState<string[]>([])
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
+  // 삭제 모달 열고, 닫기
   const openDeleteModal = () => setIsDeleteModalOpen(true)
   const closeDeleteModal = () => setIsDeleteModalOpen(false)
+
   const user = auth.currentUser
   const ItemRef = useRef<HTMLDivElement | null>(null)
   const db = getFirestore()
   const isOwner = user?.uid === playlistData?.userId
 
+  // 컴포넌트가 처음 렌더링될 때 제목 설정
   useEffect(() => {
     setTitle('플레이리스트 상세보기')
   }, [setTitle])
 
+  // 플레이리스트 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -105,6 +114,7 @@ export default function PlaylistDetail({
     fetchData()
   }, [id, db])
 
+  // 비디오 제목 가져오기
   useEffect(() => {
     if (playlistData && playlistData.urls.length > 0) {
       setCurrentVideoUrl(playlistData.urls[0])
@@ -124,6 +134,7 @@ export default function PlaylistDetail({
     console.log('playlistData:', playlistData)
   }, [playlistData])
 
+  // 드래그 앤 드롭 기능 설정
   useEffect(() => {
     if (!ItemRef.current || !playlistData || !playlistData.urls || !isOwner)
       return
@@ -131,7 +142,6 @@ export default function PlaylistDetail({
     const sortable = new Sortable(ItemRef.current, {
       handle: '.handle',
       animation: 150,
-      // forceFallback: false,
       onEnd: async event => {
         if (event.oldIndex === undefined || event.newIndex === undefined) return
 
@@ -307,8 +317,7 @@ const iconStyle = css`
   justify-self: flex-end;
 `
 const sectionOneContainer = css`
-  iframe {
-  }
+  object-fix: cover;
 `
 
 const sectionTwoContainer = css`
@@ -374,6 +383,7 @@ const sectionThreeContainer = css`
   margin-top: 15px;
   display: flex;
   align-items: center;
+  margin-left: 20px;
 `
 
 const profileImageStyle = css`
@@ -427,6 +437,8 @@ const videoContainerStyle = (showComments: boolean) => css`
   margin-top: 10px;
   gap: 5px;
   margin: ${showComments ? '0 20px 0 20px' : '10px 0'};
+  object-fix: cover;
+  overflow: hidden;
 `
 
 const videoInfoLayoutStyle = (showComments: boolean) => css`
