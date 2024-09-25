@@ -7,7 +7,8 @@ import {
   CgChevronDown,
   CgPlayList,
   CgFormatJustify,
-  CgLockUnlock
+  CgLockUnlock,
+  CgLock
 } from 'react-icons/cg'
 import { GoKebabHorizontal } from 'react-icons/go'
 import { FaPencilAlt } from 'react-icons/fa'
@@ -19,6 +20,12 @@ import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import { auth } from '@/api/firebaseApp'
 import Sortable from 'sortablejs'
+import 'dayjs/locale/ko'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.locale('ko')
+dayjs.extend(relativeTime)
 
 // 비디오 ID를 URL에서 추출하는 함수
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
@@ -202,16 +209,27 @@ export default function PlaylistDetail({
           )}
         </div>
 
-        <div css={otherInfoStyle}>
-          {showLockIcon && (
-            <div css={lockStyle}>
-              <CgLockUnlock />
-              <span className="Lock">비공개/공개</span>
-            </div>
-          )}
-        </div>
-
-        <div css={buttonContainerStyle}>
+        <div css={topContainerStyle}>
+          <div css={buttonContainerStyle(showLockIcon || false)}>
+            {showLockIcon && (
+              <div css={lockStyle}>
+                {playlistData.isPublic ? (
+                  <>
+                    <CgLockUnlock />
+                    <span>공개 / </span>
+                  </>
+                ) : (
+                  <>
+                    <CgLock />
+                    <span>비공개 / </span>
+                  </>
+                )}
+              </div>
+            )}
+            <span css={timeRecordStyle}>
+              {dayjs(playlistData.createdAt).fromNow()}
+            </span>
+          </div>
           <button
             css={buttonStyle}
             onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}>
@@ -252,7 +270,7 @@ export default function PlaylistDetail({
           <div
             key={url}
             css={videoInfoLayoutStyle(isOwner)}>
-            {isOwner && (
+            {!showComments && (
               <CgFormatJustify
                 css={dragIconStyle}
                 className="handle"
@@ -270,7 +288,7 @@ export default function PlaylistDetail({
             <span css={videoTitleStyle(isOwner)}>
               {videoTitles[index] || '제목 로딩 중...'}
             </span>
-            {isOwner && (
+            {!showComments && (
               <GoKebabHorizontal
                 css={iconStyle}
                 onClick={openDeleteModal} // 삭제함수 추가 => 바텀시트로 동영상 삭제
@@ -310,7 +328,7 @@ const titleSectionStyle = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 22px;
+  padding: 0 20px;
 `
 
 const titleStyle = css`
@@ -321,6 +339,8 @@ const titleStyle = css`
 `
 
 const buttonStyle = css`
+  display: flex;
+  justify-content: flex-end;
   background: none;
   border: none;
   cursor: pointer;
@@ -334,11 +354,14 @@ const buttonStyle = css`
   }
 `
 
-const buttonContainerStyle = css`
+const buttonContainerStyle = (showLockIcon: boolean) => css`
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  margin-right: 10px;
+  justify-content: ${showLockIcon ? 'space-between' : 'flex-end'};
+  margin-right: 20px;
+  margin-left: 20px;
+  padding: ${showLockIcon ? '10px 0 10px 0' : '0'};
+  gap: ${showLockIcon ? '5px' : '0'};
 `
 
 const descriptionStyle = css`
@@ -356,6 +379,7 @@ const plAmountInfoStyle = css`
 `
 
 const sectionThreeContainer = css`
+  margin-left: 20px;
   margin-top: 15px;
   display: flex;
   align-items: center;
@@ -370,12 +394,12 @@ const profileImageStyle = css`
   object-fit: cover;
 `
 
-// const timeRecordStyle = css`
-//   color: ${theme.colors.darkGrey};
-//   font-size: ${theme.fontSize.md};
-//   text-align: right;
-//   align-self: center;
-// `
+const timeRecordStyle = css`
+  color: ${theme.colors.charcoalGrey};
+  font-size: ${theme.fontSize.md};
+  text-align: right;
+  align-self: center;
+`
 
 const otherInfoStyle = css`
   display: flex;
@@ -388,39 +412,49 @@ const otherInfoStyle = css`
   gap: 10px;
 `
 
+const topContainerStyle = css`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-right: 20px;
+`
+
 const lockStyle = css`
   font-size: ${theme.fontSize.md};
   display: flex;
   gap: 5px;
+  color: ${theme.colors.charcoalGrey};
 `
 
-const videoContainerStyle = (isOwner: boolean) => css`
+const videoContainerStyle = (showComments: boolean) => css`
   max-height: 300px;
   overflow-y: auto;
   padding-right: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: ${isOwner ? '0 16px' : '0 20px'};
+  padding: ${showComments ? '0' : '0 20px'};
   margin-top: 10px;
+  gap: 5px;
+  margin: ${showComments ? '0 20px 0 20px' : '10px 0'};
   object-fix: cover;
   overflow: hidden;
 `
 
-const videoInfoLayoutStyle = (isOwner: boolean) => css`
+const videoInfoLayoutStyle = (showComments: boolean) => css`
   display: flex;
   align-items: center;
   width: 100%;
   margin-bottom: 8px;
-  gap: ${isOwner ? '8px' : '16px'};
+  gap: ${showComments ? '8px' : '16px'};
 `
 
-const videoTitleStyle = (isOwner: boolean) => css`
+const videoTitleStyle = (showComments: boolean) => css`
   flex-grow: 2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: ${isOwner ? '250px' : '300px'};
+  width: ${showComments ? '250px' : '300px'};
   padding-right: 8px;
 `
 
