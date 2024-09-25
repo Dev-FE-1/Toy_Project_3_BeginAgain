@@ -7,6 +7,7 @@ import { useAddPlaylistStore } from '@/stores/addPlaylist'
 import { Playlist } from '@/hooks/useFetchPlaylists'
 import { useEditPlaylistInfo } from '@/hooks/useEditPlaylistInfo'
 import { useProfileStore } from '@/stores/editProfile'
+import { useState, useEffect, useRef } from 'react'
 
 export default function TheHeader() {
   const title = useHeaderStore(state => state.title)
@@ -16,12 +17,33 @@ export default function TheHeader() {
   const navigate = useNavigate()
   const location = useLocation()
   const { isDone, savePlaylist, isPublic } = useAddPlaylistStore()
+  const { displayName, photoURL, saveProfile } = useProfileStore()
+  const [isModified, setIsModified] = useState(false)  
+  const initialDisplayName = useRef(displayName)
+  const initialPhotoURL = useRef(photoURL)
   const isAddPlaylist = location.pathname === '/add-playlist'
   const isEditPlaylist = location.pathname.includes('/edit-playlist')
   const isDeleteVideos = location.pathname.includes('/delete-videos')
   const isProfile = location.pathname === '/profile'
   const isEditProfile = location.pathname === '/edit-profile'
-  const { saveProfile } = useProfileStore()
+
+  useEffect(() => {
+    if (displayName !== initialDisplayName.current || photoURL !== initialPhotoURL.current) {
+      setIsModified(true)
+    } else {
+      setIsModified(false)
+    }
+  }, [displayName, photoURL])
+
+  const handleBackClick = () => {
+    if (isModified) {
+      if (window.confirm('변경된 내용을 저장하지않고 나가실건가요?')) {
+        navigate(-1)
+      }
+    } else {
+      navigate(-1)
+    }
+  }
 
   const handleComplete = async () => {
     try {
@@ -38,10 +60,16 @@ export default function TheHeader() {
 
   return (
     <header css={headerStyle}>
-      {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집' || title === '프로필 수정') && (
+      {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집') && (
         <CgChevronLeft
           css={iconStyle}
           onClick={() => navigate(-1)}
+        />
+      )}
+       {(title === '프로필 수정') && (
+        <CgChevronLeft
+          css={iconStyle}
+          onClick={handleBackClick}
         />
       )}
       {title === 'Home' ? (
@@ -86,7 +114,7 @@ export default function TheHeader() {
       {isEditProfile && (
         <button
           css={editBtn}
-          onClick={() => saveProfile(navigate)}
+          onClick={() => saveProfile(navigate, null)}
         >
           완료
         </button>
