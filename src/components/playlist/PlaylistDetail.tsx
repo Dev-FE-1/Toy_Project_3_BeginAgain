@@ -20,6 +20,12 @@ import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import { auth } from '@/api/firebaseApp'
 import Sortable from 'sortablejs'
+import 'dayjs/locale/ko'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.locale('ko')
+dayjs.extend(relativeTime)
 
 const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
 const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/videos'
@@ -193,25 +199,27 @@ export default function PlaylistDetail({
           )}
         </div>
 
-        <div css={otherInfoStyle}>
-          {showLockIcon && (
-            <div css={lockStyle}>
-              {playlistData.isPublic ? (
-                <>
-                  <CgLockUnlock />
-                  <span>공개</span>
-                </>
-              ) : (
-                <>
-                  <CgLock />
-                  <span>비공개</span>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div css={buttonContainerStyle}>
+        <div css={topContainerStyle}>
+          <div css={buttonContainerStyle(showLockIcon || false)}>
+            {showLockIcon && (
+              <div css={lockStyle}>
+                {playlistData.isPublic ? (
+                  <>
+                    <CgLockUnlock />
+                    <span>공개</span>
+                  </>
+                ) : (
+                  <>
+                    <CgLock />
+                    <span>비공개</span>
+                  </>
+                )}
+              </div>
+            )}
+            <span css={timeRecordStyle}>
+              {dayjs(playlistData.createdAt).fromNow()}
+            </span>
+          </div>
           <button
             css={buttonStyle}
             onClick={() => setIsDescriptionVisible(!isDescriptionVisible)}>
@@ -311,7 +319,7 @@ const titleSectionStyle = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 22px;
+  padding: 0 20px;
 `
 
 const titleStyle = css`
@@ -322,6 +330,8 @@ const titleStyle = css`
 `
 
 const buttonStyle = css`
+  display: flex;
+  justify-content: flex-end;
   background: none;
   border: none;
   cursor: pointer;
@@ -335,11 +345,13 @@ const buttonStyle = css`
   }
 `
 
-const buttonContainerStyle = css`
+const buttonContainerStyle = (showLockIcon: boolean) => css`
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  margin-right: 10px;
+  justify-content: ${showLockIcon ? 'space-between' : 'flex-end'};
+  margin-right: 20px;
+  margin-left: 20px;
+  padding: ${showLockIcon ? '10px 0 10px 0' : '0'};
 `
 
 const descriptionStyle = css`
@@ -357,6 +369,7 @@ const plAmountInfoStyle = css`
 `
 
 const sectionThreeContainer = css`
+  margin-left: 20px;
   margin-top: 15px;
   display: flex;
   align-items: center;
@@ -388,10 +401,18 @@ const otherInfoStyle = css`
   gap: 10px;
 `
 
+const topContainerStyle = css`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-right: 20px;
+`
+
 const lockStyle = css`
   font-size: ${theme.fontSize.md};
   display: flex;
   gap: 5px;
+  color: ${theme.colors.charcoalGrey};
 `
 
 const videoContainerStyle = (isOwner: boolean) => css`
@@ -403,6 +424,7 @@ const videoContainerStyle = (isOwner: boolean) => css`
   align-items: center;
   padding: ${isOwner ? '0 16px' : '0 20px'};
   margin-top: 10px;
+  gap: 5px;
 `
 
 const videoInfoLayoutStyle = (isOwner: boolean) => css`
