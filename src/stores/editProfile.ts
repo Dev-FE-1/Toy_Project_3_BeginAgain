@@ -2,6 +2,7 @@ import create from 'zustand'
 import { getAuth, updateProfile } from "firebase/auth"
 import { NavigateFunction } from 'react-router-dom'
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
+import { getFirestore, doc, setDoc } from "firebase/firestore"
 
 interface ProfileState {
   displayName: string
@@ -24,6 +25,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     const auth = getAuth()
     const user = auth.currentUser
     const storage = getStorage()
+    const firestore = getFirestore()
 
     if (user) {
       try {
@@ -40,6 +42,12 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
           displayName: get().displayName,
           photoURL: updatedPhotoURL,
         })
+
+        const userRef = doc(firestore, 'Users', user.uid)
+        await setDoc(userRef, {
+          displayName: get().displayName,
+          photoURL: updatedPhotoURL,
+        }, { merge: true }) 
 
         navigate('/profile', { state: { showToast: true } })
       } catch (error) {

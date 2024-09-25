@@ -3,36 +3,54 @@ import { getAuth, updateProfile } from 'firebase/auth'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { useProfileStore } from '@/stores/editProfile'
 import { css } from '@emotion/react'
+import { FaCamera } from 'react-icons/fa'
 import theme from '@/styles/theme'
+import { useHeaderStore } from '@/stores/header'
+import { getFirestore, doc, setDoc } from 'firebase/firestore'
+import TheHeader from '@/components/layouts/headers/TheHeader'
+import Modal from '@/components/common/TheModal'
+import { useNavigate } from 'react-router-dom'
+
 
 export default function EditProfile() {
-  const [previewPhoto, setPreviewPhoto] = useState<string>('')
+  const { displayName, setDisplayName, photoURL, setPhotoURL } = useProfileStore()
+  const setHeaderTitle = useHeaderStore((state) => state.setTitle)
+  const [previewPhoto, setPreviewPhoto] = useState<string>(photoURL || '')
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  
 
   const auth = getAuth()
   const user = auth.currentUser
   const storage = getStorage()
+  const firestore = getFirestore()
+  const navigate = useNavigate()
 
-  const setTitle = useProfileStore((state) => state.setTitle)
-  const displayName = useProfileStore((state) => state.displayName)
-  const setDisplayName = useProfileStore((state) => state.setDisplayName)
-  const photoURL = useProfileStore((state) => state.photoURL)
-  const setPhotoURL = useProfileStore((state) => state.setPhotoURL)
+
+  const initialDisplayName = useRef(displayName)
+  const initialPhotoURL = useRef(photoURL)
+  const [isModified, setIsModified] = useState(false)
 
   useEffect(() => {
-    setTitle('프로필 수정')
+    setHeaderTitle('프로필 수정')
     if (user) {
       setDisplayName(user.displayName || '')
       setPhotoURL(user.photoURL || '')
       setPreviewPhoto(user.photoURL || '')
     }
-  }, [setTitle, user, setDisplayName, setPhotoURL])
+  }, [setHeaderTitle, user, setDisplayName, setPhotoURL])
+
+  useEffect(() => {
+    setIsModified(
+      displayName !== initialDisplayName.current || photoURL !== initialPhotoURL.current
+    );
+  }, [displayName, photoURL])
 
   const handlePhotoClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click()
     }
-  }
+  };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -46,23 +64,53 @@ export default function EditProfile() {
         const downloadURL = await getDownloadURL(storageRef)
         await updateProfile(user, { photoURL: downloadURL })
         setPhotoURL(downloadURL)
+
+        const userRef = doc(firestore, 'Users', user.uid)
+        await setDoc(userRef, {
+          displayName: displayName,
+          photoURL: downloadURL,
+          email: user.email,
+        }, { merge: true })
       } catch (error) {
         console.error('사진 업로드 실패:', error)
       }
     }
   }
 
+  const handleOpenModal = () => {
+    if (isModified) {
+      setShowConfirmModal(true)
+    } else {
+      navigate(-1)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setShowConfirmModal(false)
+  }
+
+  const handleConfirmLeave = () => {
+    setShowConfirmModal(false)
+    navigate(-1)
+  }
+
   return (
     <div css={pageStyle}>
+      <TheHeader onOpenModal={handleOpenModal} />
       <div className="nav-margin-top"></div>
       {user && (
         <>
-          <img
-            src={previewPhoto || photoURL}
-            alt="프로필 사진"
-            css={profileStyle}
-            onClick={handlePhotoClick}
-          />
+          <div css={profileContainerStyle}>
+            <img
+              src={previewPhoto || photoURL}
+              alt="프로필 사진"
+              css={profileStyle}
+              onClick={handlePhotoClick}
+            />
+            <div css={iconStyle} onClick={handlePhotoClick}>
+              <FaCamera size={20} />
+            </div>
+          </div>
           <input
             type="file"
             accept="image/*"
@@ -86,6 +134,16 @@ export default function EditProfile() {
           </div>
         </>
       )}
+      
+      {showConfirmModal && (
+        <Modal
+          isOpen={showConfirmModal}
+          title="변경사항이 저장되지 않습니다."
+          description="정말 나가시겠습니까?"
+          onConfirm={handleConfirmLeave}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   )
 }
@@ -98,11 +156,27 @@ const pageStyle = css`
   gap: 10px;
 `;
 
-const profileStyle = css`
+const profileContainerStyle = css`
+  position: relative;
   width: 130px;
   margin-top: 40px;
+`;
+
+const profileStyle = css`
+  width: 100%;
   border-radius: 50%;
   cursor: pointer; 
+`;
+
+const iconStyle = css`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  color: white;
 `;
 
 const fileInputStyle = css`
@@ -128,7 +202,8 @@ const inputStyle = css`
   font-size: ${theme.fontSize.md};
   width: 100%;
   border: 1px solid ${theme.colors.grey};
-  border-radius: 4px;
+  border-radius: 5px;
+  height: 2rem;
 `;
 
 const inputText = css`

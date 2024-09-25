@@ -1,55 +1,57 @@
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { CgChevronLeft } from 'react-icons/cg'
 import { useHeaderStore } from '@/stores/header'
-import { useNavigate, useLocation } from 'react-router-dom'
 import { useAddPlaylistStore } from '@/stores/addPlaylist'
-import { Playlist } from '@/hooks/useFetchPlaylists'
-import { useEditPlaylistInfo } from '@/hooks/useEditPlaylistInfo'
 import { useProfileStore } from '@/stores/editProfile'
 
-export default function TheHeader() {
+type TheHeaderProps = {
+  onOpenModal: () => void
+}
+
+export default function TheHeader({ onOpenModal }: TheHeaderProps) {
   const title = useHeaderStore(state => state.title)
-  const handleClickRightButton = useHeaderStore(
-    state => state.handleClickRightButton
-  )
+  const handleClickRightButton = useHeaderStore(state => state.handleClickRightButton)
   const navigate = useNavigate()
   const location = useLocation()
+
   const { isDone, savePlaylist, isPublic } = useAddPlaylistStore()
+  const { saveProfile } = useProfileStore()
+
   const isAddPlaylist = location.pathname === '/add-playlist'
   const isEditPlaylist = location.pathname.includes('/edit-playlist')
   const isDeleteVideos = location.pathname.includes('/delete-videos')
   const isProfile = location.pathname === '/profile'
   const isEditProfile = location.pathname === '/edit-profile'
-  const { saveProfile } = useProfileStore()
+
+  const handleBackClick = () => {
+    if (onOpenModal) {
+      onOpenModal() 
+    } else {
+      navigate(-1)
+    }
+  }
 
   const handleComplete = async () => {
     try {
       await savePlaylist()
-      if (isPublic) {
-        navigate('/', { state: { showToast: true } })
-      } else {
-        navigate('/')
-      }
+      navigate(isPublic ? '/' : '/')
     } catch (error) {
-      console.error('저장 실패:', error)
+      console.error('Failed to save:', error)
     }
   }
 
   return (
     <header css={headerStyle}>
-      {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집' || title === '프로필 수정') && (
-        <CgChevronLeft
-          css={iconStyle}
-          onClick={() => navigate(-1)}
-        />
+      {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집') && (
+        <CgChevronLeft css={iconStyle} onClick={() => navigate(-1)} />
+      )}
+      {title === '프로필 수정' && (
+        <CgChevronLeft css={iconStyle} onClick={handleBackClick} />
       )}
       {title === 'Home' ? (
-        <img
-          css={logoStyle}
-          src="/src/assets/logo.png"
-          alt="logo"
-        />
+        <img css={logoStyle} src="/src/assets/logo.png" alt="logo" />
       ) : (
         <h2 css={titleStyle}>{title}</h2>
       )}
@@ -57,37 +59,28 @@ export default function TheHeader() {
         <button
           css={successBtn(isDone)}
           onClick={isDone ? handleComplete : undefined}
-          disabled={!isDone}>
+          disabled={!isDone}
+        >
           완료
         </button>
       )}
       {isEditPlaylist && (
-        <button
-          css={buttonStyle}
-          onClick={handleClickRightButton}>
+        <button css={buttonStyle} onClick={handleClickRightButton}>
           수정
         </button>
       )}
       {isDeleteVideos && (
-        <button
-          css={buttonStyle}
-          onClick={() => {}}>
+        <button css={buttonStyle} onClick={() => {}}>
           삭제
         </button>
       )}
       {isProfile && (
-        <button
-          css={editBtn}
-          onClick={() => navigate('/edit-profile')}
-        >
+        <button css={editBtn} onClick={() => navigate('/edit-profile')}>
           수정
         </button>
       )}
       {isEditProfile && (
-        <button
-          css={editBtn}
-          onClick={() => saveProfile(navigate)}
-        >
+        <button css={editBtn} onClick={() => saveProfile(navigate, null)}>
           완료
         </button>
       )}
@@ -109,10 +102,12 @@ const headerStyle = css`
   color: ${theme.colors.white};
   background-color: ${theme.colors.white};
 `
+
 const titleStyle = css`
   font-size: ${theme.fontSize.xl};
   color: ${theme.colors.black};
 `
+
 const iconStyle = css`
   font-size: 24px;
   color: ${theme.colors.black};
@@ -121,6 +116,7 @@ const iconStyle = css`
   left: 20px;
   cursor: pointer;
 `
+
 const successBtn = (isDone: boolean) => css`
   position: absolute;
   display: sticky;
@@ -131,6 +127,7 @@ const successBtn = (isDone: boolean) => css`
   border: none;
   cursor: ${isDone ? 'pointer' : 'default'};
 `
+
 const buttonStyle = css`
   position: absolute;
   display: sticky;
@@ -141,6 +138,7 @@ const buttonStyle = css`
   border: none;
   cursor: pointer;
 `
+
 const editBtn = css`
   position: absolute;
   display: sticky;
