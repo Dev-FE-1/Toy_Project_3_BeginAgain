@@ -3,8 +3,11 @@ import { Category } from '@/components/common/Category'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 import { IoIosAddCircleOutline, IoIosRemove } from 'react-icons/io'
+import { IoHelpCircleOutline } from "react-icons/io5"
 import { useHeaderStore } from '@/stores/header'
 import { useAddPlaylistStore } from '@/stores/addPlaylist'
+import 'react-tooltip/dist/react-tooltip.css'
+import { Tooltip } from 'react-tooltip'
 
 const AddPlaylist = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
@@ -84,11 +87,29 @@ const AddPlaylist = () => {
 
   return (
     <>
-      <div className="nav-margin-top"></div>
       <div css={DivContainer}>
-        <div css={TitleContainer}>
-          <span css={requiredTitleStyle}>동영상 링크</span>
-        </div>
+      <div className="nav-margin-top"></div>
+      
+      <div css={TitleContainer}>
+        <span css={requiredTitleStyle}>동영상 링크</span>
+        <a
+          data-tooltip-id="my-tooltip"
+          data-tooltip-content="1. + 버튼을 눌러야 링크가 추가됩니다. 2. 반드시 2개 이상의 유튜브 URL을 추가해주세요."
+          data-tooltip-place="bottom"
+          css={TooltipIconContainer}
+        >
+          <IoHelpCircleOutline size="19" color="#7695FF" />
+        </a>
+          <Tooltip
+            id="my-tooltip"
+            style={{
+              width: '16rem',
+              lineHeight: '1.3',
+              backgroundColor: "rgba(0, 0, 0, 0.8)"
+            }} />
+      </div>
+
+      <div css={InputButtonContainer}>
         <input
           type="text"
           placeholder="동영상 주소를 입력해주세요."
@@ -98,27 +119,33 @@ const AddPlaylist = () => {
         />
         <button
           css={AddButton}
-          onClick={addVideoUrl}>
+          onClick={addVideoUrl}
+        >
           <IoIosAddCircleOutline size="20" />
         </button>
-        <ul css={DeleteButtonContainer}>
-          {videoUrls.map((url, index) => (
-            <li
-              key={index}
-              css={UrlStyle}>
-              {url}
-              <button
-                onClick={() => removeVideoUrl(index)}
-                css={DeleteButton}>
-                <IoIosRemove
-                  size="15"
-                  color="#D32F2F"
-                />
-              </button>
-            </li>
-          ))}
-        </ul>
       </div>
+
+      <ul css={DeleteButtonContainer}>
+        {videoUrls.map((url, index) => (
+          <li
+            key={index}
+            css={UrlStyle}
+          >
+            {url}
+            <button
+              onClick={() => removeVideoUrl(index)}
+              css={DeleteButton}
+            >
+              <IoIosRemove
+                size="15"
+                color="#D32F2F"
+              />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
       <div css={DivContainer}>
         <div css={TitleContainer}>
           <span css={requiredTitleStyle}>플레이리스트 제목</span>
@@ -132,11 +159,11 @@ const AddPlaylist = () => {
             onTitleInputHandler(e)
           }}
           css={TitleInputContainer}
-          maxLength={15}
+          maxLength={20}
         />
         <p css={firstSpanContainer}>
           <span>{titleInputCount}</span>
-          <span>/15</span>
+          <span>/20</span>
         </p>
       </div>
       <div css={DivContainer}>
@@ -148,13 +175,13 @@ const AddPlaylist = () => {
             setVideoDescription(e.target.value)
             onDescriptionInputHandler(e)
           }}
-          rows={3}
-          maxLength={30}
+          rows={5}
+          maxLength={40}
           css={textAreaContainer}
         />
         <p css={SpanContainer}>
           <span>{descriptionInputCount}</span>
-          <span>/30</span>
+          <span>/40</span>
         </p>
       </div>
       <div css={DivContainer}>
@@ -195,12 +222,22 @@ const AddPlaylist = () => {
   )
 }
 
+const InputButtonContainer = css`
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+`;
+
+const TooltipIconContainer = css`
+  margin-left: 3px;
+  cursor: pointer;
+`;
 
 const requiredTitleStyle = css`
-  &::after {
+  &::before {
     content: '*';
-    color: red;
-    margin-left: 4px;
+    color: ${theme.colors.red};
+    margin-right: 2px;
   }
 `
 const commonButtonStyle = css`
@@ -224,7 +261,8 @@ const commonInputStyle = css`
   letter-spacing: -1px;
   box-sizing: border-box;
   margin-bottom: 35px;
-`
+  `
+
 const DivContainer = css`
   position: relative;
   display: inline-block;
@@ -247,6 +285,8 @@ const TitleInputContainer = css`
   ${commonInputStyle}
 `
 const textAreaContainer = css`
+  letter-spacing: 1px;
+  padding: 8px;
   width: 390px;
   height: 100px;
   border: 1px solid ${theme.colors.grey};
@@ -282,10 +322,10 @@ const SpanContainer = css`
   font-size: ${theme.fontSize.sm};
 `
 const AddButton = css`
-  ${commonButtonStyle}
-  top: 15px;
-  right: 15px;
-  transform: translateY(50%);
+${commonButtonStyle}
+margin-left: 28.4em;
+margin-bottom: 13px; 
+transform: none;
 `
 const DeleteButtonContainer = css`
   position: relative;
