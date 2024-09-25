@@ -14,6 +14,7 @@ interface Bookmarks {
   createdAt: string
   playlistId: string
   categories: string[]
+  order: number // 일단 넣어보기 ,,
 }
 
 export const useFetchBookmarks = (playlistId: string) => {
