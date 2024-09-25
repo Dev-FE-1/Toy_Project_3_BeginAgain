@@ -1,4 +1,4 @@
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { getFirestore, doc, updateDoc } from 'firebase/firestore'
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useHeaderStore } from '@/stores/header'
@@ -12,7 +12,6 @@ import {
 } from 'react-icons/cg'
 import { GoKebabHorizontal } from 'react-icons/go'
 import { FaPencilAlt } from 'react-icons/fa'
-import Playlist from '@/components/playlist/Playlist'
 import EditPlaylistModal from '@/components/playlist/EditPlaylistModal'
 import Comment from '@/components/Comments/Comments'
 import { AnimatePresence } from 'framer-motion'
@@ -23,6 +22,8 @@ import Sortable from 'sortablejs'
 import 'dayjs/locale/ko'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { useFetchPlaylistById } from '@/hooks/useFetchPlaylistById'
+import { useDeleteVideo } from '@/hooks/useDeleteVideo'
 
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
@@ -60,32 +61,29 @@ function extractThumbnailUrl(url: string) {
 export default function PlaylistDetail({
   showComments,
   showLockIcon,
-  showEditButton
+  showEditButton,
+  isBookmarked
 }: {
   showComments?: boolean
   showLockIcon?: boolean
   showEditButton?: boolean
-  playlist?: typeof Playlist
+  isBookmarked?: boolean
 }) {
-  const setTitle = useHeaderStore(state => state.setTitle) // 제목 설정
+  const setTitle = useHeaderStore(state => state.setTitle)
   const navigate = useNavigate()
   const { id } = useParams() // URL 파라미터에서 id 추출
-  const [playlistData, setPlaylistData] = useState<any>(null)
-  const [userData, setUserData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const {
+    data: playlistData,
+    isLoading,
+    error
+  } = useFetchPlaylistById(id || '') // 플레이리스트 데이터 가져오기
+  const deleteVideo = useDeleteVideo()
+
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
-  const [videoTitles, setVideoTitles] = useState<string[]>([])
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-
-  const [clickedIndex, setClickedIndex] = useState()
-
-  // 삭제 모달 열고, 닫기
-  const openDeleteModal = index => {
-    setClickedIndex(index)
-    setIsDeleteModalOpen(true)
-  }
-  const closeDeleteModal = () => setIsDeleteModalOpen(false)
+  const [clickedIndex, setClickedIndex] = useState<number | null>(null)
+  const [videoTitles, setVideoTitles] = useState<string[]>([])
 
   const user = auth.currentUser
   const ItemRef = useRef<HTMLDivElement | null>(null)
@@ -96,28 +94,6 @@ export default function PlaylistDetail({
   useEffect(() => {
     setTitle('플레이리스트 상세보기')
   }, [setTitle])
-
-  // 플레이리스트 데이터 가져오기
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const playlistDocRef = doc(db, 'Playlists', id!)
-        const playlistSnap = await getDoc(playlistDocRef)
-
-        if (playlistSnap.exists()) {
-          setPlaylistData({ id: playlistSnap.id, ...playlistSnap.data() })
-        } else {
-          console.log('No matching document found in the Playlists collection.')
-        }
-      } catch (error) {
-        console.error('Error fetching playlist data:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [id, db])
 
   // 비디오 제목 가져오기
   useEffect(() => {
@@ -136,7 +112,6 @@ export default function PlaylistDetail({
 
       fetchTitles()
     }
-    console.log('playlistData:', playlistData)
   }, [playlistData])
 
   // 드래그 앤 드롭 기능 설정
@@ -159,7 +134,6 @@ export default function PlaylistDetail({
           await updateDoc(playlistRef, {
             urls: newUrls
           })
-          setPlaylistData({ ...playlistData, urls: newUrls }) // Update local state
         }
 
         setCurrentVideoUrl(newUrls[0] as string)
@@ -171,17 +145,31 @@ export default function PlaylistDetail({
     }
   }, [playlistData, id, db, isOwner])
 
-  const handleEditClick = () => {
-    navigate(`/edit-playlist/${playlistData.id}`, {
-      state: { playlist: playlistData }
-    })
+  // 삭제 모달 열기, 닫기
+  const openDeleteModal = (index: number) => {
+    setClickedIndex(index)
+    setIsDeleteModalOpen(true)
+  }
+  const closeDeleteModal = () => setIsDeleteModalOpen(false)
+
+  // 비디오 삭제 핸들러
+  const handleDelete = async (videoUrl: string) => {
+    try {
+      deleteVideo.mutate({
+        playlist: playlistData,
+        videoUrl
+      })
+      closeDeleteModal()
+    } catch (error) {
+      console.error('Error deleting video:', error)
+    }
   }
 
   if (isLoading) {
     return <div>로딩 중...</div>
   }
 
-  if (!playlistData || !playlistData.urls) {
+  if (error || !playlistData || !playlistData.urls) {
     return <div>플레이리스트 데이터를 가져오지 못했습니다.</div>
   }
 
@@ -208,7 +196,11 @@ export default function PlaylistDetail({
           <h2 css={titleStyle}>{playlistData.title}</h2>
           {showEditButton && (
             <FaPencilAlt
-              onClick={handleEditClick}
+              onClick={() =>
+                navigate(`/edit-playlist/${playlistData.id}`, {
+                  state: { playlist: playlistData }
+                })
+              }
               css={editButtonStyle}
             />
           )}
@@ -247,7 +239,7 @@ export default function PlaylistDetail({
       </div>
 
       <div css={sectionThreeContainer}>
-        {user && showComments ? (
+        {user && showComments && (
           <>
             <img
               src={user.photoURL || ''}
@@ -258,7 +250,7 @@ export default function PlaylistDetail({
             />
             <span>{user.displayName}</span>
           </>
-        ) : null}
+        )}
       </div>
 
       {showComments && <Comment playlistId={playlistData.id} />}
@@ -296,15 +288,15 @@ export default function PlaylistDetail({
             {!showComments && (
               <GoKebabHorizontal
                 css={iconStyle}
-                onClick={() => openDeleteModal(index)} // 삭제함수 추가 => 바텀시트로 동영상 삭제
+                onClick={() => openDeleteModal(index)} // 삭제 모달 열기
               />
             )}
             <AnimatePresence>
-              {isDeleteModalOpen && (
+              {isDeleteModalOpen && clickedIndex === index && (
                 <EditPlaylistModal
-                  targetIndex={clickedIndex}
                   closeEdit={closeDeleteModal}
                   playlist={playlistData}
+                  onDelete={() => handleDelete(url)} // 해당 비디오 삭제
                 />
               )}
             </AnimatePresence>
@@ -366,6 +358,7 @@ const buttonContainerStyle = (showLockIcon: boolean) => css`
   justify-content: ${showLockIcon ? 'space-between' : 'flex-end'};
   margin-right: 20px;
   margin-left: 20px;
+  color: ${theme.colors.charcoalGrey};
   padding: ${showLockIcon ? '10px 0 10px 0' : '0'};
   gap: ${showLockIcon ? '5px' : '0'};
 `
@@ -407,17 +400,6 @@ const timeRecordStyle = css`
   align-self: center;
 `
 
-const otherInfoStyle = css`
-  display: flex;
-  flex-direction: row;
-  margin-left: 20px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  color: ${theme.colors.darkGrey};
-  align-self: center;
-  gap: 10px;
-`
-
 const topContainerStyle = css`
   display: flex;
   flex-direction: row;
@@ -433,7 +415,7 @@ const lockStyle = css`
 `
 
 const videoContainerStyle = (showComments: boolean) => css`
-  max-height: 300px;
+  max-height: 290px;
   overflow-y: auto;
   padding-right: 15px;
   display: flex;
@@ -471,4 +453,5 @@ const dragIconStyle = css`
 const editButtonStyle = css`
   font-size: ${theme.fontSize.lg};
   cursor: pointer;
+  color: ${theme.colors.charcoalGrey};
 `

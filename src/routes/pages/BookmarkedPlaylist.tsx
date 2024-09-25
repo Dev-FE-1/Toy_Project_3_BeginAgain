@@ -6,6 +6,7 @@ export default function BookmarkedPlaylist() {
       <PlaylistDetail
         showLockIcon={false}
         showComments={false}
+        isBookmarked={true}
       />
     </div>
   )

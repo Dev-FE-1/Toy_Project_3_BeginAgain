@@ -98,7 +98,7 @@ const bgStyle = css`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
   z-index: -1;
-  opacity: 0.2;
+  opacity: 0.8;
 `
 
 const EditModalContainerStyle = css`
