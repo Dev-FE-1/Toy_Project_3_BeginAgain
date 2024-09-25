@@ -206,12 +206,12 @@ export default function PlaylistDetail({
                 {playlistData.isPublic ? (
                   <>
                     <CgLockUnlock />
-                    <span>공개</span>
+                    <span>공개 / </span>
                   </>
                 ) : (
                   <>
                     <CgLock />
-                    <span>비공개</span>
+                    <span>비공개 / </span>
                   </>
                 )}
               </div>
@@ -385,7 +385,7 @@ const profileImageStyle = css`
 `
 
 const timeRecordStyle = css`
-  color: ${theme.colors.darkGrey};
+  color: ${theme.colors.charcoalGrey};
   font-size: ${theme.fontSize.md};
   text-align: right;
   align-self: center;
