@@ -7,17 +7,29 @@ import { FaCamera } from 'react-icons/fa'
 import theme from '@/styles/theme'
 import { useHeaderStore } from '@/stores/header'
 import { getFirestore, doc, setDoc } from 'firebase/firestore'
+import TheHeader from '@/components/layouts/headers/TheHeader'
+import Modal from '@/components/common/TheModal'
+import { useNavigate } from 'react-router-dom'
+
 
 export default function EditProfile() {
   const { displayName, setDisplayName, photoURL, setPhotoURL } = useProfileStore()
   const setHeaderTitle = useHeaderStore((state) => state.setTitle)
   const [previewPhoto, setPreviewPhoto] = useState<string>(photoURL || '')
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  
 
   const auth = getAuth()
   const user = auth.currentUser
   const storage = getStorage()
   const firestore = getFirestore()
+  const navigate = useNavigate()
+
+
+  const initialDisplayName = useRef(displayName)
+  const initialPhotoURL = useRef(photoURL)
+  const [isModified, setIsModified] = useState(false)
 
   useEffect(() => {
     setHeaderTitle('프로필 수정')
@@ -28,11 +40,17 @@ export default function EditProfile() {
     }
   }, [setHeaderTitle, user, setDisplayName, setPhotoURL])
 
+  useEffect(() => {
+    setIsModified(
+      displayName !== initialDisplayName.current || photoURL !== initialPhotoURL.current
+    );
+  }, [displayName, photoURL])
+
   const handlePhotoClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click()
     }
-  }
+  };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -59,8 +77,26 @@ export default function EditProfile() {
     }
   }
 
+  const handleOpenModal = () => {
+    if (isModified) {
+      setShowConfirmModal(true)
+    } else {
+      navigate(-1)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setShowConfirmModal(false)
+  }
+
+  const handleConfirmLeave = () => {
+    setShowConfirmModal(false)
+    navigate(-1)
+  }
+
   return (
     <div css={pageStyle}>
+      <TheHeader onOpenModal={handleOpenModal} />
       <div className="nav-margin-top"></div>
       {user && (
         <>
@@ -97,6 +133,16 @@ export default function EditProfile() {
             <div css={inputText}>{user.email}</div>
           </div>
         </>
+      )}
+      
+      {showConfirmModal && (
+        <Modal
+          isOpen={showConfirmModal}
+          title="변경사항이 저장되지 않습니다."
+          description="정말 나가시겠습니까?"
+          onConfirm={handleConfirmLeave}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   )
