@@ -61,28 +61,22 @@ function extractThumbnailUrl(url: string) {
 export default function PlaylistDetail({
   showComments,
   showLockIcon,
-  showEditButton,
-  isBookmarked
+  showEditButton
 }: {
   showComments?: boolean
   showLockIcon?: boolean
   showEditButton?: boolean
-  isBookmarked?: boolean
 }) {
   const setTitle = useHeaderStore(state => state.setTitle)
   const navigate = useNavigate()
   const { id } = useParams() // URL 파라미터에서 id 추출
-  const {
-    data: playlistData,
-    isLoading,
-    error
-  } = useFetchPlaylistById(id || '') // 플레이리스트 데이터 가져오기
+  const { data: playlistData, isLoading, error } = useFetchPlaylistById(id) // 플레이리스트 데이터 가져오기
   const deleteVideo = useDeleteVideo()
 
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
   const [currentVideoUrl, setCurrentVideoUrl] = useState<string | null>(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [clickedIndex, setClickedIndex] = useState<number | null>(null)
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null)
   const [videoTitles, setVideoTitles] = useState<string[]>([])
 
   const user = auth.currentUser
@@ -146,20 +140,24 @@ export default function PlaylistDetail({
   }, [playlistData, id, db, isOwner])
 
   // 삭제 모달 열기, 닫기
-  const openDeleteModal = (index: number) => {
-    setClickedIndex(index)
+  const openDeleteModal = (url: string) => {
     setIsDeleteModalOpen(true)
+    setSelectedVideoUrl(url)
   }
-  const closeDeleteModal = () => setIsDeleteModalOpen(false)
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false)
+    setSelectedVideoUrl(null)
+  }
 
   // 비디오 삭제 핸들러
   const handleDelete = async (videoUrl: string) => {
     try {
-      deleteVideo.mutate({
+      await deleteVideo.mutateAsync({
         playlist: playlistData,
         videoUrl
       })
       closeDeleteModal()
+      // 필요한 경우 여기에 추가적인 UI 업데이트 로직을 넣을 수 있습니다
     } catch (error) {
       console.error('Error deleting video:', error)
     }
@@ -288,15 +286,18 @@ export default function PlaylistDetail({
             {!showComments && (
               <GoKebabHorizontal
                 css={iconStyle}
-                onClick={() => openDeleteModal(index)} // 삭제 모달 열기
+                onClick={() => {
+                  openDeleteModal(url) // 삭제 모달 열기
+                }}
               />
             )}
             <AnimatePresence>
-              {isDeleteModalOpen && clickedIndex === index && (
+              {isDeleteModalOpen && selectedVideoUrl === url && (
                 <EditPlaylistModal
                   closeEdit={closeDeleteModal}
                   playlist={playlistData}
-                  onDelete={() => handleDelete(url)} // 해당 비디오 삭제
+                  videoUrl={selectedVideoUrl}
+                  onDelete={() => handleDelete(selectedVideoUrl)}
                 />
               )}
             </AnimatePresence>

@@ -9,14 +9,10 @@ import { Playlist } from '@/hooks/useFetchPlaylists'
 interface PlayListProps {
   closeEdit: () => void
   playlist: Playlist
-  targetIndex?: number
+  videoUrl?: string
 }
 
-const EditPlaylist = ({
-  closeEdit,
-  playlist,
-  targetIndex = 0
-}: PlayListProps) => {
+const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
   const pageEffect = {
     hidden: {
       opacity: 0,
@@ -40,12 +36,12 @@ const EditPlaylist = ({
 
   const deleteVideo = useDeleteVideo()
 
-  const handleDelete = async (playlist: Playlist) => {
+  const handleDelete = async () => {
     try {
-      // 첫 번째 비디오 URL을 삭제
+      console.log('삭제할 비디오 URL:', videoUrl)
       deleteVideo.mutate({
         playlist,
-        videoUrl: playlist.urls[targetIndex] // 삭제할 비디오 URL (첫 번째 요소)
+        videoUrl
       })
 
       closeEdit() // 모달 닫기
@@ -78,15 +74,14 @@ const EditPlaylist = ({
             <CgClose fontSize={theme.fontSize.lg} />
           </button>
           <div css={longButtonStyle}>
-            <LongButton onClick={() => handleDelete(playlist)}>
-              동영상 삭제
-            </LongButton>
+            <LongButton onClick={handleDelete}>동영상 삭제</LongButton>
           </div>
         </div>
       </>
     </motion.div>
   )
 }
+// handleDelete(playlist)
 
 export default EditPlaylist
 
