@@ -352,6 +352,7 @@ const buttonContainerStyle = (showLockIcon: boolean) => css`
   margin-right: 20px;
   margin-left: 20px;
   padding: ${showLockIcon ? '10px 0 10px 0' : '0'};
+  gap: ${showLockIcon ? '5px' : '0'};
 `
 
 const descriptionStyle = css`
