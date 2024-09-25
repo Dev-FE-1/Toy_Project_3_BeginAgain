@@ -49,7 +49,7 @@ export const useCreateComment = () => {
         if (!user) return
         await addDoc(coll, {
           user: {
-            uid: user.uid,
+            userId: user.uid,
             displayName: user.displayName,
             photoURL: user.photoURL
           },
