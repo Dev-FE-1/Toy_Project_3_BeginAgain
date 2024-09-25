@@ -5,14 +5,19 @@ export const useInfiniteScroll = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([])
   const [lastVisible, setLastVisible] = useState<any>(null)
   const [loading, setLoading] = useState(false)
+  const [totalFetched, setTotalFetched] = useState(0)
+
+  const MAX_PLAYLISTS = 100
 
   const loadPlaylists = async () => {
+    if (totalFetched >= MAX_PLAYLISTS) return
     setLoading(true)
     const { newPlaylists, lastVisible: newLastVisible } =
       await fetchPlaylists(lastVisible)
 
     setPlaylists(prevPlaylists => [...prevPlaylists, ...newPlaylists])
     setLastVisible(newLastVisible)
+    setTotalFetched(prevCount => prevCount + newPlaylists.length)
     setLoading(false)
   }
 
@@ -23,7 +28,8 @@ export const useInfiniteScroll = () => {
       if (
         window.innerHeight + document.documentElement.scrollTop >=
           document.documentElement.offsetHeight &&
-        !loading
+        !loading &&
+        totalFetched < MAX_PLAYLISTS
       ) {
         loadPlaylists()
       }
@@ -33,7 +39,7 @@ export const useInfiniteScroll = () => {
     return () => window.removeEventListener('scroll', handleScroll)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastVisible, loading])
+  }, [lastVisible, loading, totalFetched])
 
   return { playlists, loading }
 }
