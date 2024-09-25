@@ -65,8 +65,7 @@ export default function Home() {
         selectedCategories={selectedCategories}
         onSelectCategory={setSelectedCategories}
       />
-      {/* 
-      {isLoading && <div>데이터 불러오기</div>} */}
+
       {filteredAndSortedData &&
         filteredAndSortedData.map(pl => (
           <Playlist

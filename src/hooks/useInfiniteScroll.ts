@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react'
 import { fetchPlaylists } from '../api/playlistApi'
 
-export const useInfiniteScroll = () => {
+interface Playlist {
+  id: string
+  title: string
+  isPublic: boolean
+}
+
+export const useInfiniteScroll = (isPublic: boolean) => {
   const [playlists, setPlaylists] = useState<Playlist[]>([])
   const [lastVisible, setLastVisible] = useState<any>(null)
   const [loading, setLoading] = useState(false)
@@ -11,11 +17,16 @@ export const useInfiniteScroll = () => {
 
   const loadPlaylists = async () => {
     if (totalFetched >= MAX_PLAYLISTS) return
-    setLoading(true)
-    const { newPlaylists, lastVisible: newLastVisible } =
-      await fetchPlaylists(lastVisible)
 
-    setPlaylists(prevPlaylists => [...prevPlaylists, ...newPlaylists])
+    setLoading(true)
+    const { newPlaylists, lastVisible: newLastVisible } = await fetchPlaylists(
+      lastVisible,
+      isPublic
+    )
+
+    const filteredPlaylists = newPlaylists.filter(playlist => playlist.isPublic)
+
+    setPlaylists(prevPlaylists => [...prevPlaylists, ...filteredPlaylists])
     setLastVisible(newLastVisible)
     setTotalFetched(prevCount => prevCount + newPlaylists.length)
     setLoading(false)
@@ -37,8 +48,6 @@ export const useInfiniteScroll = () => {
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastVisible, loading, totalFetched])
 
   return { playlists, loading }

@@ -2,13 +2,13 @@ import { useInfiniteScroll } from '../../hooks/useInfiniteScroll'
 import Playlist from '@/components/playlist/Playlist'
 
 const PlaylistInfiniteScroll = () => {
-  const { playlists, loading } = useInfiniteScroll()
+  const { playlists, loading } = useInfiniteScroll(true)
 
   return (
     <div>
       {playlists.map(playlist => (
         <Playlist
-          key={playlist.userId}
+          key={playlist.id}
           playlist={playlist}
         />
       ))}

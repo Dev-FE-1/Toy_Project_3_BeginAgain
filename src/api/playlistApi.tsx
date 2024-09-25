@@ -12,6 +12,7 @@ const ITEMS_PER_PAGE = 10
 
 export const fetchPlaylists = async (lastVisible: any) => {
   const playlistsRef = collection(db, 'Playlists')
+
   let q = query(playlistsRef, orderBy('createdAt'), limit(ITEMS_PER_PAGE))
 
   if (lastVisible) {
