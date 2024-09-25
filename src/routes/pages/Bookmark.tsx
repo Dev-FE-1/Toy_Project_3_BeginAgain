@@ -48,7 +48,7 @@ const Bookmark = () => {
   useEffect(() => {
     if (!ItemRef.current) return
     new Sortable(ItemRef.current, {
-      handle: '.drag-handle',
+      handle: '.handle',
       animation: 0,
       forceFallback: false,
       onEnd: event => {
