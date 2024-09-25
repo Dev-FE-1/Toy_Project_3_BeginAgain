@@ -1,41 +1,55 @@
-import { useEffect, useRef } from 'react'
-import { getAuth } from "firebase/auth"
-import { useHeaderStore } from '@/stores/header'
+import { useState, useRef, useEffect } from 'react'
+import { getAuth, updateProfile } from 'firebase/auth'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { useProfileStore } from '@/stores/editProfile'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
 
 export default function EditProfile() {
-  const setTitle = useHeaderStore(state => state.setTitle)
-  const displayName = useProfileStore(state => state.displayName)
-  const setDisplayName = useProfileStore(state => state.setDisplayName)
-  const photoURL = useProfileStore(state => state.photoURL)
-  const setPhotoURL = useProfileStore(state => state.setPhotoURL)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [previewPhoto, setPreviewPhoto] = useState<string>('')
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+
   const auth = getAuth()
   const user = auth.currentUser
+  const storage = getStorage()
+
+  const setTitle = useProfileStore((state) => state.setTitle)
+  const displayName = useProfileStore((state) => state.displayName)
+  const setDisplayName = useProfileStore((state) => state.setDisplayName)
+  const photoURL = useProfileStore((state) => state.photoURL)
+  const setPhotoURL = useProfileStore((state) => state.setPhotoURL)
 
   useEffect(() => {
     setTitle('프로필 수정')
     if (user) {
       setDisplayName(user.displayName || '')
       setPhotoURL(user.photoURL || '')
+      setPreviewPhoto(user.photoURL || '')
     }
   }, [setTitle, user, setDisplayName, setPhotoURL])
 
-  const onChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPhotoURL(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+  const handlePhotoClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click()
     }
   }
 
-  const handleImageClick = () => {
-    fileInputRef.current?.click()
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && user) {
+      const newPhotoURL = URL.createObjectURL(file)
+      setPreviewPhoto(newPhotoURL)
+
+      try {
+        const storageRef = ref(storage, `profile_images/${user.uid}`)
+        await uploadBytes(storageRef, file)
+        const downloadURL = await getDownloadURL(storageRef)
+        await updateProfile(user, { photoURL: downloadURL })
+        setPhotoURL(downloadURL)
+      } catch (error) {
+        console.error('사진 업로드 실패:', error)
+      }
+    }
   }
 
   return (
@@ -44,17 +58,17 @@ export default function EditProfile() {
       {user && (
         <>
           <img
-            src={photoURL || ''}
-            alt={displayName || ''}
+            src={previewPhoto || photoURL}
+            alt="프로필 사진"
             css={profileStyle}
-            onClick={handleImageClick}
+            onClick={handlePhotoClick}
           />
           <input
-            ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={onChangeImage}
-            css={hiddenInputStyle}
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            css={fileInputStyle}
           />
           <div css={textStyle}>
             <div css={titleText}>닉네임</div>
@@ -82,34 +96,32 @@ const pageStyle = css`
   justify-content: center;
   align-items: center;
   gap: 10px;
-`
+`;
 
 const profileStyle = css`
   width: 130px;
-  height: 130px;
   margin-top: 40px;
   border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
-`
+  cursor: pointer; 
+`;
 
-const hiddenInputStyle = css`
-  display: none;
-`
+const fileInputStyle = css`
+  display: none; 
+`;
 
 const textStyle = css`
   margin-top: 3rem;
-  border-bottom: 2px solid #ebebeb;
+  border-bottom: 2px solid #EBEBEB;
   font-size: ${theme.fontSize.md};
   height: 50px;
   width: 24.5em;
   padding-left: 3px;
-`
+`;
 
 const titleText = css`
   color: ${theme.colors.black};
   margin-bottom: 10px;
-`
+`;
 
 const inputStyle = css`
   padding: 10px;
@@ -117,8 +129,8 @@ const inputStyle = css`
   width: 100%;
   border: 1px solid ${theme.colors.grey};
   border-radius: 4px;
-`
+`;
 
 const inputText = css`
   color: ${theme.colors.grey};
-`
+`;
