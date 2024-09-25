@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useDeletePlaylist } from '@/hooks/useDeletePlaylist'
 import { CgTrash, CgLock, CgLockUnlock } from 'react-icons/cg'
-import Toast from '@/components/common/Toast'
 import Modal from '@/components/common/TheModal'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -23,21 +22,25 @@ interface PlayList {
   createdAt: string
 }
 
-export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
+export default function SavedPlaylists({
+  playlist,
+  onDelete
+}: {
+  playlist: PlayList
+  onDelete: () => void
+}) {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isToastVisible, setIsToastVisible] = useState(false)
   const { mutate: deletePlayList } = useDeletePlaylist()
 
   const handleDelete = () => {
     deletePlayList(playlist)
     setIsModalOpen(false)
-    setIsToastVisible(true)
+    onDelete()
   }
 
   const handleCloseModal = () => {
     setIsModalOpen(false)
-    setIsToastVisible(false)
   }
 
   function extractVideoId(url: string) {
@@ -87,14 +90,6 @@ export default function SavedPlaylists({ playlist }: { playlist: PlayList }) {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           onDelete={handleDelete}
-        />
-      )}
-
-      {isToastVisible && (
-        <Toast
-          message="플레이리스트가 삭제되었습니다."
-          isVisible={isToastVisible}
-          onHide={() => setIsToastVisible(false)}
         />
       )}
     </>

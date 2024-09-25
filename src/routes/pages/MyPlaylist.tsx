@@ -2,13 +2,15 @@ import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
 import { useHeaderStore } from '@/stores/header'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { auth } from '@/api/firebaseApp'
 import SavedPlaylists from '@/routes/pages/SavedPlaylists'
 import { css } from '@emotion/react'
+import Toast from '@/components/common/Toast'
 
 const MyPlaylist = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
+  const [isToastVisible, setIsToastVisible] = useState(false)
 
   useEffect(() => {
     setTitle('플레이리스트')
@@ -24,6 +26,10 @@ const MyPlaylist = () => {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
 
+  const handleDeleteToast = () => {
+    setIsToastVisible(true)
+  }
+
   return (
     <>
       <main>
@@ -36,6 +42,7 @@ const MyPlaylist = () => {
             <SavedPlaylists
               key={pl.id}
               playlist={pl}
+              onDelete={handleDeleteToast}
             />
           ))
         ) : (
@@ -46,6 +53,12 @@ const MyPlaylist = () => {
             />
           </div>
         )}
+        <Toast
+          message="플레이리스트가 삭제되었습니다."
+          isVisible={isToastVisible}
+          onHide={() => setIsToastVisible(false)}
+        />
+
         <div className="nav-margin-bottom"></div>
       </main>
     </>

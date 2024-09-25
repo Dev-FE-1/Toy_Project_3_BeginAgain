@@ -17,7 +17,6 @@ interface Playlist {
 }
 
 function extractVideoId(url: string) {
-  // console.log('extractVideoId', url)
   url = url.split('&')[0]
   return url.replace('https://www.youtube.com/watch?v=', '')
 }
@@ -50,7 +49,8 @@ const BookmarkItem = ({
         <div css={leftSectionStyle}>
           <CgFormatJustify
             css={hamburgerIconStyle}
-            className="drag-handle"
+            className="handle"
+            // style={{ cursor: 'grab', borderRadius: '8px' }}
           />
         </div>
         <img
