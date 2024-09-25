@@ -78,8 +78,13 @@ export default function PlaylistDetail({
   const [videoTitles, setVideoTitles] = useState<string[]>([])
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
+  const [clickedIndex, setClickedIndex] = useState()
+
   // 삭제 모달 열고, 닫기
-  const openDeleteModal = () => setIsDeleteModalOpen(true)
+  const openDeleteModal = index => {
+    setClickedIndex(index)
+    setIsDeleteModalOpen(true)
+  }
   const closeDeleteModal = () => setIsDeleteModalOpen(false)
 
   const user = auth.currentUser
@@ -291,12 +296,13 @@ export default function PlaylistDetail({
             {!showComments && (
               <GoKebabHorizontal
                 css={iconStyle}
-                onClick={openDeleteModal} // 삭제함수 추가 => 바텀시트로 동영상 삭제
+                onClick={() => openDeleteModal(index)} // 삭제함수 추가 => 바텀시트로 동영상 삭제
               />
             )}
             <AnimatePresence>
               {isDeleteModalOpen && (
                 <EditPlaylistModal
+                  targetIndex={clickedIndex}
                   closeEdit={closeDeleteModal}
                   playlist={playlistData}
                 />
@@ -438,7 +444,7 @@ const videoContainerStyle = (showComments: boolean) => css`
   gap: 5px;
   margin: ${showComments ? '0 20px 0 20px' : '10px 0'};
   object-fix: cover;
-  overflow: hidden;
+  overflow: scroll;
 `
 
 const videoInfoLayoutStyle = (showComments: boolean) => css`

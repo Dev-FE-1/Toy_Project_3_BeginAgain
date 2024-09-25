@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getFirestore, doc, updateDoc, arrayRemove } from 'firebase/firestore'
 import { auth } from '@/api/firebaseApp'
 import { useExtractVideoId } from '@/hooks/useExtractVideoId'
+import Playlist from '@/components/playlist/Playlist'
 
 export interface Playlist {
   id: string
@@ -48,8 +49,8 @@ export const useDeleteVideo = () => {
         }
       }
     },
-    onSuccess() {
-      // Playlists 쿼리를 무효화하여 삭제 후 데이터를 새로고침
+    onSuccess: () => {
+      // 전체 Playlists 컬렉션을 무효화하여 모든 플레이리스트 데이터를 다시 가져오기
       queryClient.invalidateQueries({ queryKey: ['Playlists'] })
     },
     onError(error) {

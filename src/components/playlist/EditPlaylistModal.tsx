@@ -1,17 +1,22 @@
 import { css } from '@emotion/react'
 import { motion } from 'framer-motion'
-import { Playlist } from '@/hooks/useFetchPlaylist'
 import { CgClose } from 'react-icons/cg'
 import theme from '@/styles/theme'
 import LongButton from '@/components/common/LongButton'
 import { useDeleteVideo } from '@/hooks/useDeleteVideo'
+import { Playlist } from '@/hooks/useFetchPlaylists'
 
 interface PlayListProps {
   closeEdit: () => void
-  playlist: Playlist // 부모 컴포넌트로부터 playlist 전달 받음
+  playlist: Playlist
+  targetIndex?: number
 }
 
-const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
+const EditPlaylist = ({
+  closeEdit,
+  playlist,
+  targetIndex = 0
+}: PlayListProps) => {
   const pageEffect = {
     hidden: {
       opacity: 0,
@@ -36,15 +41,11 @@ const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
   const deleteVideo = useDeleteVideo()
 
   const handleDelete = async (playlist: Playlist) => {
-    if (!playlist || !playlist.urls || playlist.urls.length === 0) {
-      return
-    }
-
     try {
       // 첫 번째 비디오 URL을 삭제
       deleteVideo.mutate({
         playlist,
-        videoUrl: playlist.urls[0] // 삭제할 비디오 URL (첫 번째 요소)
+        videoUrl: playlist.urls[targetIndex] // 삭제할 비디오 URL (첫 번째 요소)
       })
 
       closeEdit() // 모달 닫기
@@ -97,6 +98,7 @@ const bgStyle = css`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
   z-index: -1;
+  opacity: 0.2;
 `
 
 const EditModalContainerStyle = css`
