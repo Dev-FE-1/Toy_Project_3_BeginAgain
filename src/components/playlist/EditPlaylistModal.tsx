@@ -1,17 +1,18 @@
 import { css } from '@emotion/react'
 import { motion } from 'framer-motion'
-import { Playlist } from '@/hooks/useFetchPlaylist'
 import { CgClose } from 'react-icons/cg'
 import theme from '@/styles/theme'
 import LongButton from '@/components/common/LongButton'
 import { useDeleteVideo } from '@/hooks/useDeleteVideo'
+import { Playlist } from '@/hooks/useFetchPlaylists'
 
 interface PlayListProps {
   closeEdit: () => void
-  playlist: Playlist // 부모 컴포넌트로부터 playlist 전달 받음
+  playlist: Playlist
+  videoUrl?: string
 }
 
-const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
+const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
   const pageEffect = {
     hidden: {
       opacity: 0,
@@ -35,16 +36,12 @@ const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
 
   const deleteVideo = useDeleteVideo()
 
-  const handleDelete = async (playlist: Playlist) => {
-    if (!playlist || !playlist.urls || playlist.urls.length === 0) {
-      return
-    }
-
+  const handleDelete = async () => {
     try {
-      // 첫 번째 비디오 URL을 삭제
+      console.log('삭제할 비디오 URL:', videoUrl)
       deleteVideo.mutate({
         playlist,
-        videoUrl: playlist.urls[0] // 삭제할 비디오 URL (첫 번째 요소)
+        videoUrl
       })
 
       closeEdit() // 모달 닫기
@@ -77,15 +74,14 @@ const EditPlaylist = ({ closeEdit, playlist }: PlayListProps) => {
             <CgClose fontSize={theme.fontSize.lg} />
           </button>
           <div css={longButtonStyle}>
-            <LongButton onClick={() => handleDelete(playlist)}>
-              동영상 삭제
-            </LongButton>
+            <LongButton onClick={handleDelete}>동영상 삭제</LongButton>
           </div>
         </div>
       </>
     </motion.div>
   )
 }
+// handleDelete(playlist)
 
 export default EditPlaylist
 
@@ -97,6 +93,7 @@ const bgStyle = css`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
   z-index: -1;
+  opacity: 0.8;
 `
 
 const EditModalContainerStyle = css`
