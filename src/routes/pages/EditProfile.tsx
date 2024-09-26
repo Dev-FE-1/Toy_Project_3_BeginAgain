@@ -158,23 +158,24 @@ const pageStyle = css`
 
 const profileContainerStyle = css`
   position: relative;
-  width: 130px;
   margin-top: 40px;
 `;
 
 const profileStyle = css`
-  width: 100%;
+  height:150px;
+  width: 150px;
   border-radius: 50%;
+  object-fit: cover;
   cursor: pointer; 
 `;
 
 const iconStyle = css`
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 0px;
+  right: 8px;
   background-color: rgba(0, 0, 0, 0.6);
   border-radius: 50%;
-  padding: 6px;
+  padding: 5px;
   cursor: pointer;
   color: white;
 `;
