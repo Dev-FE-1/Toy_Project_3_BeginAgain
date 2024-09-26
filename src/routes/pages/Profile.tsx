@@ -84,9 +84,11 @@ const pageStyle = css`
   gap: 10px;
 `
 const profileStyle = css`
-  width: 130px;
+  height:150px;
+  width: 150px;
   margin-top: 40px;
   border-radius: 50%;
+  object-fit:cover;
 `
 const textStyle = css`
   margin-top: 3rem;

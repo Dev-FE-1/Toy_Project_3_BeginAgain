@@ -16,7 +16,7 @@ export default function TheHeader({ onOpenModal }: TheHeaderProps) {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const { isDone, savePlaylist, isPublic } = useAddPlaylistStore()
+  const { isDone, savePlaylist } = useAddPlaylistStore()
   const { saveProfile } = useProfileStore()
 
   const isAddPlaylist = location.pathname === '/add-playlist'
@@ -36,11 +36,12 @@ export default function TheHeader({ onOpenModal }: TheHeaderProps) {
   const handleComplete = async () => {
     try {
       await savePlaylist()
-      navigate(isPublic ? '/' : '/')
+      navigate('/my-playlist', { state: { showToast: true } })
     } catch (error) {
       console.error('Failed to save:', error)
     }
   }
+  
 
   return (
     <header css={headerStyle}>
@@ -58,8 +59,7 @@ export default function TheHeader({ onOpenModal }: TheHeaderProps) {
       {isAddPlaylist && (
         <button
           css={successBtn(isDone)}
-          onClick={isDone ? handleComplete : undefined}
-          disabled={!isDone}
+          onClick={handleComplete}
         >
           완료
         </button>

@@ -11,11 +11,23 @@ import { useFetchComments } from '@/hooks/useFetchComments'
 import { css } from '@emotion/react'
 import { FaRegBookmark, FaBookmark } from 'react-icons/fa6'
 
+export type PlaylistType = {
+  id: string
+  title: string
+  urls: string[]
+  createdAt: string
+  userId: string
+  categories: string[]
+  isPublic: boolean
+  description: string
+}
+
 export default function Playlist({
   playlist
 }: {
-  playlist: Playlist | undefined
-  userId: string
+  playlist: PlaylistType
+  userId?: string
+  onClick: () => void
 }) {
   const navigate = useNavigate()
   const {
