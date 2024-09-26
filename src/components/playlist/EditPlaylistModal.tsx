@@ -37,7 +37,7 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
   const overlayEffect = {
     hidden: { opacity: 0 },
     visible: {
-      opacity: 0.5, // 배경을 어둡게 설정
+      opacity: 0.5,
       transition: { duration: 0.3 }
     },
     exit: {
@@ -56,7 +56,7 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
         videoUrl: videoUrl ?? ''
       })
 
-      closeEdit() // 모달 닫기
+      closeEdit()
     } catch (error) {
       console.error('Error deleting video:', error)
     }
@@ -64,7 +64,6 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
 
   return (
     <>
-      {/* 어두운 배경 */}
       <motion.div
         initial="hidden"
         animate="visible"
@@ -76,11 +75,10 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // 어두운 배경 색상
-          zIndex: 2 // 모달 뒤에 어두운 배경이 오도록 설정
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 2
         }}
       />
-      {/* 모달 */}
       <motion.div
         className="editPage"
         initial="hidden"
@@ -90,12 +88,10 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
         style={{
           position: 'fixed',
           bottom: 0,
-          left: '27.8%',
-          transform: 'translateX(-50%)',
-          width: '430px',
-          maxWidth: '100%',
-          height: '200px',
-          zIndex: 3 // 모달은 배경 위에 표시되도록 설정
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 3
         }}>
         <div css={EditModalContainerStyle}>
           <button
@@ -115,24 +111,33 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
 export default EditPlaylist
 
 const EditModalContainerStyle = css`
-  height: 100%;
-  width: 100%;
-  background-color: ${theme.colors.white};
+  background: white;
+  padding: 20px;
+  border-radius: 35px 35px 0 0;
+  width: 430px;
+  max-width: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-height: calc(100vh - 426px);
+  overflow-y: auto;
+  position: fixed;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 200px;
+  z-index: 3;
   display: flex;
   flex-direction: column;
-  border-radius: 35px 35px 0 0;
-  padding: 20px;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
 `
 
 const cancelButtonStyle = css`
-  width: 24px;
-  height: 24px;
   position: absolute;
   top: 20px;
   left: 20px;
+  width: 24px;
+  height: 24px;
   border: none;
   background-color: transparent;
   cursor: pointer;
