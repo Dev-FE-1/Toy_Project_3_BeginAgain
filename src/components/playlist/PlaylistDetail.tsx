@@ -24,6 +24,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useFetchPlaylistById } from '@/hooks/useFetchPlaylistById'
 import { useDeleteVideo } from '@/hooks/useDeleteVideo'
+import { useFetchUserId } from '@/hooks/useFetchUserId'
 
 dayjs.locale('ko')
 dayjs.extend(relativeTime)
@@ -73,6 +74,12 @@ export default function PlaylistDetail({
   const navigate = useNavigate()
   const { id } = useParams() // URL 파라미터에서 id 추출
   const { data: playlistData, isLoading, error } = useFetchPlaylistById(id) // 플레이리스트 데이터 가져오기
+  // playlistData.userId를 기반으로 해당 유저의 정보를 가져옴
+  const {
+    data: userData,
+    isLoading: isUserLoading,
+    error: userError
+  } = useFetchUserId(playlistData?.userId)
   const deleteVideo = useDeleteVideo()
 
   const [isDescriptionVisible, setIsDescriptionVisible] = useState(false)
@@ -239,16 +246,16 @@ export default function PlaylistDetail({
       </div>
 
       <div css={sectionThreeContainer}>
-        {user && showComments && (
+        {userData && showComments && (
           <>
             <img
-              src={user.photoURL || ''}
-              alt={user.displayName || 'User'}
+              src={userData.photoURL || ''}
+              alt={userData.displayName || 'User'}
               width="50"
               height="50"
               css={profileImageStyle}
             />
-            <span>{user.displayName}</span>
+            <span>{userData.displayName}</span>
           </>
         )}
       </div>

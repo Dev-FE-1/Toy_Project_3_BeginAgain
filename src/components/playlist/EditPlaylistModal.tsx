@@ -16,21 +16,33 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
   const pageEffect = {
     hidden: {
       opacity: 0,
-      y: '100vh'
+      transform: 'translateY(100%)'
     },
     visible: {
       opacity: 1,
-      y: 0,
+      transform: 'translateY(0%)',
       transition: {
-        duration: 0.5
+        duration: 0.3
       }
     },
     exit: {
       opacity: 0,
-      y: '100vh',
+      transform: 'translateY(100%)',
       transition: {
-        duration: 1
+        duration: 0.3
       }
+    }
+  }
+
+  const overlayEffect = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 0.5, // 배경을 어둡게 설정
+      transition: { duration: 0.3 }
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: 0.3 }
     }
   }
 
@@ -41,7 +53,7 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
       console.log('삭제할 비디오 URL:', videoUrl)
       deleteVideo.mutate({
         playlist,
-        videoUrl
+        videoUrl: videoUrl ?? ''
       })
 
       closeEdit() // 모달 닫기
@@ -51,22 +63,40 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
   }
 
   return (
-    <motion.div
-      className="editPage"
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      variants={pageEffect}
-      style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        width: '100%',
-        height: '200px',
-        zIndex: 3
-      }}>
-      <>
-        <div css={bgStyle}></div>
+    <>
+      {/* 어두운 배경 */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={overlayEffect}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', // 어두운 배경 색상
+          zIndex: 2 // 모달 뒤에 어두운 배경이 오도록 설정
+        }}
+      />
+      {/* 모달 */}
+      <motion.div
+        className="editPage"
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={pageEffect}
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: '27.8%',
+          transform: 'translateX(-50%)',
+          width: '430px',
+          maxWidth: '100%',
+          height: '200px',
+          zIndex: 3 // 모달은 배경 위에 표시되도록 설정
+        }}>
         <div css={EditModalContainerStyle}>
           <button
             css={cancelButtonStyle}
@@ -77,28 +107,16 @@ const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
             <LongButton onClick={handleDelete}>동영상 삭제</LongButton>
           </div>
         </div>
-      </>
-    </motion.div>
+      </motion.div>
+    </>
   )
 }
-// handleDelete(playlist)
 
 export default EditPlaylist
 
-const bgStyle = css`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: -1;
-  opacity: 0.8;
-`
-
 const EditModalContainerStyle = css`
   height: 100%;
-  width: 430px;
+  width: 100%;
   background-color: ${theme.colors.white};
   display: flex;
   flex-direction: column;
@@ -106,6 +124,7 @@ const EditModalContainerStyle = css`
   padding: 20px;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
 `
 
 const cancelButtonStyle = css`
