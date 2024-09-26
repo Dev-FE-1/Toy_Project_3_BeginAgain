@@ -19,16 +19,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onDelete }) => {
           `}>
           선택한 북마크 해제하시겠습니까?
         </p>
-        <p
+
+        <div
           css={css`
             font-size: ${theme.fontSize.md};
             font-weight: ${theme.fontWeight.thin};
             padding-top: 10px;
           `}>
-          해제하면 북마크 리스트에서 사라지지만,
-          <div />
-          추후 다시 리스트에 담을 수 있습니다.
-        </p>
+          해제하면 북마크 리스트에서 사라지지만, 추후 다시 리스트에 담을 수
+          있습니다.
+        </div>
 
         <div css={buttonContainerStyle}>
           <button

@@ -3,7 +3,7 @@ import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
 import BookmarkItem from '@/components/bookmarks/BookmarkItem'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
-import { useFetchUserBookmark } from '@/hooks/useFetchUserBookmark'
+import { useFetchUserBookmark } from '@/hooks/useFetchUserBookmark' // 북마크 훅 임포트
 import { useHeaderStore } from '@/stores/header'
 import { css } from '@emotion/react'
 import Sortable from 'sortablejs'
@@ -12,7 +12,7 @@ import Toast from '@/components/common/Toast'
 const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { data: Playlists } = useFetchPlaylists()
-  const { data: Bookmarks } = useFetchUserBookmark()
+  const { data: bookmarkMap } = useFetchUserBookmark() // useFetchUserBookmark에서 가져온 데이터는 이제 Map입니다
   const ItemRef = useRef<HTMLDivElement | null>(null)
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
@@ -40,10 +40,30 @@ const Bookmark = () => {
         )
       : Playlists
 
-  // 북마크된 플레이리스트만 필터링
-  const filteredPlaylists = filteredData?.filter(pl =>
-    Bookmarks?.includes(pl.id)
-  )
+  const filteredPlaylists = filteredData
+    ?.filter(pl => bookmarkMap?.has(pl.id))
+    ?.sort((a, b) => {
+      const bookmarkATimestamp = bookmarkMap?.get(a.id)
+      const bookmarkBTimestamp = bookmarkMap?.get(b.id)
+
+      console.log(
+        'bookmarkA Timestamp:',
+        bookmarkATimestamp,
+        'for playlist ID:',
+        a.id
+      )
+      console.log(
+        'bookmarkB Timestamp:',
+        bookmarkBTimestamp,
+        'for playlist ID:',
+        b.id
+      )
+
+      return (
+        new Date(bookmarkBTimestamp).getTime() -
+        new Date(bookmarkATimestamp).getTime()
+      )
+    })
 
   useEffect(() => {
     if (!ItemRef.current) return
@@ -68,7 +88,7 @@ const Bookmark = () => {
   }
 
   return (
-    <main>
+    <>
       <div className="nav-margin-top"></div>
       <div css={categoryMarginStyle}>
         <Category
@@ -100,7 +120,7 @@ const Bookmark = () => {
         onHide={() => setIsToastVisible(false)}
       />
       <div className="nav-margin-bottom"></div>
-    </main>
+    </>
   )
 }
 
