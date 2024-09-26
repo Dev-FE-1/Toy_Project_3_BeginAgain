@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useCreateComment } from '@/hooks/useCreateComment'
 import { useDeleteComment } from '@/hooks/useDeleteComment'
 import type { Comment } from '@/hooks/useFetchComments'
@@ -45,81 +46,136 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     deleteComment({ commentId, playlistId })
   }
 
+  // 페이지 애니메이션 효과
+  const pageEffect = {
+    hidden: {
+      opacity: 0,
+      y: '100vh'
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5
+      }
+    },
+    exit: {
+      opacity: 0,
+      y: '100vh',
+      transition: {
+        duration: 1
+      }
+    }
+  }
+
+  // 배경 애니메이션 효과
+  const overlayEffect = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 0.5,
+      transition: { duration: 0.3 }
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: 0.6 }
+    }
+  }
+
   return (
-    <div css={modalOverlayStyle}>
-      <div css={modalContainerStyle}>
-        <div css={headerContainerStyle}>
-          <CgClose
-            onClick={onClose}
-            css={closeButtonStyle}
-          />
-          <h1 css={modalTitleStyle}>댓글</h1>
-        </div>
-        <hr css={dividerStyle} />
-        <div css={commentsContainerStyle}>
-          {comments.length === 0 ? (
-            <p css={noCommentsStyle}>
-              아직 댓글이 없습니다. 첫 댓글을 남겨보세요.
-            </p>
-          ) : (
-            comments.map(comment => (
-              <div
-                key={comment.id}
-                css={commentItemStyle}>
-                <img
-                  src={comment.user.photoURL || '/default-profile.png'}
-                  alt={comment.user.displayName || 'User'}
-                  css={profileImageStyle}
-                />
-                <span css={usernameStyle}>{comment.user.displayName}</span>
-
-                <div css={commentContentStyle}>
-                  <p>{comment.content}</p>
-                </div>
-
-                {comment.user.uid === userId && (
-                  <CgTrash
-                    onClick={() => handleCommentDelete(comment.id)}
-                    css={deleteButtonStyle}
+    <AnimatePresence>
+      {/* 어두운 배경 */}
+      <motion.div
+        className="modalOverlay"
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={overlayEffect}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 2
+        }}
+      />
+      {/* 모달 */}
+      <motion.div
+        className="commentsModal"
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={pageEffect}
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 3
+        }}>
+        <div css={modalContainerStyle}>
+          <div css={headerContainerStyle}>
+            <CgClose
+              onClick={onClose}
+              css={closeButtonStyle}
+            />
+            <h1 css={modalTitleStyle}>댓글</h1>
+          </div>
+          <hr css={dividerStyle} />
+          <div css={commentsContainerStyle}>
+            {comments.length === 0 ? (
+              <p css={noCommentsStyle}>
+                아직 댓글이 없습니다. 첫 댓글을 남겨보세요.
+              </p>
+            ) : (
+              comments.map(comment => (
+                <div
+                  key={comment.id}
+                  css={commentItemStyle}>
+                  <img
+                    src={comment.user.photoURL || '/default-profile.png'}
+                    alt={comment.user.displayName || 'User'}
+                    css={profileImageStyle}
                   />
-                )}
-              </div>
-            ))
-          )}
+                  <span css={usernameStyle}>{comment.user.displayName}</span>
+
+                  <div css={commentContentStyle}>
+                    <p>{comment.content}</p>
+                  </div>
+
+                  {comment.user.uid === userId && (
+                    <CgTrash
+                      onClick={() => handleCommentDelete(comment.id)}
+                      css={deleteButtonStyle}
+                    />
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+          <div css={inputContainerStyle}>
+            <input
+              type="text"
+              value={comment}
+              onChange={handleCommentChange}
+              placeholder="댓글을 입력해 주세요."
+              css={inputStyle}
+            />
+            <button
+              onClick={handleCommentSubmit}
+              css={submitButtonStyle}>
+              전송
+            </button>
+          </div>
         </div>
-        <div css={inputContainerStyle}>
-          <input
-            type="text"
-            value={comment}
-            onChange={handleCommentChange}
-            placeholder="댓글을 입력해 주세요."
-            css={inputStyle}
-          />
-          <button
-            onClick={handleCommentSubmit}
-            css={submitButtonStyle}>
-            전송
-          </button>
-        </div>
-      </div>
-    </div>
+      </motion.div>
+    </AnimatePresence>
   )
 }
 
 export default CommentsModal
-
-const modalOverlayStyle = css`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 3;
-`
 
 const modalContainerStyle = css`
   background: white;
@@ -136,7 +192,9 @@ const modalContainerStyle = css`
   left: 50%;
   transform: translateX(-50%);
   height: 100%;
+  z-index: 3;
 `
+
 const headerContainerStyle = css`
   display: flex;
   justify-content: space-between;
@@ -144,6 +202,7 @@ const headerContainerStyle = css`
   margin-bottom: 10px;
   margin-top: 10px;
 `
+
 const modalTitleStyle = css`
   font-size: ${theme.fontSize.lg};
   font-weight: ${theme.fontWeight.semiBold};
@@ -175,10 +234,9 @@ const commentContentStyle = css`
   flex: 1;
   display: block;
   padding-right: 40px;
-  text-align: left;pl
-
-
+  text-align: left;
 `
+
 const commentItemStyle = css`
   display: flex;
   align-items: center;
@@ -188,6 +246,9 @@ const commentItemStyle = css`
   align-items: center;
   gap: 15px;
   margin-top: 20px;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
 `
 
 const profileImageStyle = css`
@@ -249,12 +310,4 @@ const deleteButtonStyle = css`
   right: 0;
   width: 18px;
   height: 18px;
-  border: none;
-  background-color: transparent;
-  color: ${theme.colors.charcoalGrey};
-  cursor: pointer;
-
-  &:hover {
-    color: ${theme.colors.lightBlue};
-  }
 `
