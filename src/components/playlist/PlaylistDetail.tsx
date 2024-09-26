@@ -61,11 +61,13 @@ function extractThumbnailUrl(url: string) {
 export default function PlaylistDetail({
   showComments,
   showLockIcon,
-  showEditButton
+  showEditButton,
+  isBookmarked
 }: {
   showComments?: boolean
   showLockIcon?: boolean
   showEditButton?: boolean
+  isBookmarked?: boolean
 }) {
   const setTitle = useHeaderStore(state => state.setTitle)
   const navigate = useNavigate()
@@ -265,7 +267,7 @@ export default function PlaylistDetail({
           <div
             key={url}
             css={videoInfoLayoutStyle(isOwner)}>
-            {!showComments && (
+            {!showComments && !isBookmarked && (
               <CgFormatJustify
                 css={dragIconStyle}
                 className="handle"
@@ -283,7 +285,7 @@ export default function PlaylistDetail({
             <span css={videoTitleStyle(isOwner)}>
               {videoTitles[index] || '제목 로딩 중...'}
             </span>
-            {!showComments && (
+            {!showComments && !isBookmarked && (
               <GoKebabHorizontal
                 css={iconStyle}
                 onClick={() => {
