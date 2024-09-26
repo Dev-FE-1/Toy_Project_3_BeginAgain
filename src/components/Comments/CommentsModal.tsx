@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCreateComment } from '@/hooks/useCreateComment'
 import { useDeleteComment } from '@/hooks/useDeleteComment'
@@ -25,6 +25,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   userId
 }) => {
   const [comment, setComment] = useState('')
+  const [isVisible, setIsVisible] = useState(true)
   const { mutate: createComment } = useCreateComment()
   const { mutate: deleteComment } = useDeleteComment()
 
@@ -46,7 +47,11 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     deleteComment({ commentId, playlistId })
   }
 
-  // 페이지 애니메이션 효과
+  const handleClose = () => {
+    setIsVisible(false)
+    setTimeout(onClose, 500)
+  }
+
   const pageEffect = {
     hidden: {
       opacity: 0,
@@ -63,12 +68,11 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
       opacity: 0,
       y: '100vh',
       transition: {
-        duration: 1
+        duration: 0.5
       }
     }
   }
 
-  // 배경 애니메이션 효과
   const overlayEffect = {
     hidden: { opacity: 0 },
     visible: {
@@ -77,100 +81,104 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     },
     exit: {
       opacity: 0,
-      transition: { duration: 0.6 }
+      transition: { duration: 0.3 }
     }
   }
 
   return (
     <AnimatePresence>
-      {/* 어두운 배경 */}
-      <motion.div
-        className="modalOverlay"
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        variants={overlayEffect}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 2
-        }}
-      />
-      {/* 모달 */}
-      <motion.div
-        className="commentsModal"
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        variants={pageEffect}
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 3
-        }}>
-        <div css={modalContainerStyle}>
-          <div css={headerContainerStyle}>
-            <CgClose
-              onClick={onClose}
-              css={closeButtonStyle}
-            />
-            <h1 css={modalTitleStyle}>댓글</h1>
-          </div>
-          <hr css={dividerStyle} />
-          <div css={commentsContainerStyle}>
-            {comments.length === 0 ? (
-              <p css={noCommentsStyle}>
-                아직 댓글이 없습니다. 첫 댓글을 남겨보세요.
-              </p>
-            ) : (
-              comments.map(comment => (
-                <div
-                  key={comment.id}
-                  css={commentItemStyle}>
-                  <img
-                    src={comment.user.photoURL || '/default-profile.png'}
-                    alt={comment.user.displayName || 'User'}
-                    css={profileImageStyle}
-                  />
-                  <span css={usernameStyle}>{comment.user.displayName}</span>
+      {isVisible && (
+        <>
+          <motion.div
+            className="modalOverlay"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={overlayEffect}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 2
+            }}
+          />
+          <motion.div
+            className="commentsModal"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={pageEffect}
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 3
+            }}>
+            <div css={modalContainerStyle}>
+              <div css={headerContainerStyle}>
+                <CgClose
+                  onClick={handleClose}
+                  css={closeButtonStyle}
+                />
+                <h1 css={modalTitleStyle}>댓글</h1>
+              </div>
+              <hr css={dividerStyle} />
+              <div css={commentsContainerStyle}>
+                {comments.length === 0 ? (
+                  <p css={noCommentsStyle}>
+                    아직 댓글이 없습니다. 첫 댓글을 남겨보세요.
+                  </p>
+                ) : (
+                  comments.map(comment => (
+                    <div
+                      key={comment.id}
+                      css={commentItemStyle}>
+                      <img
+                        src={comment.user.photoURL || '/default-profile.png'}
+                        alt={comment.user.displayName || 'User'}
+                        css={profileImageStyle}
+                      />
+                      <span css={usernameStyle}>
+                        {comment.user.displayName}
+                      </span>
 
-                  <div css={commentContentStyle}>
-                    <p>{comment.content}</p>
-                  </div>
+                      <div css={commentContentStyle}>
+                        <p>{comment.content}</p>
+                      </div>
 
-                  {comment.user.uid === userId && (
-                    <CgTrash
-                      onClick={() => handleCommentDelete(comment.id)}
-                      css={deleteButtonStyle}
-                    />
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-          <div css={inputContainerStyle}>
-            <input
-              type="text"
-              value={comment}
-              onChange={handleCommentChange}
-              placeholder="댓글을 입력해 주세요."
-              css={inputStyle}
-            />
-            <button
-              onClick={handleCommentSubmit}
-              css={submitButtonStyle}>
-              전송
-            </button>
-          </div>
-        </div>
-      </motion.div>
+                      {comment.user.uid === userId && (
+                        <CgTrash
+                          onClick={() => handleCommentDelete(comment.id)}
+                          css={deleteButtonStyle}
+                        />
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+              <div css={inputContainerStyle}>
+                <input
+                  type="text"
+                  value={comment}
+                  onChange={handleCommentChange}
+                  placeholder="댓글을 입력해 주세요."
+                  css={inputStyle}
+                />
+                <button
+                  onClick={handleCommentSubmit}
+                  css={submitButtonStyle}>
+                  전송
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
     </AnimatePresence>
   )
 }
