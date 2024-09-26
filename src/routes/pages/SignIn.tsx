@@ -48,14 +48,14 @@ export default function SignIn() {
 }
 
 const containerStyle = css`
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  background-color: ${theme.colors.white};
-  justify-content: center;
-  align-items: center;
   position: relative;
-  overflow: hidden;
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  background-color: ${theme.colors.white};
+  height: 100%;
+  overflow-y: auto;
+  border: 1px solid ${theme.colors.grey};
 
   &::before {
     content: '';

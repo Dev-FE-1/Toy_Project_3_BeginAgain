@@ -12,7 +12,9 @@ type TheHeaderProps = {
 
 export default function TheHeader({ onOpenModal }: TheHeaderProps) {
   const title = useHeaderStore(state => state.title)
-  const handleClickRightButton = useHeaderStore(state => state.handleClickRightButton)
+  const handleClickRightButton = useHeaderStore(
+    state => state.handleClickRightButton
+  )
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -27,7 +29,7 @@ export default function TheHeader({ onOpenModal }: TheHeaderProps) {
 
   const handleBackClick = () => {
     if (onOpenModal) {
-      onOpenModal() 
+      onOpenModal()
     } else {
       navigate(-1)
     }
@@ -41,46 +43,62 @@ export default function TheHeader({ onOpenModal }: TheHeaderProps) {
       console.error('Failed to save:', error)
     }
   }
-  
 
   return (
     <header css={headerStyle}>
       {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집') && (
-        <CgChevronLeft css={iconStyle} onClick={() => navigate(-1)} />
+        <CgChevronLeft
+          css={iconStyle}
+          onClick={() => navigate(-1)}
+        />
       )}
       {title === '프로필 수정' && (
-        <CgChevronLeft css={iconStyle} onClick={handleBackClick} />
+        <CgChevronLeft
+          css={iconStyle}
+          onClick={handleBackClick}
+        />
       )}
       {title === 'Home' ? (
-        <img css={logoStyle} src="/src/assets/logo.png" alt="logo" />
+        <img
+          css={logoStyle}
+          src="/src/assets/logo.png"
+          alt="logo"
+        />
       ) : (
         <h2 css={titleStyle}>{title}</h2>
       )}
       {isAddPlaylist && (
         <button
           css={successBtn(isDone)}
-          onClick={handleComplete}
-        >
+          onClick={handleComplete}>
           완료
         </button>
       )}
       {isEditPlaylist && (
-        <button css={buttonStyle} onClick={handleClickRightButton}>
+        <button
+          css={buttonStyle}
+          onClick={handleClickRightButton}>
           수정
         </button>
       )}
       {isDeleteVideos && (
-        <button css={buttonStyle} onClick={() => {}}>
+        <button
+          css={buttonStyle}
+          onClick={() => {}}>
           삭제
         </button>
       )}
       {isProfile && (
-        <button css={editBtn} onClick={() => navigate('/edit-profile')}>
+        <button
+          css={editBtn}
+          onClick={() => navigate('/edit-profile')}>
           수정
         </button>
       )}
       {isEditProfile && (
-        <button css={editBtn} onClick={() => saveProfile(navigate, null)}>
+        <button
+          css={editBtn}
+          onClick={() => saveProfile(navigate, null)}>
           완료
         </button>
       )}
@@ -101,6 +119,8 @@ const headerStyle = css`
   z-index: 2;
   color: ${theme.colors.white};
   background-color: ${theme.colors.white};
+  border-right: 1px solid ${theme.colors.grey};
+  border-left: 1px solid ${theme.colors.grey};
 `
 
 const titleStyle = css`
