@@ -12,7 +12,9 @@ export default function SignIn() {
 
   async function handleSignIn() {
     try {
+      console.log('Google 로그인 시도 중...')
       await signInWithGoogleAndCreateUser()
+      console.log('로그인 성공, 홈 페이지로 이동')
       navigate('/')
     } catch (error) {
       console.error('로그인 실패:', error)
@@ -26,6 +28,7 @@ export default function SignIn() {
           css={logoStyle}
           src={logo}
           alt="Logo"
+          data-testid="main-logo"
         />
       </div>
 
@@ -34,6 +37,7 @@ export default function SignIn() {
           <img
             src={googleLogo}
             alt="Google Logo"
+            data-testid="google-logo"
             style={{ width: '20px', height: '20px' }}
           />
           Google 로그인
