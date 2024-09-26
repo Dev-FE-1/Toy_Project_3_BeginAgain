@@ -3,7 +3,7 @@ import Category from '@/components/common/Category'
 import EmptyInfo from '@/components/emptyInfo/EmptyInfo'
 import BookmarkItem from '@/components/bookmarks/BookmarkItem'
 import { useFetchPlaylists } from '@/hooks/useFetchPlaylists'
-import { useFetchUserBookmark } from '@/hooks/useFetchUserBookmark' // 북마크 훅 임포트
+import { useFetchUserBookmark } from '@/hooks/useFetchUserBookmark'
 import { useHeaderStore } from '@/stores/header'
 import { css } from '@emotion/react'
 import Sortable from 'sortablejs'
@@ -12,7 +12,7 @@ import Toast from '@/components/common/Toast'
 const Bookmark = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
   const { data: Playlists } = useFetchPlaylists()
-  const { data: bookmarkMap } = useFetchUserBookmark() // useFetchUserBookmark에서 가져온 데이터는 이제 Map입니다
+  const { data: bookmarkMap } = useFetchUserBookmark()
   const ItemRef = useRef<HTMLDivElement | null>(null)
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
@@ -24,7 +24,6 @@ const Bookmark = () => {
     setTitle('북마크')
   }, [setTitle])
 
-  // 선택된 카테고리가 없을 경우 '전체'로 설정
   useEffect(() => {
     if (selectedCategories.length === 0) {
       setSelectedCategories(['전체'])
@@ -40,31 +39,37 @@ const Bookmark = () => {
         )
       : Playlists
 
+  // playlistId와 bookmarkTimestamp를 이용하여 북마크 시점으로 최신 정렬
   const filteredPlaylists = filteredData
     ?.filter(pl => bookmarkMap?.has(pl.id))
     ?.sort((a, b) => {
-      const bookmarkATimestamp = bookmarkMap?.get(a.id)
-      const bookmarkBTimestamp = bookmarkMap?.get(b.id)
+      const bookmarkA = bookmarkMap?.get(a.id)?.createdAt
+      const bookmarkB = bookmarkMap?.get(b.id)?.createdAt
 
-      console.log(
-        'bookmarkA Timestamp:',
-        bookmarkATimestamp,
-        'for playlist ID:',
-        a.id
-      )
-      console.log(
-        'bookmarkB Timestamp:',
-        bookmarkBTimestamp,
-        'for playlist ID:',
-        b.id
-      )
+      console.log('bookmarkA Timestamp:', bookmarkA, 'for playlist ID:', a.id)
+      console.log('bookmarkB Timestamp:', bookmarkB, 'for playlist ID:', b.id)
 
-      return (
-        new Date(bookmarkBTimestamp).getTime() -
-        new Date(bookmarkATimestamp).getTime()
-      )
+      return new Date(bookmarkB).getTime() - new Date(bookmarkA).getTime()
     })
 
+  // 드래그 앤 드롭 기능 (파베 연동 안돼!!!!!!!!)
+  // useEffect(() => {
+  //   if (!ItemRef.current) return
+  //   const sortable = new Sortable(ItemRef.current, {
+  //     handle: '.handle',
+  //     animation: 150,
+  //     forceFallback: false,
+  //     onEnd: async event => {
+  //       if (event.oldIndex === undefined || event.newIndex === undefined) return
+  //     }
+  //   })
+
+  //   return () => {
+  //     sortable.destroy()
+  //   }
+  // }, [filteredPlaylists])
+
+  // 드래그 앤 드롭 기능 (파베 연동 안돼!!!!!!!!_ ORDER 값으로 해보기 ,,안돼)
   useEffect(() => {
     if (!ItemRef.current) return
     new Sortable(ItemRef.current, {
