@@ -12,7 +12,9 @@ export default function SignIn() {
 
   async function handleSignIn() {
     try {
+      console.log('Google 로그인 시도 중...')
       await signInWithGoogleAndCreateUser()
+      console.log('로그인 성공, 홈 페이지로 이동')
       navigate('/')
     } catch (error) {
       console.error('로그인 실패:', error)
@@ -26,6 +28,7 @@ export default function SignIn() {
           css={logoStyle}
           src={logo}
           alt="Logo"
+          data-testid="main-logo"
         />
       </div>
 
@@ -34,6 +37,7 @@ export default function SignIn() {
           <img
             src={googleLogo}
             alt="Google Logo"
+            data-testid="google-logo"
             style={{ width: '20px', height: '20px' }}
           />
           Google 로그인
@@ -48,19 +52,19 @@ export default function SignIn() {
 }
 
 const containerStyle = css`
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  background-color: ${theme.colors.white};
-  justify-content: center;
-  align-items: center;
   position: relative;
-  overflow: hidden;
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  background-color: ${theme.colors.white};
+  height: 100%;
+  overflow-y: auto;
+  border: 1px solid ${theme.colors.grey};
 
   &::before {
     content: '';
     position: absolute;
-    top: 40%;
+    top: 47%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-image: url(${signInImage});
@@ -82,7 +86,7 @@ const contentStyle = css`
 `
 const buttonStyle = css`
   position: absolute;
-  bottom: 25%;
+  bottom: 11%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
@@ -90,7 +94,7 @@ const buttonStyle = css`
 
 const logoStyle = css`
   position: absolute;
-  top: 10%;
+  top: 13%;
   left: 50%;
   height: 55px;
   width: 180px;
@@ -100,7 +104,7 @@ const logoStyle = css`
 const signInText = css`
   color: ${theme.colors.grey};
   position: absolute;
-  top: 78%;
+  bottom: 6%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: ${theme.fontSize.sm};

@@ -437,6 +437,7 @@ const videoContainerStyle = (showComments: boolean) => css`
   margin: ${showComments ? '0 20px 0 20px' : '10px 0'};
   object-fix: cover;
   overflow: scroll;
+  padding-right: 8px;
 `
 
 const videoInfoLayoutStyle = (showComments: boolean) => css`

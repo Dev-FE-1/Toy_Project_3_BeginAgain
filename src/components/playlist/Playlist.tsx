@@ -124,7 +124,6 @@ export default function Playlist({
 
 const playlistStyle = css`
   margin-top: 30px;
-  cursor: pointer;
 `
 const headerStyle = css`
   display: flex;
@@ -138,6 +137,7 @@ const headerTextStyle = css`
 `
 const videoIdStyle = css`
   margin-bottom: 10px;
+  cursor: pointer;
 `
 const footerStyle = css`
   margin-left: 20px;
