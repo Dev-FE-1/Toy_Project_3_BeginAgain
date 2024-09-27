@@ -45,7 +45,7 @@
 
 ## 3. 채택한 개발 기술과 브랜치 전략
 
-### React, styled-component, emotion
+### React, emotion, framer-motion
 
 - **React**
 
