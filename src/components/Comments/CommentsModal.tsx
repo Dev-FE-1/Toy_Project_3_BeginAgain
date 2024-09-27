@@ -190,10 +190,9 @@ const modalContainerStyle = css`
   padding: 20px;
   border-radius: 35px 35px 0 0;
   width: 430px;
-  max-width: 600px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  max-height: calc(100vh - 426px);
+  max-height: calc(100vh - 391px);
   overflow-y: auto;
   position: fixed;
   bottom: 0px;

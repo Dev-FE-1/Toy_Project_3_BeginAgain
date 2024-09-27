@@ -99,11 +99,11 @@ export default function EditPlaylistInfo() {
           value={videoTitle}
           onChange={onTitleInputHandler}
           css={TitleInputContainer}
-          maxLength={15}
+          maxLength={20}
         />
         <p css={firstSpanContainer}>
           <span>{titleInputCount}</span>
-          <span>/15</span>
+          <span>/20</span>
         </p>
 
         <div css={TitleContainer}>설명</div>
@@ -112,12 +112,12 @@ export default function EditPlaylistInfo() {
           value={videoDescription}
           onChange={onDescriptionInputHandler}
           rows={3}
-          maxLength={30}
+          maxLength={40}
           css={textAreaContainer}
         />
         <p css={secondSpanContainer}>
           <span>{descriptionInputCount}</span>
-          <span>/30</span>
+          <span>/40</span>
         </p>
 
         <div css={TitleContainer}>
@@ -168,7 +168,7 @@ const commonInputStyle = css`
   margin-left: 20px;
   letter-spacing: -0.2px;
   box-sizing: border-box;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
   outline: none;
 `
 
@@ -177,7 +177,7 @@ const DivContainer = css`
   display: inline-block;
   width: 100%;
   transform: rotate(0);
-  margin-top: 20px;
+  margin-top: 40px;
 `
 
 const TitleContainer = css`
@@ -190,6 +190,7 @@ const TitleContainer = css`
 
 const TitleInputContainer = css`
   ${commonInputStyle}
+  letter-spacing: 0.3px;
 `
 
 const textAreaContainer = css`
@@ -203,8 +204,9 @@ const textAreaContainer = css`
   font-size: ${theme.fontSize.md};
   font: inherit;
   padding-top: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
   outline: none;
+  letter-spacing: 0.3px;
 `
 
 const firstSpanContainer = css`
@@ -223,7 +225,7 @@ const secondSpanContainer = css`
   z-index: 1;
   position: fixed;
   right: 30px;
-  top: 180px;
+  top: 200px;
   transform: translateY(50%);
   background-color: transparent;
   color: ${theme.colors.grey};
@@ -231,7 +233,7 @@ const secondSpanContainer = css`
 `
 
 const CategoryStyle = css`
-  margin-bottom: 35px;
+  margin-bottom: 50px;
 `
 
 const RadioLabelStyle = css`

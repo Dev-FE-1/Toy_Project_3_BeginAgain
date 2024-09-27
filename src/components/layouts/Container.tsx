@@ -21,5 +21,6 @@ const containerStyle = css`
   ::-webkit-scrollbar {
     display: none;
   }
+  border: 1px solid ${theme.colors.grey};
 `
 export default Container
