@@ -115,16 +115,14 @@ const EditModalContainerStyle = css`
   padding: 20px;
   border-radius: 35px 35px 0 0;
   width: 430px;
-  max-width: 600px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  max-height: calc(100vh - 426px);
   overflow-y: auto;
   position: fixed;
   bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
-  height: 200px;
+  height: 185px;
   z-index: 3;
   display: flex;
   flex-direction: column;

@@ -64,7 +64,7 @@ const containerStyle = css`
   &::before {
     content: '';
     position: absolute;
-    top: 40%;
+    top: 47%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-image: url(${signInImage});
@@ -86,7 +86,7 @@ const contentStyle = css`
 `
 const buttonStyle = css`
   position: absolute;
-  bottom: 25%;
+  bottom: 11%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
@@ -94,7 +94,7 @@ const buttonStyle = css`
 
 const logoStyle = css`
   position: absolute;
-  top: 10%;
+  top: 13%;
   left: 50%;
   height: 55px;
   width: 180px;
@@ -104,7 +104,7 @@ const logoStyle = css`
 const signInText = css`
   color: ${theme.colors.grey};
   position: absolute;
-  top: 78%;
+  bottom: 6%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: ${theme.fontSize.sm};
