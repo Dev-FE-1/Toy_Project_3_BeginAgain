@@ -19,10 +19,8 @@ export const useInfiniteScroll = (isPublic: boolean) => {
     if (totalFetched >= MAX_PLAYLISTS) return
 
     setLoading(true)
-    const { newPlaylists, lastVisible: newLastVisible } = await fetchPlaylists(
-      lastVisible,
-      isPublic
-    )
+    const { newPlaylists, lastVisible: newLastVisible } =
+      await fetchPlaylists(lastVisible)
 
     const filteredPlaylists = newPlaylists.filter(playlist => playlist.isPublic)
 

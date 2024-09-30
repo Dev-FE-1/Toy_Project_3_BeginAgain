@@ -18,3 +18,5 @@ export const useExtractVideoId = () => {
 
   return { extractVideoId }
 }
+
+// 이런게 보통 훅이지....
