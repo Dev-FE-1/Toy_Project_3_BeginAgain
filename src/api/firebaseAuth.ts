@@ -1,5 +1,6 @@
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { doc, setDoc, getDoc, collection } from 'firebase/firestore'
+// 파베에서 제공하는 함수를 편하게 쓰는거
 
 import { auth, db } from '@/api/firebaseApp'
 
@@ -13,14 +14,12 @@ export const signInWithGoogleAndCreateUser = async () => {
     const docSnapshot = await getDoc(userDoc)
 
     if (!docSnapshot.exists()) {
-      console.log('새로운 사용자 정보 데이터베이스에 저장')
       await setDoc(userDoc, {
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
         userId: user.uid
       })
-      console.log('유저 정보 저장 완료')
 
       const PlaylistsCollection = collection(db, 'Playlists')
       const newPlaylistDocRef = doc(PlaylistsCollection)

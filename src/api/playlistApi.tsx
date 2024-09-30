@@ -10,7 +10,7 @@ import {
 
 const ITEMS_PER_PAGE = 10
 
-export const fetchPlaylists = async (lastVisible: any) => {
+export const fetchPlaylists = async (lastVisible: boolean) => {
   const playlistsRef = collection(db, 'Playlists')
 
   let q = query(playlistsRef, orderBy('createdAt'), limit(ITEMS_PER_PAGE))

@@ -2,18 +2,20 @@ import { useState } from 'react'
 import { useFetchComments } from '@/hooks/useFetchComments'
 import { css } from '@emotion/react'
 import theme from '@/styles/theme'
-import CommentsModal from '@/components/comments/CommentsModal'
+import CommentsModal from '@/components/Comments/CommentsModal'
 
 interface CommentsProps {
   playlistId: string
+  myProfile: { photoURL: string }
+  comments: Comment[]
+  userData: { name: string; photoURL: string }
+  userId: string
+  onClose: () => void
 }
 
 const Comments: React.FC<CommentsProps> = ({ playlistId }) => {
   const { data: comments, isLoading, isError } = useFetchComments(playlistId)
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const openModal = () => setIsModalOpen(true)
-  const closeModal = () => setIsModalOpen(false)
 
   if (isLoading) {
     return <div>댓글 로딩 중...</div>
@@ -30,7 +32,7 @@ const Comments: React.FC<CommentsProps> = ({ playlistId }) => {
     <div css={sectionContainer}>
       <div
         css={headerStyle}
-        onClick={openModal}>
+        onClick={() => setIsModalOpen(true)}>
         <h1>댓글</h1>
         <span>{commentCount}개</span>
       </div>
@@ -47,8 +49,7 @@ const Comments: React.FC<CommentsProps> = ({ playlistId }) => {
       {isModalOpen && (
         <CommentsModal
           comments={comments || []}
-          onClose={closeModal}
-          myProfile={{ photoURL: '/my-profile.png' }}
+          onClose={() => setIsModalOpen(false)}
           playlistId={playlistId}
         />
       )}
