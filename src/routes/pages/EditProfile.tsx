@@ -1,20 +1,17 @@
 import { useState, useRef, useEffect } from 'react'
-import { getAuth, updateProfile } from 'firebase/auth'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { getAuth } from 'firebase/auth'
 import { useProfileStore } from '@/stores/editProfile'
 import { css } from '@emotion/react'
 import { FaCamera } from 'react-icons/fa'
 import theme from '@/styles/theme'
 import { useHeaderStore } from '@/stores/header'
-import { getFirestore, doc, setDoc } from 'firebase/firestore'
 import TheHeader from '@/components/layouts/headers/TheHeader'
 import Modal from '@/components/common/TheModal'
 import { useNavigate } from 'react-router-dom'
 
-
 export default function EditProfile() {
-  const { displayName, setDisplayName, photoURL, setPhotoURL } = useProfileStore()
   const setHeaderTitle = useHeaderStore((state) => state.setTitle)
+  const { displayName, setDisplayName, photoURL, setPhotoURL } = useProfileStore()
   const [previewPhoto, setPreviewPhoto] = useState<string>(photoURL || '')
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -22,8 +19,6 @@ export default function EditProfile() {
 
   const auth = getAuth()
   const user = auth.currentUser
-  const storage = getStorage()
-  const firestore = getFirestore()
   const navigate = useNavigate()
 
 
@@ -34,16 +29,16 @@ export default function EditProfile() {
   useEffect(() => {
     setHeaderTitle('프로필 수정')
     if (user) {
+      setPreviewPhoto(user.photoURL || '')
       setDisplayName(user.displayName || '')
       setPhotoURL(user.photoURL || '')
-      setPreviewPhoto(user.photoURL || '')
     }
   }, [setHeaderTitle, user, setDisplayName, setPhotoURL])
 
   useEffect(() => {
     setIsModified(
       displayName !== initialDisplayName.current || photoURL !== initialPhotoURL.current
-    );
+    )
   }, [displayName, photoURL])
 
   const handlePhotoClick = () => {
@@ -57,23 +52,6 @@ export default function EditProfile() {
     if (file && user) {
       const newPhotoURL = URL.createObjectURL(file)
       setPreviewPhoto(newPhotoURL)
-
-      try {
-        const storageRef = ref(storage, `profile_images/${user.uid}`)
-        await uploadBytes(storageRef, file)
-        const downloadURL = await getDownloadURL(storageRef)
-        await updateProfile(user, { photoURL: downloadURL })
-        setPhotoURL(downloadURL)
-
-        const userRef = doc(firestore, 'Users', user.uid)
-        await setDoc(userRef, {
-          displayName: displayName,
-          photoURL: downloadURL,
-          email: user.email,
-        }, { merge: true })
-      } catch (error) {
-        console.error('사진 업로드 실패:', error)
-      }
     }
   }
 
