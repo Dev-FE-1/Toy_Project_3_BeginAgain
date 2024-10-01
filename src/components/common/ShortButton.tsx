@@ -20,7 +20,7 @@ const ShortButton = ({
     <button
       type={type}
       onClick={onClick}
-      css={[baseButtonStyle, buttonStyle[styleType] || []]}>
+      css={[baseButtonStyle, buttonStyle[styleType]]}>
       {children}
     </button>
   )

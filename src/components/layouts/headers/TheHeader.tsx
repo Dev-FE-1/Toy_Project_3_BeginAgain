@@ -10,6 +10,12 @@ type TheHeaderProps = {
   onOpenModal: () => void
 }
 
+export enum titleName {
+  PlaylistDetail = '플레이리스트 상세보기',
+  PlaylistEdit = '플레이리스트 편집',
+  ProfileEdit = '프로필 수정'
+}
+
 export default function TheHeader({ onOpenModal }: TheHeaderProps) {
   const title = useHeaderStore(state => state.title)
   const handleClickRightButton = useHeaderStore(
@@ -46,13 +52,14 @@ export default function TheHeader({ onOpenModal }: TheHeaderProps) {
 
   return (
     <header css={headerStyle}>
-      {(title === '플레이리스트 상세보기' || title === '플레이리스트 편집') && (
+      {(title === titleName.PlaylistDetail ||
+        title === titleName.PlaylistEdit) && (
         <CgChevronLeft
           css={iconStyle}
           onClick={() => navigate(-1)}
         />
       )}
-      {title === '프로필 수정' && (
+      {title === titleName.ProfileEdit && (
         <CgChevronLeft
           css={iconStyle}
           onClick={handleBackClick}
