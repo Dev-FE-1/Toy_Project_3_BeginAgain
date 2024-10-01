@@ -59,7 +59,7 @@ export const usePlaylistData = (playlist?: Playlist) => {
     commentCount,
     userData,
     isBookmarked,
-    handleBookmark: isOwner ? undefined : handleBookmark,
+    handleBookmark,
     toastMessage,
     isToastVisible,
     hideToast,
