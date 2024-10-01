@@ -6,8 +6,8 @@ import { IoIosAddCircleOutline, IoIosRemove } from 'react-icons/io'
 import { IoHelpCircleOutline } from 'react-icons/io5'
 import { useHeaderStore } from '@/stores/header'
 import { useAddPlaylistStore } from '@/stores/addPlaylist'
-import 'react-tooltip/dist/react-tooltip.css'
 import { Tooltip } from 'react-tooltip'
+import Toast from '@/components/common/Toast'
 
 const AddPlaylist = () => {
   const setTitle = useHeaderStore(state => state.setTitle)
@@ -18,6 +18,8 @@ const AddPlaylist = () => {
   }, [setTitle])
   const [videoUrls, setVideoUrls] = useState<string[]>([])
   const [currentVideoUrl, setCurrentVideoUrl] = useState('')
+  const [isToastVisible, setIsToastVisible] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
   const [videoTitle, setVideoTitle] = useState('')
   const [videoDescription, setVideoDescription] = useState('')
   const [isPublic, setIsPublic] = useState(true)
@@ -53,9 +55,8 @@ const AddPlaylist = () => {
   const addVideoUrl = () => {
     const pattern = /^https:\/\/www\.youtube\.com\/watch\?v=.*/
     if (!currentVideoUrl.match(pattern)) {
-      alert(
-        'https://www.youtube.com/watch?v= 를 반드시 포함시킨 링크만을 사용해주세요!'
-      )
+      setToastMessage('유효한 youtube URL 을 사용해주세요!')
+      setIsToastVisible(true)
       return
     }
     if (currentVideoUrl && !videoUrls.includes(currentVideoUrl)) {
@@ -147,6 +148,12 @@ const AddPlaylist = () => {
           ))}
         </ul>
       </div>
+
+      <Toast
+        message={toastMessage} 
+        isVisible={isToastVisible} 
+        onHide={() => setIsToastVisible(false)} 
+      />
 
       <div css={DivContainer}>
         <div css={TitleContainer}>

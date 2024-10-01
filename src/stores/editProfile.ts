@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 import { getAuth, updateProfile } from "firebase/auth"
 import { NavigateFunction } from 'react-router-dom'
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage"
