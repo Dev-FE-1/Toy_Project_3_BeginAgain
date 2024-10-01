@@ -12,45 +12,44 @@ interface PlayListProps {
   videoUrl?: string
 }
 
+const pageEffect = {
+  hidden: {
+    opacity: 0,
+    transform: 'translateY(100%)'
+  },
+  visible: {
+    opacity: 1,
+    transform: 'translateY(0%)',
+    transition: {
+      duration: 0.3
+    }
+  },
+  exit: {
+    opacity: 0,
+    transform: 'translateY(100%)',
+    transition: {
+      duration: 0.3
+    }
+  }
+}
+
+const overlayEffect = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 0.5,
+    transition: { duration: 0.3 }
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.3 }
+  }
+}
+
 const EditPlaylist = ({ closeEdit, playlist, videoUrl }: PlayListProps) => {
-  const pageEffect = {
-    hidden: {
-      opacity: 0,
-      transform: 'translateY(100%)'
-    },
-    visible: {
-      opacity: 1,
-      transform: 'translateY(0%)',
-      transition: {
-        duration: 0.3
-      }
-    },
-    exit: {
-      opacity: 0,
-      transform: 'translateY(100%)',
-      transition: {
-        duration: 0.3
-      }
-    }
-  }
-
-  const overlayEffect = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 0.5,
-      transition: { duration: 0.3 }
-    },
-    exit: {
-      opacity: 0,
-      transition: { duration: 0.3 }
-    }
-  }
-
   const deleteVideo = useDeleteVideo()
 
   const handleDelete = async () => {
     try {
-      console.log('삭제할 비디오 URL:', videoUrl)
       deleteVideo.mutate({
         playlist,
         videoUrl: videoUrl ?? ''
