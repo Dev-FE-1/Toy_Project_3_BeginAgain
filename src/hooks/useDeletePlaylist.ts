@@ -29,6 +29,9 @@ export const useDeletePlaylist = () => {
     },
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ['Playlists'] })
+    },
+    onError(error) {
+      console.error('플레이리스트 삭제 중 오류 발생:', error)
     }
   })
 }
