@@ -48,7 +48,6 @@ const Toast: React.FC<ToastProps> = ({
 }) => {
   useEffect(() => {
     if (isVisible) {
-      console.log('Toast is visible')
       const timer = setTimeout(() => {
         onHide()
       }, duration)

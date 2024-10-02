@@ -42,12 +42,9 @@ const Bookmark = () => {
   // playlistId와 bookmarkTimestamp를 이용하여 북마크 시점으로 최신 정렬
   const filteredPlaylists = filteredData
     ?.filter(pl => bookmarkMap?.has(pl.id))
-    ?.sort((a, b) => {
+    .sort((a, b) => {
       const bookmarkA = bookmarkMap?.get(a.id)?.createdAt
       const bookmarkB = bookmarkMap?.get(b.id)?.createdAt
-
-      console.log('bookmarkA Timestamp:', bookmarkA, 'for playlist ID:', a.id)
-      console.log('bookmarkB Timestamp:', bookmarkB, 'for playlist ID:', b.id)
 
       return new Date(bookmarkB).getTime() - new Date(bookmarkA).getTime()
     })
@@ -77,9 +74,7 @@ const Bookmark = () => {
       animation: 0,
       forceFallback: false,
       onEnd: event => {
-        console.log(event.oldIndex, event.newIndex)
         if (event.oldIndex === undefined || event.newIndex === undefined) return
-        console.log('>>> filteredPlaylists', filteredPlaylists)
         // reorderTodos({
         //   oldIndex: event.oldIndex,
         //   newIndex: event.newIndex

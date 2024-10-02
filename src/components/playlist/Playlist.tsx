@@ -36,7 +36,8 @@ export default function Playlist({
     handleBookmark,
     toastMessage,
     isToastVisible,
-    hideToast
+    hideToast,
+    isOwner
   } = usePlaylistData(playlist)
 
   const { isLikeFilled, handleLikeClick, likeCount } = useLikeData(playlist.id)
@@ -93,7 +94,7 @@ export default function Playlist({
             <CgComment css={commentIconStyle} />
             <span css={commentCountStyle}>{comments?.length || 0}</span>
           </div>
-          {handleBookmark &&
+          {!isOwner &&
             (isBookmarked ? (
               <FaBookmark
                 onClick={handleBookmark}

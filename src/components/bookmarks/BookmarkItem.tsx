@@ -15,12 +15,12 @@ interface Playlist {
   userId: string
   createdAt: string
 }
+const YOUTUBE_WATCH_URL = 'https://www.youtube.com/watch?v=' // 나중에 폴더안에 넣어서 import 할 수 있게 해야함(상수사용)
 
 function extractVideoId(url: string) {
   url = url.split('&')[0]
-  return url.replace('https://www.youtube.com/watch?v=', '')
+  return url.replace(YOUTUBE_WATCH_URL, '')
 }
-
 const BookmarkItem = ({
   playlist,
   onBookmarkToggle

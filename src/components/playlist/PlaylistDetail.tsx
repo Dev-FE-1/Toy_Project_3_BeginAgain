@@ -22,7 +22,7 @@ import Sortable from 'sortablejs'
 import 'dayjs/locale/ko'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { useFetchPlaylistById } from '@/hooks/useFetchPlaylistById'
+import { useFetchPlaylistById, Playlist } from '@/hooks/useFetchPlaylistById'
 import { useDeleteVideo } from '@/hooks/useDeleteVideo'
 import { useFetchUserId } from '@/hooks/useFetchUserId'
 
@@ -118,8 +118,27 @@ export default function PlaylistDetail({
   }, [playlistData])
 
   // 드래그 앤 드롭 기능 설정
+  // 드래그 앤 드롭 기능 설정
+  // 기존의 useFetchPlaylistById를 통해 가져온 playlistData를 그대로 사용할 수 없으므로 아래처럼 수정합니다.
+  const [localPlaylistData, setLocalPlaylistData] = useState<Playlist | null>(
+    null
+  )
+
   useEffect(() => {
-    if (!ItemRef.current || !playlistData || !playlistData.urls || !isOwner)
+    // playlistData가 변경될 때마다 localPlaylistData를 업데이트
+    if (playlistData) {
+      setLocalPlaylistData(playlistData)
+    }
+  }, [playlistData])
+
+  // 드래그 앤 드롭 시 로컬 상태 업데이트
+  useEffect(() => {
+    if (
+      !ItemRef.current ||
+      !localPlaylistData ||
+      !localPlaylistData.urls ||
+      !isOwner
+    )
       return
 
     const sortable = new Sortable(ItemRef.current, {
@@ -128,10 +147,14 @@ export default function PlaylistDetail({
       onEnd: async event => {
         if (event.oldIndex === undefined || event.newIndex === undefined) return
 
-        const newUrls: string[] = Array.from(playlistData.urls)
+        const newUrls: string[] = Array.from(localPlaylistData.urls)
         const [movedItem] = newUrls.splice(event.oldIndex, 1)
         newUrls.splice(event.newIndex, 0, movedItem)
 
+        // 로컬 상태를 먼저 업데이트
+        setLocalPlaylistData({ ...localPlaylistData, urls: newUrls })
+
+        // Firestore에 업데이트
         if (id) {
           const playlistRef = doc(db, 'Playlists', id)
           await updateDoc(playlistRef, {
@@ -146,7 +169,7 @@ export default function PlaylistDetail({
     return () => {
       sortable.destroy()
     }
-  }, [playlistData, id, db, isOwner])
+  }, [localPlaylistData, id, db, isOwner])
 
   // 삭제 모달 열기, 닫기
   const openDeleteModal = (url: string) => {
